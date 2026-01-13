@@ -3,17 +3,25 @@ import numpy as np
 from nltk.tokenize import word_tokenize
 from nltk.tokenize.regexp import RegexpTokenizer
 from nltk.corpus import stopwords
-from langdetect import detect
+import langid
+from bs4 import BeautifulSoup
+import html
+from imblearn.over_sampling import RandomOverSampler, SMOTEN
+from libretranslatepy import LibreTranslateAPI
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.ensemble import GradientBoostingClassifier
+
 
 
 ##import original data
 ##data is already split into Training/Testing, no need to re-split
-Rak_train_raw = pd.read_csv('../data/raw/X_train_update.csv', index_col=0)
-RakY_train_raw = pd.read_csv('../data/raw/Y_train_CVw08PX.csv', index_col=0)
-RakX_test_raw = pd.read_csv('../data/raw/X_test_update.csv', index_col=0)
+Rak_train_raw = pd.read_csv('../data/raw/X_train_update.csv', index_col=0)  ##raw X train data
+RakY_train_raw = pd.read_csv('../data/raw/Y_train_CVw08PX.csv', index_col=0)  ##raw Y train data
+Rak_test_raw = pd.read_csv('../data/raw/X_test_update.csv', index_col=0)  ##raw X test data
 
 #####
 ##Clean-up strings
+##FIXME def func
 
 ##Fix problematic strings for text clean-up
 
@@ -72,19 +80,18 @@ Rak_train['product_txt_len'] = Rak_train['product_txt'].apply(len)
 #####
 ##foreign language handling
 ##detect phrase language using 'langid' on product_txt
-import langid
 
 # langid.set_languages(langs=None)
 langid.set_languages(langs=['fr', 'en', 'de', 'it', 'es', 'pt'])
 Rak_train['lang'] = Rak_train['product_txt'].apply(lambda x: langid.classify(x)[0])
 
 
+##FIXME def func with a param for rerun={0,1}; if 1 run translate code, if 0 load csv
 ##translate using libretranslate (self-hosted process)
 ##NOTE: need to start external process first
 # libretranslate --update-models --load-only fr,en,es,de,it,pt
 # libretranslate --load-only fr,en,es,de,it,pt
 
-from libretranslatepy import LibreTranslateAPI
 lt = LibreTranslateAPI("http://localhost:5000/")
 
 ##re-use detected language
@@ -103,13 +110,10 @@ Rak_train.to_csv('../data/processed/Rak_train_translations.csv')
 
 
 #####
-##Sample Rebalancing
+##Training Sample Rebalancing
 RakX_train = Rak_train[['product_txt_transl']]
 
-
 ##Oversampling (only on training data)
-from imblearn.over_sampling import RandomOverSampler, SMOTEN
-
 ##SMOTEN
 smo = SMOTEN(random_state=27732)
 RakX_train_sm, Raky_train_sm = smo.fit_resample(RakX_train, RakY_train_raw)
@@ -117,9 +121,6 @@ RakX_train_sm, Raky_train_sm = smo.fit_resample(RakX_train, RakY_train_raw)
 
 #####
 ##Tokenization
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.ensemble import GradientBoostingClassifier
-
 # Créer un vectorisateur 
 ##FIXME consider custom tokenizer and max_features
 regexp_tokenizer = RegexpTokenizer("[a-zA-ZÀÂÆÇÉÈÊËÎÏÔŒÙÛÜŸàâæçéèêëîïôœùûüÿ]{3,}") ##words with at least 3 characaters
