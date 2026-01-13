@@ -87,33 +87,51 @@ Rak_test = rak_data_cleanup(Rak_test_raw)
 #####
 ##foreign language handling
 ##detect phrase language using 'langid' on product_txt
+def lang_detect(data):
+    # langid.set_languages(langs=None)
+    langid.set_languages(langs=['fr', 'en', 'de', 'it', 'es', 'pt'])
+    data['lang'] = data['product_txt'].apply(lambda x: langid.classify(x)[0])
 
-# langid.set_languages(langs=None)
-langid.set_languages(langs=['fr', 'en', 'de', 'it', 'es', 'pt'])
-Rak_train['lang'] = Rak_train['product_txt'].apply(lambda x: langid.classify(x)[0])
+    return data
+
+##detect languages on Rakuten processed data
+Rak_train = lang_detect(data = Rak_train)
+Rak_test = lang_detect(data = Rak_test)
 
 
-##FIXME def func with a param for rerun={0,1}; if 1 run translate code, if 0 load csv
 ##translate using libretranslate (self-hosted process)
-##NOTE: need to start external process first
-# libretranslate --update-models --load-only fr,en,es,de,it,pt
-# libretranslate --load-only fr,en,es,de,it,pt
+##func to obtain translations 
+## if rerun == True then run translation code, if False (default) then just load csv from supplied path
+def translate_txt(data = None, rerun = False, csv_file = '../data/processed/Rak_train_translations.csv'):
+    ##FIXME improve func not to require data if just loading csv
+    if rerun == True:
+        ##NOTE: need to start external process first (and this code is time-consuming)
+        # libretranslate --update-models --load-only fr,en,es,de,it,pt
+        # libretranslate --load-only fr,en,es,de,it,pt
+        lt = LibreTranslateAPI("http://localhost:5000/")
 
-lt = LibreTranslateAPI("http://localhost:5000/")
-
-##re-use detected language
-def lt_fun(row):
-    if row.name % 10000 == 0: print(row.name)
-    # print(row['lang'])
-    transl = row['product_txt'] if row['lang'] == 'fr' else lt.translate(
-        row['product_txt'], source=row['lang'], target="fr")
-    return transl
+        ##re-use detected language
+        def lt_fun(row):
+            if row.name % 5000 == 0: print(row.name)
+            # print(row['lang'])
+            transl = row['product_txt'] if row['lang'] == 'fr' else lt.translate(
+                row['product_txt'], source=row['lang'], target="fr")
+            return transl
 
 
-Rak_train['product_txt_transl'] = Rak_train.apply(lambda row: lt_fun(row), axis=1)
+        data['product_txt_transl'] = data.apply(lambda row: lt_fun(row), axis=1)
 
-##save translations to csv
-Rak_train.to_csv('../data/processed/Rak_train_translations.csv')
+        ##save translations to csv (overwrites existing file)
+        data.to_csv(csv_file)
+    else:
+        ##load translations from stored csv file
+        data = pd.read_csv(csv_file)
+
+    return data
+
+##translate X train (by default load existing csv file with translations)
+Rak_train = translate_txt(data = None, rerun = False, csv_file = '../data/processed/Rak_train_translations.csv')
+##FIXME run translations for X test as well
 
 
 #####
@@ -128,14 +146,23 @@ RakX_train_sm, Raky_train_sm = smo.fit_resample(RakX_train, RakY_train_raw)
 
 #####
 ##Tokenization
+##FIXME def tokenization fun to reuse with test data as well
+
+##Stop Words
+fr_stop_words = stopwords.words('french')
+
 # Créer un vectorisateur 
 ##FIXME consider custom tokenizer and max_features
-regexp_tokenizer = RegexpTokenizer("[a-zA-ZÀÂÆÇÉÈÊËÎÏÔŒÙÛÜŸàâæçéèêëîïôœùûüÿ]{3,}") ##words with at least 3 characaters
-vect_tfidf = TfidfVectorizer()
+# regexp_tokenizer = RegexpTokenizer("[a-zA-ZÀÂÆÇÉÈÊËÎÏÔŒÙÛÜŸàâæçéèêëîïôœùûüÿ]{3,}") ##words with at least 3 characaters
+vect_tfidf = TfidfVectorizer(    
+    max_features=10000,
+    stop_words=fr_stop_words
+    # , tokenizer = regexp_tokenizer
+)
 
 # Mettre à jour la valeur de X_train_tfidf et X_test_tfidf
-##FIXME
-RakX_train_sm_tfidf = vect_tfidf.fit_transform(RakX_train_sm)
+##FIXME need to finalize tokenization
+RakX_train_sm_tfidf = vect_tfidf.fit_transform(RakX_train_sm['product_txt_transl'])
 
 
 
