@@ -37,7 +37,7 @@ h1, h2, h3, h4 {
 /* Primary buttons */
 .stButton > button {
     background-color: var(--rakuten-red) !important;
-    color: white !important;
+    color: #FFFFFF !important;
     border: none !important;
     border-radius: 8px;
     padding: 0.5rem 1.5rem;
@@ -47,7 +47,27 @@ h1, h2, h3, h4 {
 
 .stButton > button:hover {
     background-color: var(--rakuten-red-dark) !important;
-    color: white !important;
+    color: #FFFFFF !important;
+}
+
+.stButton > button p,
+.stButton > button span,
+.stButton > button div {
+    color: #FFFFFF !important;
+}
+
+/* Primary type button */
+.stButton > button[kind="primary"],
+.stButton > button[data-testid="stBaseButton-primary"] {
+    background-color: var(--rakuten-red) !important;
+    color: #FFFFFF !important;
+}
+
+.stButton > button[kind="primary"] p,
+.stButton > button[kind="primary"] span,
+.stButton > button[data-testid="stBaseButton-primary"] p,
+.stButton > button[data-testid="stBaseButton-primary"] span {
+    color: #FFFFFF !important;
 }
 
 /* Cards */
@@ -140,14 +160,26 @@ h1, h2, h3, h4 {
 
 .stTabs [data-baseweb="tab"] {
     background-color: var(--rakuten-gray-light) !important;
-    color: var(--rakuten-gray-dark) !important;
+    color: #333333 !important;
     border-radius: 8px 8px 0 0;
     padding: 0.5rem 1rem;
 }
 
+.stTabs [data-baseweb="tab"] p,
+.stTabs [data-baseweb="tab"] span,
+.stTabs [data-baseweb="tab"] div {
+    color: #333333 !important;
+}
+
 .stTabs [aria-selected="true"] {
     background-color: var(--rakuten-red) !important;
-    color: white !important;
+    color: #FFFFFF !important;
+}
+
+.stTabs [aria-selected="true"] p,
+.stTabs [aria-selected="true"] span,
+.stTabs [aria-selected="true"] div {
+    color: #FFFFFF !important;
 }
 
 /* Mode indicator */
