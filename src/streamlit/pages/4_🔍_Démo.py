@@ -21,7 +21,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from config import APP_CONFIG, MODEL_CONFIG, THEME, ASSETS_DIR
 from utils.category_mapping import get_category_info, get_category_emoji
-from utils.mock_classifier import DemoClassifier
+from utils.mock_classifier import (
+    DemoClassifier,
+    TEXT_MODELS,
+    IMAGE_MODELS,
+    get_available_text_models,
+    get_available_image_models,
+)
 from utils.image_utils import load_image_from_upload, validate_image, get_image_info
 from utils.preprocessing import preprocess_product_text, validate_text_input
 from utils.ui_utils import load_css
@@ -30,7 +36,7 @@ from utils.ui_utils import load_css
 # Configuration de la page
 # =============================================================================
 st.set_page_config(
-    page_title=f"Classification - {APP_CONFIG['title']}",
+    page_title=f"Démo - {APP_CONFIG['title']}",
     page_icon="🔍",
     layout=APP_CONFIG["layout"],
 )
@@ -46,6 +52,23 @@ load_css(ASSETS_DIR / "style.css")
 # =============================================================================
 def init_page_state():
     """Initialise l'état de la page."""
+    # Sélection des modèles
+    if "selected_text_model" not in st.session_state:
+        st.session_state.selected_text_model = "camembert"  # Meilleur modèle par défaut
+
+    if "selected_image_model" not in st.session_state:
+        st.session_state.selected_image_model = "resnet50_svm"  # Meilleur modèle par défaut
+
+    # Créer les classifieurs avec les modèles sélectionnés
+    if "text_classifier" not in st.session_state:
+        text_config = TEXT_MODELS[st.session_state.selected_text_model]
+        st.session_state.text_classifier = DemoClassifier(model_config=text_config)
+
+    if "image_classifier" not in st.session_state:
+        image_config = IMAGE_MODELS[st.session_state.selected_image_model]
+        st.session_state.image_classifier = DemoClassifier(model_config=image_config)
+
+    # Classifieur par défaut (pour compatibilité)
     if "classifier" not in st.session_state:
         st.session_state.classifier = DemoClassifier()
 
@@ -69,6 +92,15 @@ def init_page_state():
     # État pour le mode comparaison
     if "comparison_results" not in st.session_state:
         st.session_state.comparison_results = None
+
+
+def update_classifiers():
+    """Met à jour les classifieurs après changement de modèle."""
+    text_config = TEXT_MODELS[st.session_state.selected_text_model]
+    st.session_state.text_classifier = DemoClassifier(model_config=text_config)
+
+    image_config = IMAGE_MODELS[st.session_state.selected_image_model]
+    st.session_state.image_classifier = DemoClassifier(model_config=image_config)
 
 
 def add_to_history(result, designation="", description="", has_image=False, source_tab="multimodal"):
@@ -769,6 +801,22 @@ tab_combined, tab_image, tab_text, tab_compare, tab_gallery = st.tabs([
 ])
 
 with tab_combined:
+    st.markdown("""
+    Fournissez **texte OU image** (ou les deux). Le système utilisera le modèle approprié
+    selon les données fournies.
+    """)
+
+    # Afficher les modèles sélectionnés
+    col_models1, col_models2 = st.columns(2)
+    with col_models1:
+        txt_cfg = TEXT_MODELS[st.session_state.selected_text_model]
+        st.markdown(f"📝 **Texte**: {txt_cfg.name}")
+    with col_models2:
+        img_cfg = IMAGE_MODELS[st.session_state.selected_image_model]
+        st.markdown(f"🖼️ **Image**: {img_cfg.name}")
+
+    st.markdown("---")
+
     col_upload, col_text = st.columns(2)
 
     with col_upload:
@@ -830,36 +878,57 @@ with tab_combined:
         if not has_image and not has_text:
             st.error("❌ Veuillez fournir au moins une image ou une désignation.")
         else:
-            with st.spinner("🔄 Classification en cours..."):
-                # Prétraiter le texte si présent
-                processed_text = None
+            # Déterminer quel(s) modèle(s) utiliser
+            results_to_show = []
+
+            try:
+                # Classification par texte si texte fourni
                 if has_text:
-                    processed_text = preprocess_product_text(designation, description)
+                    with st.spinner(f"🔄 Classification texte avec {txt_cfg.short_name}..."):
+                        processed_text = preprocess_product_text(designation, description)
+                        text_result = st.session_state.text_classifier.predict(text=processed_text, top_k=5)
+                        results_to_show.append(("texte", text_result, txt_cfg))
+                        add_to_history(text_result, designation, description, False, "texte")
 
-                # Effectuer la prédiction
-                try:
-                    result = st.session_state.classifier.predict(
-                        image=image,
-                        text=processed_text,
-                        top_k=5
-                    )
+                # Classification par image si image fournie
+                if has_image:
+                    with st.spinner(f"🔄 Classification image avec {img_cfg.short_name}..."):
+                        image_result = st.session_state.image_classifier.predict(image=image, top_k=5)
+                        results_to_show.append(("image", image_result, img_cfg))
+                        add_to_history(image_result, "Image", "", True, "image")
 
-                    # Stocker le résultat
+                # Afficher les résultats
+                st.markdown("---")
+
+                if len(results_to_show) == 2:
+                    # Afficher les deux résultats côte à côte
+                    st.markdown("## 🎯 Résultats de Classification")
+                    st.info("📊 Deux modèles ont été utilisés : un pour le texte, un pour l'image")
+
+                    col_res1, col_res2 = st.columns(2)
+
+                    with col_res1:
+                        st.markdown(f"### 📝 Modèle Texte")
+                        st.caption(f"*{txt_cfg.name}*")
+                        display_prediction_result(results_to_show[0][1], None)
+
+                    with col_res2:
+                        st.markdown(f"### 🖼️ Modèle Image")
+                        st.caption(f"*{img_cfg.name}*")
+                        display_prediction_result(results_to_show[1][1], image)
+
+                else:
+                    # Un seul résultat
+                    mode, result, config = results_to_show[0]
+                    st.markdown(f"## 🎯 Résultat ({config.name})")
                     st.session_state.last_prediction = result
+                    display_prediction_result(result, image if mode == "image" else None)
 
-                    # Ajouter à l'historique
-                    add_to_history(result, designation, description, has_image, "multimodal")
+                # Résumé des entrées
+                display_input_summary(designation, description, image)
 
-                    # Afficher les résultats
-                    st.markdown("---")
-                    st.markdown("## 🎯 Résultat de la Classification")
-                    display_prediction_result(result, image)
-
-                    # Résumé des entrées
-                    display_input_summary(designation, description, image)
-
-                except Exception as e:
-                    st.error(f"❌ Erreur lors de la classification: {e}")
+            except Exception as e:
+                st.error(f"❌ Erreur lors de la classification: {e}")
 
 with tab_image:
     st.markdown("#### 🖼️ Classification par Image Seule")
@@ -878,9 +947,13 @@ with tab_image:
                 with col1:
                     st.image(image_only, caption="Image à classifier", use_container_width=True)
                 with col2:
+                    # Afficher le modèle utilisé
+                    img_config = IMAGE_MODELS[st.session_state.selected_image_model]
+                    st.info(f"🧠 Modèle: **{img_config.name}**")
+
                     if st.button("🚀 Classifier", key="classify_image_only", use_container_width=True, type="primary"):
-                        with st.spinner("Classification..."):
-                            result = st.session_state.classifier.predict(image=image_only, top_k=5)
+                        with st.spinner(f"Classification avec {img_config.short_name}..."):
+                            result = st.session_state.image_classifier.predict(image=image_only, top_k=5)
                             st.session_state.image_only_result = result
                             st.session_state.image_only_image = image_only
                             add_to_history(result, "Image uploadée", "", True, "image")
@@ -896,6 +969,10 @@ with tab_image:
 
 with tab_text:
     st.markdown("#### 📝 Classification par Texte Seul")
+
+    # Afficher le modèle utilisé
+    txt_config = TEXT_MODELS[st.session_state.selected_text_model]
+    st.info(f"🧠 Modèle: **{txt_config.name}** - {txt_config.description}")
 
     designation_text = st.text_input(
         "Désignation du produit",
@@ -914,9 +991,9 @@ with tab_text:
         if not designation_text or not designation_text.strip():
             st.error("❌ Veuillez saisir au moins la désignation du produit.")
         else:
-            with st.spinner("Classification..."):
+            with st.spinner(f"Classification avec {txt_config.short_name}..."):
                 processed_text = preprocess_product_text(designation_text, description_text)
-                result = st.session_state.classifier.predict(text=processed_text, top_k=5)
+                result = st.session_state.text_classifier.predict(text=processed_text, top_k=5)
                 st.session_state.text_only_result = result
                 add_to_history(result, designation_text, description_text, False, "texte")
 
@@ -1131,13 +1208,64 @@ with tab_gallery:
 
 
 # =============================================================================
-# Sidebar avec Historique
+# Sidebar avec Sélection de Modèles et Historique
 # =============================================================================
 with st.sidebar:
     st.markdown("### 🔍 Classification")
     st.markdown("---")
 
-    # Statistiques de session
+    # =========================================================================
+    # SÉLECTION DES MODÈLES
+    # =========================================================================
+    st.markdown("#### 🧠 Modèles")
+
+    # Modèle texte
+    text_model_options = {k: v.name for k, v in TEXT_MODELS.items()}
+    selected_text = st.selectbox(
+        "📝 Modèle Texte",
+        options=list(text_model_options.keys()),
+        format_func=lambda x: text_model_options[x],
+        index=list(text_model_options.keys()).index(st.session_state.selected_text_model),
+        key="sidebar_text_model"
+    )
+
+    # Modèle image
+    image_model_options = {k: v.name for k, v in IMAGE_MODELS.items()}
+    selected_image = st.selectbox(
+        "🖼️ Modèle Image",
+        options=list(image_model_options.keys()),
+        format_func=lambda x: image_model_options[x],
+        index=list(image_model_options.keys()).index(st.session_state.selected_image_model),
+        key="sidebar_image_model"
+    )
+
+    # Mettre à jour si changement
+    if selected_text != st.session_state.selected_text_model or selected_image != st.session_state.selected_image_model:
+        st.session_state.selected_text_model = selected_text
+        st.session_state.selected_image_model = selected_image
+        update_classifiers()
+        st.rerun()
+
+    # Afficher les infos du modèle sélectionné
+    text_config = TEXT_MODELS[st.session_state.selected_text_model]
+    image_config = IMAGE_MODELS[st.session_state.selected_image_model]
+
+    with st.expander("ℹ️ Détails des modèles", expanded=False):
+        st.markdown(f"""
+        **Texte: {text_config.name}**
+        - {text_config.description}
+        - Confiance moy.: {text_config.base_confidence*100:.0f}%
+
+        **Image: {image_config.name}**
+        - {image_config.description}
+        - Confiance moy.: {image_config.base_confidence*100:.0f}%
+        """)
+
+    st.markdown("---")
+
+    # =========================================================================
+    # STATISTIQUES DE SESSION
+    # =========================================================================
     st.markdown("#### 📊 Session")
     col_stat1, col_stat2 = st.columns(2)
     with col_stat1:
@@ -1162,7 +1290,9 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # Historique des classifications
+    # =========================================================================
+    # HISTORIQUE
+    # =========================================================================
     st.markdown("#### 🕐 Historique")
 
     if st.session_state.classification_history:
@@ -1186,6 +1316,15 @@ with st.sidebar:
             st.caption(f"... et {len(st.session_state.classification_history) - 5} autres")
     else:
         st.info("Aucune classification")
+
+    st.markdown("---")
+
+    # =========================================================================
+    # LIEN VERS COMPARAISON
+    # =========================================================================
+    st.markdown("#### 🔬 Comparer les modèles")
+    if st.button("⚔️ Page Comparaison", use_container_width=True, type="secondary"):
+        st.switch_page("pages/3_🧠_Modèles.py")
 
     st.markdown("---")
 

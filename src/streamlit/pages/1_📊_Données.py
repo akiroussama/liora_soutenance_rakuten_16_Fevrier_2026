@@ -32,7 +32,7 @@ from utils.ui_utils import load_css
 # Configuration de la page
 # =============================================================================
 st.set_page_config(
-    page_title=f"Exploration - {APP_CONFIG['title']}",
+    page_title=f"Données - {APP_CONFIG['title']}",
     page_icon="📊",
     layout=APP_CONFIG["layout"],
 )

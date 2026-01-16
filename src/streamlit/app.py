@@ -442,10 +442,10 @@ with col2:
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         if st.button("🔍 Classifier un Produit", use_container_width=True, type="primary"):
-            st.switch_page("pages/1_🔍_Classification.py")
+            st.switch_page("pages/4_🔍_Démo.py")
     with col_btn2:
         if st.button("📊 Explorer les Données", use_container_width=True, type="primary"):
-            st.switch_page("pages/2_📊_Exploration.py")
+            st.switch_page("pages/1_📊_Données.py")
 
 # =============================================================================
 # FOOTER
