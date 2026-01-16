@@ -1,22 +1,15 @@
 """
 Page d'exploration des données Rakuten.
-
-Cette page permet de visualiser:
-- La distribution des 27 catégories de produits
-- Les statistiques sur les textes (langues, longueurs)
-- Des exemples de produits par catégorie
 """
 import streamlit as st
 import plotly.express as px
-import plotly.graph_objects as go
 import pandas as pd
 import sys
 from pathlib import Path
 
-# Ajouter le répertoire parent au path pour les imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from config import APP_CONFIG, THEME, ASSETS_DIR
+from config import APP_CONFIG, ASSETS_DIR
 from utils.category_mapping import CATEGORY_MAPPING, get_category_info
 from utils.data_loader import (
     is_data_available,
@@ -28,86 +21,41 @@ from utils.data_loader import (
 )
 from utils.ui_utils import load_css
 
-# =============================================================================
-# Configuration de la page
-# =============================================================================
 st.set_page_config(
     page_title=f"Données - {APP_CONFIG['title']}",
     page_icon="📊",
     layout=APP_CONFIG["layout"],
 )
 
-# Charger le CSS
 load_css(ASSETS_DIR / "style.css")
 
-# =============================================================================
-# En-tête
-# =============================================================================
-st.title("📊 Exploration des Données")
+# Header
+st.title("Exploration des Données")
 
-st.markdown("""
-Explorez le dataset Rakuten France utilisé pour entraîner notre modèle de classification.
-Découvrez la distribution des catégories, les statistiques textuelles et des exemples de produits.
-""")
-
-# Indicateur de source de données
 if is_data_available():
-    st.success("✅ **Données réelles chargées** - Statistiques basées sur le dataset complet")
+    st.success("Données réelles chargées")
 else:
-    st.info("ℹ️ **Mode démonstration** - Statistiques basées sur des données représentatives")
+    st.info("Mode démonstration")
 
-# =============================================================================
-# Métriques clés
-# =============================================================================
-st.markdown("---")
-st.markdown("### 📈 Vue d'ensemble du Dataset")
-
+# Métriques
+st.divider()
 summary = get_dataset_summary()
 
 col1, col2, col3, col4 = st.columns(4)
+col1.metric("Train", f"{summary['train_samples']:,}".replace(",", " "))
+col2.metric("Test", f"{summary['test_samples']:,}".replace(",", " ") if isinstance(summary['test_samples'], int) else summary['test_samples'])
+col3.metric("Catégories", summary['num_categories'])
+col4.metric("Features", len(summary['features']))
 
-with col1:
-    st.metric(
-        "Produits (train)",
-        f"{summary['train_samples']:,}".replace(",", " "),
-        help="Nombre de produits dans le jeu d'entraînement"
-    )
-
-with col2:
-    st.metric(
-        "Produits (test)",
-        f"{summary['test_samples']:,}".replace(",", " ") if isinstance(summary['test_samples'], int) else summary['test_samples'],
-        help="Nombre de produits dans le jeu de test"
-    )
-
-with col3:
-    st.metric(
-        "Catégories",
-        summary['num_categories'],
-        help="Nombre de catégories de produits"
-    )
-
-with col4:
-    st.metric(
-        "Features",
-        len(summary['features']),
-        help="Nombre de caractéristiques par produit"
-    )
-
-# =============================================================================
 # Distribution des catégories
-# =============================================================================
-st.markdown("---")
-st.markdown("### 🏷️ Distribution des Catégories")
+st.divider()
+st.header("Distribution des Catégories")
 
-# Charger la distribution
 dist_df = get_category_distribution()
 
-# Tabs pour différentes visualisations
-tab_bar, tab_pie, tab_table = st.tabs(["📊 Barres", "🥧 Camembert", "📋 Tableau"])
+tab_bar, tab_table = st.tabs(["Graphique", "Tableau"])
 
 with tab_bar:
-    # Graphique en barres horizontales
     fig_bar = px.bar(
         dist_df,
         x='count',
@@ -115,258 +63,77 @@ with tab_bar:
         orientation='h',
         color='count',
         color_continuous_scale=['#FFE5E5', '#BF0000'],
-        labels={'count': 'Nombre de produits', 'category_name': 'Catégorie'},
-        title='Distribution des produits par catégorie',
+        labels={'count': 'Produits', 'category_name': 'Catégorie'},
         text='count'
     )
-
     fig_bar.update_layout(
         height=700,
         yaxis={'categoryorder': 'total ascending'},
         showlegend=False,
         coloraxis_showscale=False,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#333333'),
-        title_font=dict(color='#BF0000', size=18),
     )
-
-    fig_bar.update_traces(
-        textposition='outside',
-        textfont=dict(color='#333333', size=10),
-        marker_line_color='#BF0000',
-        marker_line_width=0.5
-    )
-
+    fig_bar.update_traces(textposition='outside')
     st.plotly_chart(fig_bar, use_container_width=True)
 
-with tab_pie:
-    # Top 10 catégories pour le camembert
-    top_10 = dist_df.head(10).copy()
-    others = pd.DataFrame([{
-        'category_name': 'Autres',
-        'count': dist_df.iloc[10:]['count'].sum(),
-        'percentage': dist_df.iloc[10:]['percentage'].sum()
-    }])
-    pie_data = pd.concat([top_10, others], ignore_index=True)
-
-    fig_pie = px.pie(
-        pie_data,
-        values='count',
-        names='category_name',
-        title='Top 10 des catégories (+ autres)',
-        color_discrete_sequence=px.colors.sequential.Reds_r
-    )
-
-    fig_pie.update_layout(
-        height=500,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#333333'),
-        title_font=dict(color='#BF0000', size=18),
-    )
-
-    fig_pie.update_traces(
-        textposition='inside',
-        textinfo='percent+label',
-        textfont=dict(color='white')
-    )
-
-    st.plotly_chart(fig_pie, use_container_width=True)
-
 with tab_table:
-    # Tableau avec toutes les catégories
-    display_df = dist_df[['emoji', 'category_name', 'category_full', 'count', 'percentage']].copy()
-    display_df.columns = ['', 'Catégorie', 'Description', 'Produits', '%']
+    display_df = dist_df[['emoji', 'category_name', 'count', 'percentage']].copy()
+    display_df.columns = ['', 'Catégorie', 'Produits', '%']
     display_df['Produits'] = display_df['Produits'].apply(lambda x: f"{x:,}".replace(",", " "))
     display_df['%'] = display_df['%'].apply(lambda x: f"{x:.1f}%")
+    st.dataframe(display_df, use_container_width=True, hide_index=True, height=600)
 
-    st.dataframe(
-        display_df,
-        use_container_width=True,
-        hide_index=True,
-        height=600
-    )
-
-# =============================================================================
-# Statistiques textuelles
-# =============================================================================
-st.markdown("---")
-st.markdown("### 📝 Analyse des Textes")
+# Statistiques texte
+st.divider()
+st.header("Statistiques Texte")
 
 text_stats = get_text_statistics()
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("#### Désignation (titre)")
-
-    desg_stats = text_stats['designation']
-    st.markdown(f"""
-    | Métrique | Valeur |
-    |----------|--------|
-    | Longueur moyenne | **{desg_stats['mean_length']:.1f}** caractères |
-    | Longueur médiane | **{desg_stats['median_length']:.0f}** caractères |
-    | Minimum | **{desg_stats['min_length']}** caractères |
-    | Maximum | **{desg_stats['max_length']}** caractères |
-    """)
+    st.subheader("Désignation")
+    desg = text_stats['designation']
+    st.markdown(f"- Moyenne: **{desg['mean_length']:.0f}** car.")
+    st.markdown(f"- Min/Max: **{desg['min_length']}** / **{desg['max_length']}**")
 
 with col2:
-    st.markdown("#### Description")
+    st.subheader("Description")
+    desc = text_stats['description']
+    st.markdown(f"- Moyenne: **{desc['mean_length']:.0f}** car.")
+    st.markdown(f"- Remplissage: **{desc['non_empty_pct']:.0f}%**")
 
-    desc_stats = text_stats['description']
-    st.markdown(f"""
-    | Métrique | Valeur |
-    |----------|--------|
-    | Longueur moyenne | **{desc_stats['mean_length']:.1f}** caractères |
-    | Taux de remplissage | **{desc_stats['non_empty_pct']:.1f}%** |
-    | Minimum | **{desc_stats['min_length']}** caractères |
-    | Maximum | **{desc_stats['max_length']}** caractères |
-    """)
+# Exemples
+st.divider()
+st.header("Exemples par Catégorie")
 
-# Distribution des langues
-if text_stats.get('languages'):
-    st.markdown("#### 🌍 Distribution des Langues")
+categories_list = [(f"{info[2]} {info[0]}", code) for code, info in CATEGORY_MAPPING.items()]
+selected = st.selectbox("Catégorie", categories_list, format_func=lambda x: x[0])
 
-    lang_data = pd.DataFrame([
-        {"Langue": lang, "Produits": count}
-        for lang, count in text_stats['languages'].items()
-    ])
-
-    lang_labels = {
-        'fr': '🇫🇷 Français',
-        'en': '🇬🇧 Anglais',
-        'de': '🇩🇪 Allemand',
-        'es': '🇪🇸 Espagnol',
-        'it': '🇮🇹 Italien',
-        'other': '🌐 Autres'
-    }
-    lang_data['Langue'] = lang_data['Langue'].map(lambda x: lang_labels.get(x, x))
-
-    fig_lang = px.bar(
-        lang_data,
-        x='Langue',
-        y='Produits',
-        color='Produits',
-        color_continuous_scale=['#FFE5E5', '#BF0000'],
-        title='Répartition des langues détectées'
-    )
-
-    fig_lang.update_layout(
-        height=400,
-        showlegend=False,
-        coloraxis_showscale=False,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#333333'),
-        title_font=dict(color='#BF0000', size=16),
-    )
-
-    st.plotly_chart(fig_lang, use_container_width=True)
-
-# =============================================================================
-# Exemples de produits par catégorie
-# =============================================================================
-st.markdown("---")
-st.markdown("### 🛍️ Exemples de Produits")
-
-# Sélecteur de catégorie
-categories_list = [(f"{info[2]} {info[0]} ({code})", code) for code, info in CATEGORY_MAPPING.items()]
-selected_display, selected_code = st.selectbox(
-    "Choisissez une catégorie",
-    categories_list,
-    format_func=lambda x: x[0]
-)
-
-# Afficher les exemples
 X_train, Y_train = load_training_data()
-samples = get_sample_products(X_train, Y_train, category_code=selected_code, n_samples=5)
+samples = get_sample_products(X_train, Y_train, category_code=selected[1], n_samples=3)
 
 if len(samples) > 0:
-    cat_name, cat_full, cat_emoji = get_category_info(selected_code)
-    st.markdown(f"#### {cat_emoji} {cat_name}")
-    st.caption(cat_full)
-
-    for idx, row in samples.iterrows():
-        with st.expander(f"📦 {row['designation'][:80]}{'...' if len(str(row['designation'])) > 80 else ''}", expanded=False):
-            st.markdown(f"**Désignation:** {row['designation']}")
+    for _, row in samples.iterrows():
+        with st.expander(f"{row['designation'][:60]}..."):
+            st.write(f"**Désignation:** {row['designation']}")
             desc = row.get('description', '')
             if pd.notna(desc) and str(desc).strip():
-                st.markdown(f"**Description:** {str(desc)[:500]}{'...' if len(str(desc)) > 500 else ''}")
-            else:
-                st.markdown("*Pas de description*")
-else:
-    st.warning("Aucun exemple disponible pour cette catégorie.")
+                st.write(f"**Description:** {str(desc)[:300]}...")
 
-# =============================================================================
-# Analyse du déséquilibre
-# =============================================================================
-st.markdown("---")
-st.markdown("### ⚖️ Analyse du Déséquilibre des Classes")
-
-# Calculer les métriques de déséquilibre
-max_count = dist_df['count'].max()
-min_count = dist_df['count'].min()
-imbalance_ratio = max_count / min_count
+# Déséquilibre
+st.divider()
+st.header("Déséquilibre des Classes")
 
 col1, col2, col3 = st.columns(3)
+col1.metric("Majoritaire", dist_df.iloc[0]['category_name'], f"{dist_df.iloc[0]['count']:,}".replace(",", " "))
+col2.metric("Minoritaire", dist_df.iloc[-1]['category_name'], f"{dist_df.iloc[-1]['count']:,}".replace(",", " "))
+col3.metric("Ratio", f"{dist_df['count'].max() / dist_df['count'].min():.1f}x")
 
-with col1:
-    st.metric(
-        "Catégorie majoritaire",
-        f"{dist_df.iloc[0]['category_name']}",
-        f"{dist_df.iloc[0]['count']:,} produits".replace(",", " ")
-    )
+st.info("Le déséquilibre est géré par class weighting et SMOTE.")
 
-with col2:
-    st.metric(
-        "Catégorie minoritaire",
-        f"{dist_df.iloc[-1]['category_name']}",
-        f"{dist_df.iloc[-1]['count']:,} produits".replace(",", " ")
-    )
-
-with col3:
-    st.metric(
-        "Ratio de déséquilibre",
-        f"{imbalance_ratio:.1f}x",
-        help="Rapport entre la classe la plus fréquente et la moins fréquente"
-    )
-
-st.markdown("""
-> **Note:** Le déséquilibre des classes est un défi important pour ce dataset.
-> Des techniques comme le **SMOTE** ou le **class weighting** sont utilisées
-> pour améliorer les performances sur les classes minoritaires.
-""")
-
-# =============================================================================
 # Sidebar
-# =============================================================================
 with st.sidebar:
-    st.markdown("### 📊 Exploration")
-    st.markdown("---")
-
-    st.markdown("#### 📁 Source des données")
-    if is_data_available():
-        st.success("Données réelles")
-    else:
-        st.info("Données démo")
-
-    st.markdown("---")
-
-    st.markdown("#### 🔗 Liens utiles")
-    st.markdown("""
-    - [Rakuten France](https://fr.shopping.rakuten.com/)
-    - [Challenge Data](https://challengedata.ens.fr/)
-    """)
-
-    st.markdown("---")
-
-    # Export des données
-    st.markdown("#### 💾 Export")
+    st.markdown("### Données")
+    st.divider()
     csv_data = dist_df.to_csv(index=False)
-    st.download_button(
-        label="📥 Télécharger distribution (CSV)",
-        data=csv_data,
-        file_name="rakuten_category_distribution.csv",
-        mime="text/csv"
-    )
+    st.download_button("Télécharger CSV", csv_data, "distribution.csv", "text/csv")
