@@ -9,11 +9,14 @@ Ce module fournit des fonctions pour:
 from typing import Tuple, Optional
 from pathlib import Path
 import io
+import sys
 
 from PIL import Image
 import numpy as np
 
-from ..config import IMAGE_CONFIG
+# Ajouter le répertoire parent au path pour les imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from config import IMAGE_CONFIG
 
 
 def load_image_from_upload(uploaded_file) -> Image.Image:

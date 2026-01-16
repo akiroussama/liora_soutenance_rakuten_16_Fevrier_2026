@@ -86,6 +86,7 @@ def init_session_state():
     if "classifier" not in st.session_state:
         from utils.mock_classifier import DemoClassifier
         st.session_state.classifier = DemoClassifier()
+        st.session_state.classifier_loaded = True
 
     if "use_mock" not in st.session_state:
         st.session_state.use_mock = MODEL_CONFIG["use_mock"]
