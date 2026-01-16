@@ -1,0 +1,162 @@
+/*
+ * Styles personnalisés pour l'application Rakuten
+ * Thème: Rouge Rakuten (#BF0000) / Blanc / Gris
+ */
+
+/* Variables CSS */
+:root {
+    --rakuten-red: #BF0000;
+    --rakuten-red-dark: #990000;
+    --rakuten-white: #FFFFFF;
+    --rakuten-gray-light: #F5F5F5;
+    --rakuten-gray: #888888;
+    --rakuten-gray-dark: #333333;
+    --success-green: #28A745;
+    --warning-yellow: #FFC107;
+    --error-red: #DC3545;
+}
+
+/* Application background */
+.stApp {
+    background-color: var(--rakuten-gray-light);
+}
+
+/* Headers */
+h1, h2, h3 {
+    color: var(--rakuten-red);
+}
+
+/* Primary buttons */
+.stButton > button[kind="primary"] {
+    background-color: var(--rakuten-red);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.stButton > button[kind="primary"]:hover {
+    background-color: var(--rakuten-red-dark);
+}
+
+/* Cards */
+.prediction-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+/* Category badge */
+.category-badge {
+    display: inline-block;
+    background-color: var(--rakuten-red);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* Confidence indicators */
+.confidence-high {
+    color: var(--success-green);
+    font-weight: bold;
+}
+
+.confidence-medium {
+    color: var(--warning-yellow);
+    font-weight: bold;
+}
+
+.confidence-low {
+    color: var(--error-red);
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #F8F8F8;
+    border-right: 1px solid #E0E0E0;
+}
+
+/* Progress bars */
+.stProgress > div > div {
+    background-color: var(--rakuten-red);
+}
+
+/* File uploader */
+[data-testid="stFileUploader"] {
+    border: 2px dashed #CCC;
+    border-radius: 10px;
+    padding: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+[data-testid="stFileUploader"]:hover {
+    border-color: var(--rakuten-red);
+}
+
+/* Metrics */
+[data-testid="stMetric"] {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    border-radius: 8px 8px 0 0;
+    padding: 0.5rem 1rem;
+}
+
+/* Mode indicator */
+.mode-indicator {
+    background-color: #FFF3CD;
+    border: 1px solid #FFE69C;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+/* Result display */
+.result-header {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, var(--rakuten-red) 0%, var(--rakuten-red-dark) 100%);
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+/* Top predictions list */
+.prediction-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background-color: white;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.prediction-item:first-child {
+    border-left: 4px solid var(--rakuten-red);
+}
+
+/* Footer */
+.app-footer {
+    text-align: center;
+    color: var(--rakuten-gray);
+    padding: 1rem;
+    margin-top: 2rem;
+    border-top: 1px solid #E0E0E0;
+}
