@@ -14,11 +14,12 @@ from pathlib import Path
 # Ajouter le répertoire parent au path pour les imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from config import APP_CONFIG, MODEL_CONFIG, THEME
+from config import APP_CONFIG, MODEL_CONFIG, THEME, ASSETS_DIR
 from utils.category_mapping import get_category_info, get_category_emoji
 from utils.mock_classifier import DemoClassifier
 from utils.image_utils import load_image_from_upload, validate_image, get_image_info
 from utils.preprocessing import preprocess_product_text, validate_text_input
+from utils.ui_utils import load_css
 
 # =============================================================================
 # Configuration de la page
@@ -32,42 +33,7 @@ st.set_page_config(
 # =============================================================================
 # CSS personnalisé
 # =============================================================================
-st.markdown(f"""
-<style>
-    .result-card {{
-        background-color: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        margin-bottom: 1rem;
-    }}
-    .confidence-high {{
-        color: {THEME["success_color"]};
-        font-weight: bold;
-    }}
-    .confidence-medium {{
-        color: {THEME["warning_color"]};
-        font-weight: bold;
-    }}
-    .confidence-low {{
-        color: {THEME["error_color"]};
-    }}
-    .category-badge {{
-        display: inline-block;
-        background-color: {THEME["primary_color"]};
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 1.2rem;
-        font-weight: bold;
-    }}
-    .prediction-bar {{
-        height: 25px;
-        border-radius: 5px;
-        margin-bottom: 8px;
-    }}
-</style>
-""", unsafe_allow_html=True)
+load_css(ASSETS_DIR / "style.css")
 
 
 # =============================================================================
@@ -83,6 +49,13 @@ def init_page_state():
 
     if "uploaded_image" not in st.session_state:
         st.session_state.uploaded_image = None
+
+    # État pour chaque onglet
+    if "image_only_result" not in st.session_state:
+        st.session_state.image_only_result = None
+
+    if "text_only_result" not in st.session_state:
+        st.session_state.text_only_result = None
 
 
 init_page_state()
@@ -117,8 +90,8 @@ def display_prediction_result(result, image=None):
         <div style='text-align: center; margin-bottom: 1rem;'>
             <span style='font-size: 3rem;'>{emoji}</span>
             <h2 style='margin: 0.5rem 0; color: {THEME["primary_color"]};'>{name}</h2>
-            <p style='color: #666;'>{full_name}</p>
-            <p><strong>Code:</strong> {main_category}</p>
+            <p style='color: #555;'>{full_name}</p>
+            <p style='color: #333;'><strong>Code:</strong> {main_category}</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -136,8 +109,8 @@ def display_prediction_result(result, image=None):
 
         st.markdown(f"""
         <div style='text-align: center;'>
-            <p style='font-size: 0.9rem; color: #888;'>Confiance</p>
-            <p class='{confidence_class}' style='font-size: 2rem;'>{confidence_pct:.1f}%</p>
+            <p style='font-size: 0.9rem; color: #666;'>Confiance</p>
+            <p class='{confidence_class}' style='font-size: 2rem; color: {confidence_color};'>{confidence_pct:.1f}%</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -335,14 +308,16 @@ with tab_image:
                 with col1:
                     st.image(image_only, caption="Image à classifier", use_container_width=True)
                 with col2:
-                    if st.button("🚀 Classifier", key="classify_image_only", use_container_width=True):
+                    if st.button("🚀 Classifier", key="classify_image_only", use_container_width=True, type="primary"):
                         with st.spinner("Classification..."):
                             result = st.session_state.classifier.predict(image=image_only, top_k=5)
-                            st.session_state.last_prediction = result
+                            st.session_state.image_only_result = result
+                            st.session_state.image_only_image = image_only
 
-                if st.session_state.last_prediction and uploaded_file_img:
+                # Afficher le résultat s'il existe pour cet onglet
+                if "image_only_result" in st.session_state and st.session_state.image_only_result is not None:
                     st.markdown("---")
-                    display_prediction_result(st.session_state.last_prediction, image_only)
+                    display_prediction_result(st.session_state.image_only_result, st.session_state.get("image_only_image"))
             else:
                 st.error(message)
         except ValueError as e:
@@ -364,17 +339,19 @@ with tab_text:
         key="description_text_only",
     )
 
-    if st.button("🚀 Classifier", key="classify_text_only", use_container_width=True):
+    if st.button("🚀 Classifier", key="classify_text_only", use_container_width=True, type="primary"):
         if not designation_text or not designation_text.strip():
             st.error("❌ Veuillez saisir au moins la désignation du produit.")
         else:
             with st.spinner("Classification..."):
                 processed_text = preprocess_product_text(designation_text, description_text)
                 result = st.session_state.classifier.predict(text=processed_text, top_k=5)
-                st.session_state.last_prediction = result
+                st.session_state.text_only_result = result
 
-            st.markdown("---")
-            display_prediction_result(result)
+    # Afficher le résultat s'il existe pour cet onglet
+    if "text_only_result" in st.session_state and st.session_state.text_only_result is not None:
+        st.markdown("---")
+        display_prediction_result(st.session_state.text_only_result)
 
 
 # =============================================================================
@@ -436,6 +413,8 @@ with st.sidebar:
     # Bouton de réinitialisation
     if st.button("🔄 Réinitialiser", use_container_width=True):
         st.session_state.last_prediction = None
+        st.session_state.image_only_result = None
+        st.session_state.text_only_result = None
         st.session_state.classification_history = []
         st.rerun()
 

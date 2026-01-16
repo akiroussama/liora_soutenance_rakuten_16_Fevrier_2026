@@ -1,6 +1,6 @@
 /*
- * Styles personnalisés pour l'application Rakuten
- * Thème: Rouge Rakuten (#BF0000) / Blanc / Gris
+ * Styles Rakuten - Thème clair
+ * Inspiré du site officiel Rakuten
  */
 
 /* Variables CSS */
@@ -8,37 +8,46 @@
     --rakuten-red: #BF0000;
     --rakuten-red-dark: #990000;
     --rakuten-white: #FFFFFF;
+    --rakuten-bg: #FAFAFA;
     --rakuten-gray-light: #F5F5F5;
-    --rakuten-gray: #888888;
+    --rakuten-gray: #666666;
     --rakuten-gray-dark: #333333;
+    --rakuten-border: #E0E0E0;
     --success-green: #28A745;
-    --warning-yellow: #FFC107;
+    --warning-yellow: #FF9800;
     --error-red: #DC3545;
 }
 
-/* Application background */
+/* Force light mode - Application background */
 .stApp {
-    background-color: var(--rakuten-gray-light);
+    background-color: var(--rakuten-bg) !important;
+    color: var(--rakuten-gray-dark) !important;
 }
 
-/* Headers */
-h1, h2, h3 {
-    color: var(--rakuten-red);
+/* All text dark */
+.stApp p, .stApp span, .stApp label, .stApp li {
+    color: var(--rakuten-gray-dark) !important;
+}
+
+/* Headers red */
+h1, h2, h3, h4 {
+    color: var(--rakuten-red) !important;
 }
 
 /* Primary buttons */
-.stButton > button[kind="primary"] {
-    background-color: var(--rakuten-red);
-    color: white;
-    border: none;
+.stButton > button {
+    background-color: var(--rakuten-red) !important;
+    color: white !important;
+    border: none !important;
     border-radius: 8px;
     padding: 0.5rem 1.5rem;
     font-weight: bold;
     transition: background-color 0.2s ease;
 }
 
-.stButton > button[kind="primary"]:hover {
-    background-color: var(--rakuten-red-dark);
+.stButton > button:hover {
+    background-color: var(--rakuten-red-dark) !important;
+    color: white !important;
 }
 
 /* Cards */
@@ -48,13 +57,14 @@ h1, h2, h3 {
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 1rem;
+    color: var(--rakuten-gray-dark);
 }
 
 /* Category badge */
 .category-badge {
     display: inline-block;
     background-color: var(--rakuten-red);
-    color: white;
+    color: white !important;
     padding: 0.5rem 1rem;
     border-radius: 20px;
     font-size: 1.1rem;
@@ -63,58 +73,81 @@ h1, h2, h3 {
 
 /* Confidence indicators */
 .confidence-high {
-    color: var(--success-green);
+    color: var(--success-green) !important;
     font-weight: bold;
 }
 
 .confidence-medium {
-    color: var(--warning-yellow);
+    color: var(--warning-yellow) !important;
     font-weight: bold;
 }
 
 .confidence-low {
-    color: var(--error-red);
+    color: var(--error-red) !important;
 }
 
-/* Sidebar */
+/* Sidebar - Light */
 [data-testid="stSidebar"] {
-    background-color: #F8F8F8;
-    border-right: 1px solid #E0E0E0;
+    background-color: var(--rakuten-white) !important;
+    border-right: 1px solid var(--rakuten-border);
+}
+
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] label {
+    color: var(--rakuten-gray-dark) !important;
 }
 
 /* Progress bars */
 .stProgress > div > div {
-    background-color: var(--rakuten-red);
+    background-color: var(--rakuten-red) !important;
 }
 
 /* File uploader */
 [data-testid="stFileUploader"] {
-    border: 2px dashed #CCC;
+    background-color: white !important;
+    border: 2px dashed var(--rakuten-border) !important;
     border-radius: 10px;
     padding: 1rem;
     transition: border-color 0.2s ease;
 }
 
 [data-testid="stFileUploader"]:hover {
-    border-color: var(--rakuten-red);
+    border-color: var(--rakuten-red) !important;
 }
 
 /* Metrics */
 [data-testid="stMetric"] {
-    background-color: white;
+    background-color: white !important;
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+[data-testid="stMetricLabel"] {
+    color: var(--rakuten-gray) !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: var(--rakuten-red) !important;
+}
+
 /* Tabs */
 .stTabs [data-baseweb="tab-list"] {
+    background-color: transparent !important;
     gap: 8px;
 }
 
 .stTabs [data-baseweb="tab"] {
+    background-color: var(--rakuten-gray-light) !important;
+    color: var(--rakuten-gray-dark) !important;
     border-radius: 8px 8px 0 0;
     padding: 0.5rem 1rem;
+}
+
+.stTabs [aria-selected="true"] {
+    background-color: var(--rakuten-red) !important;
+    color: white !important;
 }
 
 /* Mode indicator */
@@ -125,6 +158,7 @@ h1, h2, h3 {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     margin-bottom: 1rem;
+    color: #856404;
 }
 
 /* Result display */
@@ -133,7 +167,7 @@ h1, h2, h3 {
     padding: 1.5rem;
     background: linear-gradient(135deg, var(--rakuten-red) 0%, var(--rakuten-red-dark) 100%);
     border-radius: 10px;
-    color: white;
+    color: white !important;
     margin-bottom: 1rem;
 }
 
@@ -146,10 +180,44 @@ h1, h2, h3 {
     border-radius: 8px;
     margin-bottom: 0.5rem;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    color: var(--rakuten-gray-dark);
 }
 
 .prediction-item:first-child {
     border-left: 4px solid var(--rakuten-red);
+}
+
+/* Inputs - Light */
+.stTextInput > div > div > input,
+.stTextArea > div > div > textarea {
+    background-color: white !important;
+    color: var(--rakuten-gray-dark) !important;
+    border: 1px solid var(--rakuten-border) !important;
+}
+
+/* Select boxes */
+[data-baseweb="select"] {
+    background-color: white !important;
+}
+
+[data-baseweb="select"] * {
+    color: var(--rakuten-gray-dark) !important;
+}
+
+/* Expander */
+.streamlit-expanderHeader {
+    background-color: white !important;
+    color: var(--rakuten-gray-dark) !important;
+}
+
+/* Alerts - keep readable */
+.stAlert {
+    color: var(--rakuten-gray-dark) !important;
+}
+
+/* Captions */
+.stCaption, [data-testid="stCaptionContainer"] {
+    color: var(--rakuten-gray) !important;
 }
 
 /* Footer */
@@ -158,5 +226,5 @@ h1, h2, h3 {
     color: var(--rakuten-gray);
     padding: 1rem;
     margin-top: 2rem;
-    border-top: 1px solid #E0E0E0;
+    border-top: 1px solid var(--rakuten-border);
 }

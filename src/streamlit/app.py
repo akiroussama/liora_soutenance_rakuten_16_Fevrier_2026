@@ -10,7 +10,8 @@ Lancement:
     streamlit run app.py
 """
 import streamlit as st
-from config import APP_CONFIG, MODEL_CONFIG, THEME
+from config import APP_CONFIG, MODEL_CONFIG, THEME, ASSETS_DIR
+from utils.ui_utils import load_css
 
 # =============================================================================
 # Configuration de la page
@@ -25,57 +26,7 @@ st.set_page_config(
 # =============================================================================
 # CSS personnalisé (thème Rakuten)
 # =============================================================================
-st.markdown(f"""
-<style>
-    /* Couleur principale Rakuten */
-    .stApp {{
-        background-color: {THEME["background_color"]};
-    }}
-
-    /* Headers */
-    h1, h2, h3 {{
-        color: {THEME["primary_color"]};
-    }}
-
-    /* Boutons */
-    .stButton > button {{
-        background-color: {THEME["primary_color"]};
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-weight: bold;
-    }}
-    .stButton > button:hover {{
-        background-color: #990000;
-        color: white;
-    }}
-
-    /* Cards */
-    .prediction-card {{
-        background-color: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        margin-bottom: 1rem;
-    }}
-
-    /* Sidebar */
-    [data-testid="stSidebar"] {{
-        background-color: #F8F8F8;
-    }}
-
-    /* Mode indicateur */
-    .mode-indicator {{
-        background-color: #FFF3CD;
-        border: 1px solid #FFE69C;
-        border-radius: 5px;
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-    }}
-</style>
-""", unsafe_allow_html=True)
+load_css(ASSETS_DIR / "style.css")
 
 
 # =============================================================================
@@ -128,7 +79,7 @@ with st.sidebar:
 
     # Footer
     st.markdown("""
-    <div style='text-align: center; color: #888; font-size: 0.8rem;'>
+    <div style='text-align: center; color: #666; font-size: 0.8rem;'>
         Projet DataScientest<br>
         BMLE - Octobre 2025
     </div>
@@ -216,8 +167,8 @@ with col2:
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style='text-align: center; color: #888;'>
-    <p>Développé avec ❤️ par l'équipe BMLE - DataScientest</p>
+<div style='text-align: center; color: #666;'>
+    <p>Développé par l'équipe BMLE - DataScientest</p>
     <p style='font-size: 0.8rem;'>Streamlit | Python | Machine Learning</p>
 </div>
 """, unsafe_allow_html=True)
