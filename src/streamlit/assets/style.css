@@ -70,6 +70,38 @@ h1, h2, h3, h4 {
     color: #FFFFFF !important;
 }
 
+/* Secondary buttons (gray background) */
+.stButton > button[kind="secondary"],
+.stButton > button[data-testid="stBaseButton-secondary"] {
+    background-color: #F0F0F0 !important;
+    color: #333333 !important;
+    border: 1px solid #CCCCCC !important;
+}
+
+.stButton > button[kind="secondary"] p,
+.stButton > button[kind="secondary"] span,
+.stButton > button[data-testid="stBaseButton-secondary"] p,
+.stButton > button[data-testid="stBaseButton-secondary"] span {
+    color: #333333 !important;
+}
+
+/* Download button */
+.stDownloadButton > button {
+    background-color: var(--rakuten-red) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+}
+
+.stDownloadButton > button p,
+.stDownloadButton > button span,
+.stDownloadButton > button div {
+    color: #FFFFFF !important;
+}
+
+.stDownloadButton > button:hover {
+    background-color: var(--rakuten-red-dark) !important;
+}
+
 /* Cards */
 .prediction-card {
     background-color: white;
