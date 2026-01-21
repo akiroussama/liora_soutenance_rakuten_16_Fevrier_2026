@@ -1,0 +1,3 @@
+salut oussama, les fichiers .npy (data augmentée) sont trop lourds pour github.
+télécharge-les ici : https://drive.google.com/drive/folders/1faJtjk_fsNNw4DCiPiz67-lYivyGjnKB?usp=sharing
+une fois téléchargés, mets-les dans le dossier : implementation/outputs/
