@@ -1,0 +1,169 @@
+{
+  "num_classes": 27,
+  "categories": {
+    "10": {
+      "name": "Livres",
+      "full_name": "Livres occasion",
+      "emoji": "📚"
+    },
+    "40": {
+      "name": "Jeux vidéo",
+      "full_name": "Jeux vidéo, consoles et accessoires",
+      "emoji": "🎮"
+    },
+    "50": {
+      "name": "Gaming PC",
+      "full_name": "Accessoires gaming PC",
+      "emoji": "🖥️"
+    },
+    "60": {
+      "name": "Consoles",
+      "full_name": "Consoles de jeux vidéo",
+      "emoji": "🕹️"
+    },
+    "1140": {
+      "name": "Figurines",
+      "full_name": "Figurines et objets de collection",
+      "emoji": "🎭"
+    },
+    "1160": {
+      "name": "Cartes",
+      "full_name": "Cartes de collection (Pokemon, Magic, etc.)",
+      "emoji": "🃏"
+    },
+    "1180": {
+      "name": "Figurines pop",
+      "full_name": "Figurines de jeux et mangas",
+      "emoji": "🦸"
+    },
+    "1280": {
+      "name": "Jouets enfants",
+      "full_name": "Jouets et jeux pour enfants",
+      "emoji": "🧸"
+    },
+    "1281": {
+      "name": "Jeux société",
+      "full_name": "Jeux de société et puzzles",
+      "emoji": "🎲"
+    },
+    "1300": {
+      "name": "Modélisme",
+      "full_name": "Modélisme et miniatures",
+      "emoji": "✈️"
+    },
+    "1301": {
+      "name": "Loisirs créatifs",
+      "full_name": "Loisirs créatifs et bricolage enfant",
+      "emoji": "🎨"
+    },
+    "1302": {
+      "name": "Déguisements",
+      "full_name": "Déguisements et accessoires de fête",
+      "emoji": "🎃"
+    },
+    "1320": {
+      "name": "Puériculture",
+      "full_name": "Équipement bébé et puériculture",
+      "emoji": "👶"
+    },
+    "1560": {
+      "name": "Mobilier",
+      "full_name": "Mobilier intérieur",
+      "emoji": "🪑"
+    },
+    "1920": {
+      "name": "Literie",
+      "full_name": "Literie et linge de maison",
+      "emoji": "🛏️"
+    },
+    "1940": {
+      "name": "Alimentation",
+      "full_name": "Épicerie et alimentation",
+      "emoji": "🍽️"
+    },
+    "2060": {
+      "name": "Déco maison",
+      "full_name": "Décoration intérieure",
+      "emoji": "🏠"
+    },
+    "2220": {
+      "name": "Animalerie",
+      "full_name": "Produits pour animaux",
+      "emoji": "🐾"
+    },
+    "2280": {
+      "name": "Magazines",
+      "full_name": "Magazines et revues",
+      "emoji": "📰"
+    },
+    "2403": {
+      "name": "Livres neufs",
+      "full_name": "Livres, BD, magazines neufs",
+      "emoji": "📖"
+    },
+    "2462": {
+      "name": "Jeux PC",
+      "full_name": "Jeux vidéo PC en téléchargement",
+      "emoji": "💿"
+    },
+    "2522": {
+      "name": "Papeterie",
+      "full_name": "Fournitures de bureau et papeterie",
+      "emoji": "✏️"
+    },
+    "2582": {
+      "name": "Jardin",
+      "full_name": "Mobilier et équipement de jardin",
+      "emoji": "🌳"
+    },
+    "2583": {
+      "name": "Piscine",
+      "full_name": "Piscines et accessoires",
+      "emoji": "🏊"
+    },
+    "2585": {
+      "name": "Bricolage",
+      "full_name": "Outillage et bricolage",
+      "emoji": "🔧"
+    },
+    "2705": {
+      "name": "Livres anciens",
+      "full_name": "Livres anciens et de collection",
+      "emoji": "📜"
+    },
+    "2905": {
+      "name": "Jeux PC box",
+      "full_name": "Jeux vidéo PC en boîte",
+      "emoji": "📦"
+    }
+  },
+  "code_to_index": {
+    "10": 0,
+    "40": 1,
+    "50": 2,
+    "60": 3,
+    "1140": 4,
+    "1160": 5,
+    "1180": 6,
+    "1280": 7,
+    "1281": 8,
+    "1300": 9,
+    "1301": 10,
+    "1302": 11,
+    "1320": 12,
+    "1560": 13,
+    "1920": 14,
+    "1940": 15,
+    "2060": 16,
+    "2220": 17,
+    "2280": 18,
+    "2403": 19,
+    "2462": 20,
+    "2522": 21,
+    "2582": 22,
+    "2583": 23,
+    "2585": 24,
+    "2705": 25,
+    "2905": 26
+  }
+}
