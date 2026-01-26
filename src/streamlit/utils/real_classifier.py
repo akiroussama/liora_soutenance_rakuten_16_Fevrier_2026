@@ -6,27 +6,25 @@ from src.models.predict_model import VotingPredictor
 
 class MultimodalClassifier:
     def __init__(self):
-        # charge mon voting
+        try:
+            with open(CATEGORY_MAPPING_PATH, 'r') as f: self.mapping = json.load(f)
+        except: self.mapping = {}
         try:
             self.voting = VotingPredictor(MODELS_DIR)
             self.voting.load_models()
-        except: self.voting = None
-        # charge texte oussama
+        except Exception as e:
+            print(f"erreur image : {e}")
+            self.voting = None
         try:
             self.text_model = joblib.load(TEXT_MODEL_PATH)
             self.tfidf = joblib.load(TFIDF_VECTORIZER_PATH)
-        except:
-            self.text_model = None
-            self.tfidf = None
-        # charge mapping
-        with open(CATEGORY_MAPPING_PATH, 'r') as f: self.mapping = json.load(f)
+        except: self.text_model = None
 
     def predict_image(self, p):
         if not self.voting: return []
         res = self.voting.predict(p)
         for r in res: r['name'] = self.mapping.get(str(r['label']), r['label'])
         return res
-
     def predict_text(self, t):
         if not self.text_model: return []
         v = self.tfidf.transform([t])
