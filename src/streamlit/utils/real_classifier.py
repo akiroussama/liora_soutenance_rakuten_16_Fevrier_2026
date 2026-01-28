@@ -1,35 +1,120 @@
-import os, sys, joblib, json
+import sys
+import os
+import joblib
+import json
+import numpy as np
 from pathlib import Path
-sys.path.append(str(Path(__file__).parent.parent))
-from config import MODELS_DIR, IMAGE_MODEL_PATH, TEXT_MODEL_PATH, TFIDF_VECTORIZER_PATH, CATEGORY_MAPPING_PATH
+
+# --- CONFIGURATION DES CHEMINS ---
+current_dir = os.path.dirname(os.path.abspath(__file__))
+root_dir = os.path.abspath(os.path.join(current_dir, "../../../"))
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+
+from config import MODELS_DIR, TEXT_MODEL_PATH, CATEGORY_MAPPING_PATH
 from src.models.predict_model import VotingPredictor
 
 class MultimodalClassifier:
     def __init__(self):
+        # Configuration des poids pour la fusion (Image est souvent plus fiable)
+        self.w_text = 0.4
+        self.w_image = 0.6
+        
+        # 1. Chargement du Mapping
         try:
-            with open(CATEGORY_MAPPING_PATH, 'r') as f: self.mapping = json.load(f)
-        except: self.mapping = {}
+            with open(CATEGORY_MAPPING_PATH, 'r', encoding='utf-8') as f:
+                self.mapping = json.load(f)
+        except:
+            try:
+                with open(CATEGORY_MAPPING_PATH, 'r') as f: self.mapping = json.load(f)
+            except: self.mapping = {}
+
+        # 2. Chargement Image (Voting)
         try:
             self.voting = VotingPredictor(MODELS_DIR)
             self.voting.load_models()
         except Exception as e:
-            print(f"erreur image : {e}")
+            print(f"Erreur Image: {e}")
             self.voting = None
+
+        # 3. Chargement Texte (Pipeline)
         try:
             self.text_model = joblib.load(TEXT_MODEL_PATH)
-            self.tfidf = joblib.load(TFIDF_VECTORIZER_PATH)
-        except: self.text_model = None
+        except Exception as e:
+            print(f"Erreur Texte: {e}")
+            self.text_model = None
 
-    def predict_image(self, p):
+    def _format_result(self, label, score):
+        """Helper pour formater joliment un résultat"""
+        return {
+            "label": str(label),
+            "name": self.mapping.get(str(label), f"Produit Type {label}"),
+            "confidence": float(score)
+        }
+
+    def predict_image(self, image_path):
+        """Prédiction Image pure"""
         if not self.voting: return []
-        res = self.voting.predict(p)
-        for r in res: r['name'] = self.mapping.get(str(r['label']), r['label'])
-        return res
-    def predict_text(self, t):
+        try:
+            # Le voting renvoie déjà une liste triée
+            raw_res = self.voting.predict(image_path)
+            # On formate
+            return [self._format_result(r['label'], r['confidence']) for r in raw_res]
+        except Exception as e:
+            print(f"Bug Image: {e}")
+            return []
+
+    def predict_text(self, text):
+        """Prédiction Texte pure (avec gestion LinearSVC)"""
         if not self.text_model: return []
-        v = self.tfidf.transform([t])
-        probs = self.text_model.predict_proba(v)[0]
-        ids = probs.argsort()[-5:][::-1]
-        return [{"label": str(self.text_model.classes_[i]), 
-                 "name": self.mapping.get(str(self.text_model.classes_[i]), str(self.text_model.classes_[i])),
-                 "confidence": float(probs[i])} for i in ids]
+        try:
+            if isinstance(text, str): text = [text]
+
+            # Calcul des probabilités (même si LinearSVC)
+            if hasattr(self.text_model, "predict_proba"):
+                probs = self.text_model.predict_proba(text)[0]
+            elif hasattr(self.text_model, "decision_function"):
+                scores = self.text_model.decision_function(text)[0]
+                exp_scores = np.exp(scores - np.max(scores))
+                probs = exp_scores / exp_scores.sum()
+            else:
+                return []
+
+            # On récupère TOUTES les classes pour la fusion
+            results = []
+            for i, class_id in enumerate(self.text_model.classes_):
+                results.append(self._format_result(class_id, probs[i]))
+            
+            # On trie pour l'affichage direct (Top 5)
+            return sorted(results, key=lambda x: x['confidence'], reverse=True)
+        except Exception as e:
+            print(f"Bug Texte: {e}")
+            return []
+
+    def predict_fusion(self, text, image_path):
+        """LA FUSION : Combine les scores Texte et Image"""
+        
+        # 1. Obtenir les scores bruts (tous les scores, pas juste le top 5)
+        res_text = self.predict_text(text)
+        res_image = self.predict_image(image_path)
+        
+        # Dictionnaire pour fusionner : {label: score_fusionné}
+        fusion_scores = {}
+        
+        # On remplit avec le Texte
+        for item in res_text:
+            label = item['label']
+            fusion_scores[label] = item['confidence'] * self.w_text
+            
+        # On ajoute l'Image
+        for item in res_image:
+            label = item['label']
+            current_score = fusion_scores.get(label, 0.0)
+            fusion_scores[label] = current_score + (item['confidence'] * self.w_image)
+            
+        # 2. On transforme en liste propre et on trie
+        final_results = []
+        for label, score in fusion_scores.items():
+            final_results.append(self._format_result(label, score))
+            
+        return sorted(final_results, key=lambda x: x['confidence'], reverse=True)
