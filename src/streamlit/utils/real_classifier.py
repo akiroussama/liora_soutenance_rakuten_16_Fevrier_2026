@@ -16,9 +16,11 @@ from src.models.predict_model import VotingPredictor
 
 class MultimodalClassifier:
     def __init__(self):
-        # Configuration des poids pour la fusion (Image est souvent plus fiable)
-        self.w_text = 0.4
-        self.w_image = 0.6
+        # MISE A JOUR STRATEGIQUE :
+        # Puisque nous avons fiabilisé l'image (DINOv3 + Sharpening),
+        # nous augmentons sa part dans la décision finale.
+        self.w_text = 0.3  # Baisse légère (était 0.4)
+        self.w_image = 0.7 # Hausse (était 0.6)
         
         # 1. Chargement du Mapping
         try:
@@ -118,3 +120,4 @@ class MultimodalClassifier:
             final_results.append(self._format_result(label, score))
             
         return sorted(final_results, key=lambda x: x['confidence'], reverse=True)
+        

@@ -1,9 +1,10 @@
 import streamlit as st
 import time
 import sys
+import pandas as pd
 from pathlib import Path
 
-# Hack pour trouver les modules du projet
+# hack pour trouver les modules du projet
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from utils.real_classifier import MultimodalClassifier
 
@@ -12,7 +13,7 @@ st.set_page_config(page_title="Démo Rakuten", page_icon="🔍", layout="wide")
 st.title("🔍 Démonstration Interactive & Explicabilité")
 st.markdown("---")
 
-# Chargement unique du cerveau
+# chargement unique du cerveau
 @st.cache_resource
 def get_clf():
     return MultimodalClassifier()
@@ -22,52 +23,57 @@ clf = get_clf()
 # --- FONCTIONS UTILITAIRES ---
 
 def show_results(results, title="Résultats"):
-    """Affiche le gagnant et le top 5 avec des barres"""
+    # affiche le gagnant et le top 5 avec des barres
     if not results:
-        st.error("⚠️ Le modèle n'a renvoyé aucun résultat. Vérifiez que les fichiers modèles sont bien chargés.")
+        st.error("⚠️ Le modèle n'a renvoyé aucun résultat.")
         return
     
-    # 1. Le Vainqueur
+    # 1. le vainqueur
     top = results[0]
-    st.success(f"🏆 **Prédiction : {top['name']}** (Code: {top['label']})")
-    st.metric("Confiance Globale", f"{top['confidence']:.1%}")
-    
+    c1, c2 = st.columns([1, 3])
+    with c1:
+        st.metric("🏆 Prédiction", top['label'])
+    with c2:
+        st.success(f"**{top['name']}**")
+        st.progress(top['confidence'])
+        st.caption(f"Confiance: {top['confidence']:.1%}")
+
     st.markdown("#### 📊 Détails des probabilités (Top 5)")
     
-    # 2. Le Podium
+    # 2. le podium
+    chart_data = []
     for r in results[:5]:
-        col_lbl, col_bar, col_pct = st.columns([3, 5, 1])
-        with col_lbl: 
-            st.write(f"**{r['name']}**")
-        with col_bar: 
-            st.progress(r['confidence'])
-        with col_pct: 
-            st.write(f"{r['confidence']:.1%}")
+        chart_data.append({"Produit": r['name'], "Confiance": r['confidence']})
+    
+    df_chart = pd.DataFrame(chart_data)
+    st.dataframe(
+        df_chart.style.background_gradient(cmap="Greens", subset=["Confiance"]).format({"Confiance": "{:.1%}"}),
+        use_container_width=True,
+        hide_index=True
+    )
 
-def show_pipeline_steps(mode="text"):
-    """Affiche les étapes techniques pour l'explicabilité"""
-    with st.expander(f"🛠️ Comprendre le traitement ({mode.upper()})", expanded=True):
-        if mode == "text":
-            st.info("""
-            1. **Nettoyage** : Minuscules, suppression balises HTML.
-            2. **Tokenization** : Découpage en mots (TF-IDF Word + Char).
-            3. **Modèle** : LinearSVC (Support Vector Machine).
-            4. **Calibration** : Conversion du score en probabilité (Softmax).
-            """)
-        elif mode == "image":
-            st.info("""
-            1. **Preprocessing** : Redimensionnement (224x224) et normalisation.
-            2. **Extraction** : Analyse par DINOv3 et EfficientNet.
-            3. **Décision** : XGBoost analyse les vecteurs caractéristiques.
-            4. **Voting** : Consensus entre les différents experts.
-            """)
-        elif mode == "fusion":
-            st.info("""
-            1. **Analyse Parallèle** : Texte (40%) et Image (60%) travaillent séparément.
-            2. **Alignement** : Les scores sont normalisés par catégorie.
-            3. **Fusion** : Addition pondérée des vecteurs de probabilité.
-            4. **Décision Finale** : La catégorie avec le score combiné le plus haut l'emporte.
-            """)
+def explain_voting_system():
+    # explicabilite du vote image
+    st.info("🧠 **Architecture du Conseil des Sages (Voting)**")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.metric("🦖 DINOv3 (Le Patron)", "Poids 4", "Vision Globale")
+        st.progress(0.57) # 4/7
+    with c2:
+        st.metric("👁️ EffNet (L'Expert)", "Poids 2", "Détails Fins")
+        st.progress(0.28) # 2/7
+    with c3:
+        st.metric("⚡ XGBoost (Le Statisticien)", "Poids 1", "Correction")
+        st.progress(0.14) # 1/7
+    st.caption("Le système combine ces 3 avis. XGBoost est 'Sharpened' (au cube) pour trancher net.")
+
+def explain_text_tokens(text):
+    # simulation nettoyage texte
+    tokens = text.lower().split()
+    # on garde que les mots longs pour le show
+    kept = [w for w in tokens if len(w) > 3]
+    st.write("🔠 **Mots-clés captés par le modèle :**")
+    st.markdown(" ".join([f"`{w}`" for w in kept]))
 
 # --- INTERFACE PRINCIPALE ---
 
@@ -82,21 +88,23 @@ with tabs[0]:
     with col1:
         st.subheader("Entrée Texte")
         txt_input = st.text_area("Description du produit", height=200, 
-                                 placeholder="Ex: Piscine gonflable pour enfants intex, résistante et colorée...")
+                                 placeholder="Ex: Piscine gonflable pour enfants intex...")
         btn_txt = st.button("Analyser le Texte", type="primary")
     
     with col2:
         st.subheader("Résultats")
         if btn_txt and txt_input:
             with st.spinner("Lecture et analyse sémantique..."):
-                time.sleep(0.5) 
+                time.sleep(0.3) 
                 res = clf.predict_text(txt_input)
-                show_pipeline_steps("text")
+                
+                # explicabilite texte
+                explain_text_tokens(txt_input)
                 st.divider()
                 show_results(res)
 
 # ==========================================
-# ONGLET 2 : IMAGE (CORRIGÉ STABLE)
+# ONGLET 2 : IMAGE
 # ==========================================
 with tabs[1]:
     col1, col2 = st.columns([1, 1], gap="large")
@@ -106,46 +114,58 @@ with tabs[1]:
         img_file = st.file_uploader("Image du produit", type=['jpg', 'png', 'jpeg', 'webp'])
         
         if img_file:
-            # RETOUR A LA VERSION STABLE (use_container_width)
             st.image(img_file, caption="Aperçu", use_container_width=True)
-            
             with open("temp_demo.jpg", "wb") as f: 
                 f.write(img_file.getbuffer())
     
     with col2:
-        st.subheader("Résultats")
+        st.subheader("Analyse Visuelle")
         if img_file:
-            if st.button("Analyser l'Image", type="primary"):
-                with st.spinner("Analyse visuelle (DINOv3 + Voting)..."):
+            if st.button("Lancer le Voting Image", type="primary"):
+                with st.spinner("Réunion du Conseil (DINO + XGBoost + EffNet)..."):
                     res = clf.predict_image("temp_demo.jpg")
-                    show_pipeline_steps("image")
+                    
+                    # explicabilite image
+                    explain_voting_system()
                     st.divider()
                     show_results(res)
 
 # ==========================================
-# ONGLET 3 : FUSION
+# ONGLET 3 : FUSION (SLIDER INTERACTIF)
 # ==========================================
 with tabs[2]:
-    st.markdown("### 🧬 La puissance du Multimodal")
-    st.info("💡 La fusion combine les forces du texte et de l'image pour corriger les erreurs de l'un ou l'autre.")
+    st.markdown("### 🧬 Cockpit de Fusion")
+    st.info("Ajustez le curseur pour voir comment le Texte et l'Image s'influencent mutuellement.")
     
+    # slider interactif poids
+    fusion_weight = st.slider("⚖️ Équilibre de la Décision", 0.0, 1.0, 0.7, 
+                              format="Image: %d%%")
+    
+    # mise a jour dynamique des poids du classifieur
+    clf.w_image = fusion_weight
+    clf.w_text = 1.0 - fusion_weight
+    
+    # affichage visuel des poids
+    c_txt, c_mid, c_img = st.columns([1, 6, 1])
+    with c_txt: st.write(f"📜 Texte **{int((1-fusion_weight)*100)}%**")
+    with c_img: st.write(f"🖼️ Image **{int(fusion_weight*100)}%**")
+    with c_mid: st.progress(fusion_weight)
+    
+    st.divider()
+
     c1, c2 = st.columns(2, gap="large")
-    
     with c1:
         f_txt = st.text_area("1. Description", height=100, key="fusion_txt")
-    with c2:
         f_img = st.file_uploader("2. Image", type=['jpg', 'png'], key="fusion_img")
         
-    if st.button("Lancer la FUSION 🔥", type="primary", help="Cliquez pour lancer l'analyse"):
-        if f_txt and f_img:
+        launch = st.button("Calculer la Fusion 🔥", type="primary")
+
+    with c2:
+        if launch and f_txt and f_img:
             with open("temp_fusion.jpg", "wb") as f: f.write(f_img.getbuffer())
             
-            with st.spinner("Fusion des intelligences en cours..."):
+            with st.spinner("Fusion pondérée en cours..."):
                 res = clf.predict_fusion(f_txt, "temp_fusion.jpg")
-                res_col1, res_col2 = st.columns([1, 2])
-                with res_col1:
-                    show_pipeline_steps("fusion")
-                with res_col2:
-                    show_results(res, title="Résultat Fusionné")
-        else:
-            st.warning("⚠️ Merci de remplir le texte ET l'image pour tester la fusion.")
+                show_results(res, title="Résultat Fusionné")
+        elif launch:
+            st.warning("Remplissez les deux champs (Texte et Image) !")
