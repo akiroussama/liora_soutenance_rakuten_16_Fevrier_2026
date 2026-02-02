@@ -1,0 +1,3941 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Multimodale Rakuten | Rapport Final BMLE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        @page {
+            size: A4;
+            margin: 2.5cm;
+        }
+
+        :root {
+            --primary: #C41E3A;
+            --primary-dark: #9B1B30;
+            --primary-light: #E8374F;
+            --secondary: #1B2B4B;
+            --secondary-light: #2D4A7C;
+            --accent: #D4AF37;
+            --accent-muted: #B8941F;
+            --success: #2D8B6F;
+            --warning: #D4940B;
+            --danger: #C23B3B;
+            --gray-50: #FAFBFC;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Source Sans 3', 'Segoe UI', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 11pt;
+            line-height: 1.7;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--gray-800);
+            background: linear-gradient(135deg, #E8E8E8 0%, #F5F5F5 50%, #EBEBEB 100%);
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .document-container {
+            background: white;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 2.5cm;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .document-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 50%, var(--primary) 100%);
+        }
+
+        /* Cover Page - Editorial Style */
+        .cover-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 780px;
+            text-align: center;
+            page-break-after: always;
+            padding: 2rem 0;
+            position: relative;
+            background: linear-gradient(180deg, transparent 0%, rgba(196, 30, 58, 0.02) 100%);
+        }
+
+        .cover-page::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(196, 30, 58, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cover-logo-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .cover-logo-text {
+            font-family: var(--font-display);
+            font-size: 72pt;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -3px;
+            line-height: 1;
+            text-shadow: 2px 2px 0 rgba(196, 30, 58, 0.1);
+        }
+
+        .cover-logo-accent {
+            position: absolute;
+            top: -10px;
+            right: -20px;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            transform: rotate(45deg);
+        }
+
+        .cover-institution {
+            font-family: var(--font-body);
+            font-size: 11pt;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .cover-formation {
+            font-size: 10pt;
+            color: var(--secondary);
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 2.5rem;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid var(--gray-200);
+            display: inline-block;
+        }
+
+        .cover-title {
+            font-family: var(--font-display);
+            font-size: 32pt;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.75rem;
+            line-height: 1.15;
+            letter-spacing: -0.5px;
+        }
+
+        .cover-title-accent {
+            color: var(--primary);
+        }
+
+        .cover-subtitle {
+            font-family: var(--font-body);
+            font-size: 13pt;
+            color: var(--gray-600);
+            font-weight: 400;
+            margin-bottom: 2rem;
+            max-width: 90%;
+            line-height: 1.6;
+        }
+
+        .cover-subtitle em {
+            font-style: italic;
+            color: var(--secondary);
+        }
+
+        .cover-divider {
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .cover-divider::before,
+        .cover-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+        }
+
+        .cover-divider::before {
+            left: -15px;
+        }
+
+        .cover-divider::after {
+            right: -15px;
+        }
+
+        .cover-team {
+            margin: 1.5rem 0;
+        }
+
+        .cover-team-title {
+            font-size: 9pt;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .cover-author {
+            font-family: var(--font-body);
+            font-size: 12pt;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin: 0.3rem 0;
+            letter-spacing: 0.5px;
+        }
+
+        .cover-supervisor {
+            font-size: 11pt;
+            color: var(--gray-500);
+            margin-top: 1.5rem;
+        }
+
+        .cover-supervisor strong {
+            color: var(--gray-700);
+        }
+
+        .cover-date {
+            font-family: var(--font-display);
+            font-size: 14pt;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--gray-400);
+            margin-top: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .cover-metrics {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .cover-metric {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            padding: 0.6rem 1.2rem;
+            text-align: center;
+            min-width: 110px;
+        }
+
+        .cover-metric-value {
+            font-family: var(--font-display);
+            font-size: 18pt;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            line-height: 1.2;
+        }
+
+        .cover-metric-label {
+            font-size: 8pt;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .cover-metric.success .cover-metric-value {
+            color: var(--success);
+        }
+
+        .cover-metric.secondary .cover-metric-value {
+            color: var(--secondary);
+        }
+
+        .cover-metric.warning .cover-metric-value {
+            color: var(--warning);
+        }
+
+        /* Abstract */
+        .abstract-page {
+            page-break-after: always;
+            padding: 2rem 0;
+        }
+
+        .abstract-title {
+            font-family: var(--font-display);
+            font-size: 22pt;
+            font-weight: 600;
+            color: var(--gray-900);
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .abstract-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .abstract-content {
+            background: linear-gradient(135deg, var(--gray-50) 0%, rgba(196, 30, 58, 0.02) 100%);
+            border-left: 4px solid var(--primary);
+            padding: 1.75rem 2rem;
+            margin-bottom: 2rem;
+            font-style: normal;
+            position: relative;
+        }
+
+        .abstract-content::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-family: var(--font-display);
+            font-size: 60pt;
+            color: var(--primary);
+            opacity: 0.1;
+            line-height: 1;
+        }
+
+        .keywords {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .keywords-title {
+            font-weight: 600;
+            color: var(--gray-700);
+            font-style: normal;
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .keyword-tag {
+            display: inline-block;
+            background: white;
+            color: var(--gray-700);
+            padding: 0.25rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            font-size: 9pt;
+            margin: 0.2rem;
+            font-style: normal;
+            transition: all 0.2s ease;
+        }
+
+        .keyword-tag:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* TOC */
+        .toc-page {
+            page-break-after: always;
+            padding: 2rem 0;
+        }
+
+        .toc-title {
+            font-family: var(--font-display);
+            font-size: 24pt;
+            font-weight: 600;
+            color: var(--gray-900);
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            position: relative;
+        }
+
+        .toc-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .toc-part {
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 10pt;
+            color: var(--primary);
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+            padding: 0.6rem 0.75rem;
+            background: var(--gray-50);
+            border-left: 3px solid var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .toc-section {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.35rem 0;
+            padding-left: 1.5rem;
+            font-size: 10pt;
+            color: var(--gray-600);
+            border-bottom: 1px dotted var(--gray-200);
+            transition: all 0.2s ease;
+        }
+
+        .toc-section:hover {
+            color: var(--primary);
+            padding-left: 1.75rem;
+        }
+
+        /* Part Dividers */
+        .part-divider {
+            page-break-before: always;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 220px;
+            margin: 2rem 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--gray-50) 0%, rgba(196, 30, 58, 0.03) 100%);
+            border: 1px solid var(--gray-200);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .part-divider::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+        }
+
+        .part-divider::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(196, 30, 58, 0.05) 0%, transparent 70%);
+        }
+
+        .part-number {
+            font-family: var(--font-display);
+            font-size: 64pt;
+            font-weight: 700;
+            color: var(--primary);
+            opacity: 0.15;
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .part-title {
+            font-family: var(--font-display);
+            font-size: 22pt;
+            font-weight: 600;
+            color: var(--gray-900);
+            letter-spacing: 1px;
+        }
+
+        .part-subtitle {
+            font-size: 11pt;
+            color: var(--gray-500);
+            margin-top: 0.75rem;
+            font-style: italic;
+        }
+
+        /* Headings */
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: var(--font-body);
+            color: var(--gray-800);
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 17pt;
+            font-weight: 600;
+            color: var(--gray-900);
+            border-bottom: none;
+            padding-bottom: 0.75rem;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        h2 {
+            font-size: 13pt;
+            font-weight: 600;
+            color: var(--secondary);
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 0.35rem;
+        }
+
+        h3 {
+            font-size: 11pt;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        h4 {
+            font-size: 10pt;
+            font-weight: 600;
+            color: var(--gray-600);
+        }
+
+        .section-number {
+            color: var(--primary);
+            margin-right: 0.6em;
+            font-weight: 700;
+        }
+
+        p {
+            margin-bottom: 0.85rem;
+            text-align: justify;
+            font-size: 10.5pt;
+        }
+
+        .lead {
+            font-size: 11.5pt;
+            color: var(--gray-600);
+            line-height: 1.8;
+            font-weight: 400;
+        }
+
+        /* Executive Summary Metrics */
+        .exec-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        .exec-metric {
+            background: linear-gradient(145deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.75rem 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exec-metric::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .exec-metric.success {
+            background: linear-gradient(145deg, var(--success) 0%, #1F6F5A 100%);
+        }
+
+        .exec-metric.secondary {
+            background: linear-gradient(145deg, var(--secondary) 0%, #0F1A2E 100%);
+        }
+
+        .exec-metric-value {
+            font-family: var(--font-display);
+            font-size: 36pt;
+            font-weight: 700;
+            display: block;
+            line-height: 1.1;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .exec-metric-label {
+            font-size: 9pt;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.25rem 0;
+            font-size: 9.5pt;
+            border: 1px solid var(--gray-200);
+        }
+
+        thead {
+            background: linear-gradient(145deg, var(--secondary) 0%, var(--secondary-light) 100%);
+            color: white;
+        }
+
+        th {
+            padding: 0.7rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            font-family: var(--font-body);
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 0.55rem 0.8rem;
+            border-bottom: 1px solid var(--gray-200);
+            vertical-align: middle;
+        }
+
+        tbody tr:nth-child(even) {
+            background: var(--gray-50);
+        }
+
+        tbody tr:hover {
+            background: rgba(196, 30, 58, 0.04);
+        }
+
+        tbody tr {
+            transition: background 0.15s ease;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .success-text {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .warning-text {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .danger-text {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        /* Callouts */
+        .callout {
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+            font-size: 10pt;
+            border: 1px solid;
+            position: relative;
+        }
+
+        .callout::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .callout-info {
+            background: linear-gradient(135deg, #F0F7FF 0%, #E8F4FD 100%);
+            border-color: #D0E3F5;
+        }
+
+        .callout-info::before {
+            background: var(--secondary-light);
+        }
+
+        .callout-success {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-color: #A7F3D0;
+        }
+
+        .callout-success::before {
+            background: var(--success);
+        }
+
+        .callout-warning {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-color: #FDE68A;
+        }
+
+        .callout-warning::before {
+            background: var(--warning);
+        }
+
+        .callout-danger {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-color: #FECACA;
+        }
+
+        .callout-danger::before {
+            background: var(--danger);
+        }
+
+        .callout-rakuten {
+            background: linear-gradient(135deg, #FFF5F5 0%, #FEE2E2 100%);
+            border-color: #FECACA;
+        }
+
+        .callout-rakuten::before {
+            background: var(--primary);
+        }
+
+        .callout-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            font-family: var(--font-body);
+            font-size: 10.5pt;
+            color: var(--gray-800);
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 1.25rem 0;
+        }
+
+        .metric-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            padding: 1rem 0.75rem;
+            text-align: center;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transition: transform 0.25s ease;
+        }
+
+        .metric-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 6px 20px rgba(196, 30, 58, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .metric-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .metric-value {
+            font-family: var(--font-display);
+            font-size: 22pt;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.1;
+        }
+
+        .metric-label {
+            font-size: 8pt;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            font-weight: 500;
+            margin-top: 0.4rem;
+        }
+
+        .metric-card.success .metric-value {
+            color: var(--success);
+        }
+
+        .metric-card.success::before {
+            background: var(--success);
+        }
+
+        .metric-card.warning .metric-value {
+            color: var(--warning);
+        }
+
+        .metric-card.warning::before {
+            background: var(--warning);
+        }
+
+        .metric-card.danger .metric-value {
+            color: var(--danger);
+        }
+
+        .metric-card.danger::before {
+            background: var(--danger);
+        }
+
+        /* Key Result Box */
+        .key-result {
+            background: linear-gradient(145deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            margin: 1.75rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .key-result::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+        }
+
+        .key-result::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .key-result .metric {
+            font-family: var(--font-display);
+            font-size: 48pt;
+            font-weight: 700;
+            display: block;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .key-result .label {
+            font-size: 11pt;
+            opacity: 0.9;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Formula Box */
+        .formula-box {
+            background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%);
+            color: #E2E8F0;
+            padding: 1.25rem 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 9.5pt;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+            border-left: 4px solid var(--accent);
+        }
+
+        .formula-title {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%);
+            color: #E2E8F0;
+            padding: 1.25rem 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 9pt;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+            border-left: 4px solid var(--secondary-light);
+            line-height: 1.6;
+        }
+
+        .code-title {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 8pt;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .code-keyword {
+            color: #C084FC;
+            font-weight: 500;
+        }
+
+        .code-string {
+            color: #4ADE80;
+        }
+
+        .code-number {
+            color: #FB923C;
+        }
+
+        .code-comment {
+            color: #64748B;
+            font-style: italic;
+        }
+
+        /* Two Columns */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.75rem;
+            margin: 1.25rem 0;
+        }
+
+        .three-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        /* Pipeline */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 1.75rem 0;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+            border: 1px solid var(--gray-200);
+        }
+
+        .pipeline-step {
+            background: white;
+            border: 2px solid var(--gray-300);
+            padding: 0.6rem 1rem;
+            text-align: center;
+            min-width: 85px;
+            transition: all 0.2s ease;
+        }
+
+        .pipeline-step:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(196, 30, 58, 0.1);
+        }
+
+        .pipeline-step-title {
+            font-size: 7pt;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pipeline-step-value {
+            font-size: 10pt;
+            color: var(--gray-700);
+            font-weight: 500;
+            margin-top: 0.15rem;
+        }
+
+        .pipeline-arrow {
+            color: var(--accent);
+            font-size: 18pt;
+            font-weight: 700;
+        }
+
+        /* Comparison Box */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin: 1.25rem 0;
+            position: relative;
+        }
+
+        .comparison-item {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            padding: 1.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .comparison-item.good {
+            border-color: var(--success);
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+        }
+
+        .comparison-item.bad {
+            border-color: var(--danger);
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+        }
+
+        .comparison-title {
+            font-weight: 700;
+            font-size: 11pt;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-800);
+        }
+
+        .vs-badge {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--secondary);
+            color: white;
+            padding: 0.4rem 1rem;
+            font-weight: 700;
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 10;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.2em 0.6em;
+            font-size: 8pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .badge-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .badge-info {
+            background: var(--secondary-light);
+            color: white;
+        }
+
+        .badge-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Lists */
+        ul,
+        ol {
+            margin-bottom: 0.85rem;
+            padding-left: 1.75rem;
+            font-size: 10pt;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        .check-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .check-list li {
+            padding-left: 1.75rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        .check-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 700;
+            font-size: 11pt;
+        }
+
+        /* Figure */
+        .figure {
+            margin: 1.75rem 0;
+            text-align: center;
+        }
+
+        .figure-caption {
+            font-size: 9pt;
+            color: var(--gray-500);
+            margin-top: 0.75rem;
+            font-style: italic;
+        }
+
+        .figure-number {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Images */
+        img {
+            transition: all 0.3s ease;
+        }
+
+        img:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        /* Page Break */
+        .page-break {
+            page-break-before: always;
+        }
+
+        /* Print Button */
+        .print-button-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .print-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(145deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            font-family: var(--font-body);
+            font-size: 11pt;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(196, 30, 58, 0.3);
+        }
+
+        .print-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 30, 58, 0.4);
+        }
+
+        .print-button:active {
+            transform: translateY(0);
+        }
+
+        .print-button svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* Print Styles - Comprehensive */
+        @media print {
+
+            /* Reset page with generous margins */
+            @page {
+                size: A4;
+                margin: 18mm 20mm 18mm 20mm;
+            }
+
+            @page :first {
+                margin-top: 15mm;
+            }
+
+            /* Hide print button */
+            .print-button-container {
+                display: none !important;
+            }
+
+            /* Body and container */
+            html {
+                font-size: 10pt;
+            }
+
+            body {
+                padding: 0;
+                margin: 0;
+                background: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+
+            .document-container {
+                padding: 0;
+                margin: 0;
+                box-shadow: none;
+                max-width: 100% !important;
+                width: 100% !important;
+                overflow: hidden !important;
+            }
+
+            .document-container::before {
+                display: none;
+            }
+
+            /* Global content constraint for print */
+            * {
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            section, article, div, p, ul, ol, li, figure, figcaption {
+                max-width: 100% !important;
+                overflow-wrap: break-word !important;
+            }
+
+            /* Cover page */
+            .cover-page {
+                min-height: auto;
+                height: 100vh;
+                page-break-after: always;
+                background: white !important;
+                padding: 2cm 0;
+            }
+
+            .cover-page::before {
+                display: none;
+            }
+
+            .cover-logo-text {
+                font-size: 60pt;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .cover-logo-accent {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .cover-title {
+                font-size: 26pt;
+            }
+
+            .cover-metrics {
+                gap: 0.5rem;
+            }
+
+            .cover-metric {
+                padding: 0.5rem 1rem;
+                min-width: 90px;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .cover-metric-value {
+                font-size: 14pt;
+            }
+
+            /* Abstract page */
+            .abstract-page {
+                page-break-after: always;
+            }
+
+            .abstract-content {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .abstract-content::before {
+                display: none;
+            }
+
+            /* TOC */
+            .toc-page {
+                page-break-after: always;
+            }
+
+            /* Part dividers */
+            .part-divider {
+                page-break-before: always;
+                page-break-after: avoid;
+                min-height: 150px;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .part-divider::before,
+            .part-divider::after {
+                display: none;
+            }
+
+            .part-number {
+                font-size: 48pt;
+            }
+
+            .part-title {
+                font-size: 18pt;
+            }
+
+            /* Page breaks */
+            .page-break {
+                page-break-before: always;
+            }
+
+            h1,
+            h2 {
+                page-break-after: avoid;
+            }
+
+            table,
+            .callout,
+            .code-block,
+            .formula-box,
+            .key-result {
+                page-break-inside: avoid;
+            }
+
+            img {
+                page-break-inside: avoid;
+                max-width: 100% !important;
+                height: auto !important;
+                display: block;
+            }
+
+            figure {
+                max-width: 100% !important;
+                margin: 1rem 0 !important;
+                overflow: hidden !important;
+            }
+
+            /* Tables - constrain width and prevent overflow */
+            table {
+                width: 100% !important;
+                max-width: 100% !important;
+                table-layout: fixed !important;
+                overflow: hidden !important;
+                word-wrap: break-word !important;
+            }
+
+            th, td {
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                word-wrap: break-word !important;
+                max-width: 100% !important;
+            }
+
+            thead {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            tbody tr:nth-child(even) {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Metrics and cards */
+            .exec-metrics {
+                gap: 0.75rem;
+            }
+
+            .exec-metric {
+                padding: 1rem;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .exec-metric::before {
+                display: none;
+            }
+
+            .exec-metric-value {
+                font-size: 28pt;
+            }
+
+            .metrics-grid {
+                gap: 0.5rem;
+            }
+
+            .metric-card {
+                padding: 0.6rem 0.5rem;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .metric-card::before {
+                display: none;
+            }
+
+            .metric-value {
+                font-size: 18pt;
+            }
+
+            /* Key result */
+            .key-result {
+                padding: 1.25rem 1rem;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .key-result::before,
+            .key-result::after {
+                display: none;
+            }
+
+            .key-result .metric {
+                font-size: 36pt;
+            }
+
+            /* Code blocks - prevent overflow */
+            .code-block,
+            .formula-box {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                padding: 0.75rem 1rem;
+                font-size: 8pt;
+                max-width: 100% !important;
+                overflow: hidden !important;
+                word-wrap: break-word !important;
+                white-space: pre-wrap !important;
+            }
+
+            pre, code {
+                max-width: 100% !important;
+                overflow: hidden !important;
+                word-wrap: break-word !important;
+                white-space: pre-wrap !important;
+            }
+
+            /* Callouts */
+            .callout {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                padding: 0.75rem 1rem;
+            }
+
+            .callout::before {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Pipeline */
+            .pipeline {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                padding: 0.75rem;
+            }
+
+            .pipeline-step {
+                padding: 0.4rem 0.75rem;
+                min-width: 70px;
+            }
+
+            /* Badges */
+            .badge {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Progress bars */
+            .progress-bar,
+            .progress-fill {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Grids - reduce gaps */
+            .two-columns {
+                gap: 1rem;
+            }
+
+            .three-columns {
+                gap: 0.75rem;
+            }
+
+            /* Remove hover effects */
+            .metric-card:hover,
+            .pipeline-step:hover,
+            .toc-section:hover,
+            .keyword-tag:hover,
+            img:hover,
+            tbody tr:hover {
+                transform: none !important;
+                box-shadow: none !important;
+                background: inherit;
+            }
+
+            /* Links */
+            a {
+                text-decoration: none;
+                color: var(--primary);
+            }
+
+            /* Comparison */
+            .comparison-item {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .vs-badge {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Footer */
+            section[style*="border-top"] {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Progress indicator for models */
+        .progress-bar {
+            height: 8px;
+            background: var(--gray-200);
+            overflow: hidden;
+            margin: 0.3rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .progress-fill.success {
+            background: linear-gradient(90deg, var(--success), #4ADE80);
+        }
+
+        .progress-fill.primary {
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+
+        .progress-fill.warning {
+            background: linear-gradient(90deg, var(--warning), #FBBF24);
+        }
+
+        /* Footer enhancement */
+        footer,
+        section[style*="border-top"] {
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Print Button -->
+    <div class="print-button-container">
+        <button class="print-button" onclick="window.print()" title="Télécharger en PDF">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Télécharger PDF
+        </button>
+    </div>
+
+    <div class="document-container">
+
+        <!-- ==================== COVER PAGE ==================== -->
+        <section class="cover-page">
+            <div class="cover-logo-container">
+                <div class="cover-logo-text">R</div>
+                <div class="cover-logo-accent"></div>
+            </div>
+
+            <div class="cover-institution">DataScientest × Mines Paris - PSL</div>
+            <div class="cover-formation">Machine Learning Engineer (BMLE) — Promotion Octobre 2025</div>
+
+            <div class="cover-divider"></div>
+
+            <h1 class="cover-title">
+                Classification <span class="cover-title-accent">Multimodale</span><br>
+                de Produits E-Commerce
+            </h1>
+            <p class="cover-subtitle">
+                Projet Rakuten France — Challenge de Classification Automatique<br>
+                <em>Approche Hybride Texte + Image avec Voting System</em>
+            </p>
+
+            <div class="cover-divider"></div>
+
+            <div class="cover-team">
+                <div class="cover-team-title">Équipe Projet</div>
+                <p class="cover-author">Johan Frachon</p>
+                <p class="cover-author">Liviu Andronic</p>
+                <p class="cover-author">Hery Mickael Ralaimanantsoa</p>
+                <p class="cover-author">Oussama Akir</p>
+            </div>
+
+            <p class="cover-supervisor">
+                Mentor : <strong>Antoine</strong><br>
+                DataScientest — Paris
+            </p>
+
+            <div class="cover-metrics">
+                <div class="cover-metric">
+                    <span class="cover-metric-value">84 916</span>
+                    <span class="cover-metric-label">Produits</span>
+                </div>
+                <div class="cover-metric secondary">
+                    <span class="cover-metric-value">27</span>
+                    <span class="cover-metric-label">Catégories</span>
+                </div>
+                <div class="cover-metric success">
+                    <span class="cover-metric-value">92%</span>
+                    <span class="cover-metric-label">Accuracy Image</span>
+                </div>
+                <div class="cover-metric warning">
+                    <span class="cover-metric-value">83%</span>
+                    <span class="cover-metric-label">Accuracy Texte</span>
+                </div>
+            </div>
+
+            <p class="cover-date">Février 2025</p>
+        </section>
+
+        <!-- ==================== ABSTRACT ==================== -->
+        <section class="abstract-page">
+            <h1 class="abstract-title">Résumé Exécutif</h1>
+
+
+            <div class="abstract-content">
+                <p>
+                    Ce rapport présente notre solution de <strong>classification automatique multimodale</strong>
+                    développée dans le cadre du challenge Rakuten France.
+                    L'objectif était de classifier automatiquement des produits e-commerce parmi <strong>27
+                        catégories</strong> en utilisant à la fois les données textuelles
+                    (titre et description) et visuelles (images produits).
+                </p>
+                <p>
+                    Notre approche hybride combine un <strong>classifieur textuel LinearSVC</strong> (TF-IDF word+char,
+                    accuracy 83%) et un
+                    <strong>Voting System d'images</strong> fusionnant trois architectures complémentaires : DINOv3
+                    (Vision Transformer), XGBoost sur features ResNet,
+                    et EfficientNet-B0. Ce système de vote atteint <strong>92% d'accuracy</strong> sur les images
+                    seules.
+                </p>
+                <p>
+                    La fusion tardive (Late Fusion) des deux modalités avec pondération optimisée permet d'atteindre des
+                    performances robustes
+                    sur l'ensemble des 27 catégories, y compris les classes minoritaires grâce aux stratégies
+                    d'oversampling et de class weighting.
+                </p>
+                <div class="keywords">
+                    <span class="keywords-title">Mots-clés :</span>
+                    <span class="keyword-tag">Classification Multimodale</span>
+                    <span class="keyword-tag">Transfer Learning</span>
+                    <span class="keyword-tag">Voting Classifier</span>
+                    <span class="keyword-tag">TF-IDF</span>
+                    <span class="keyword-tag">Vision Transformer</span>
+                    <span class="keyword-tag">E-commerce</span>
+                    <span class="keyword-tag">Deep Learning</span>
+                </div>
+            </div>
+
+            <div class="exec-metrics">
+                <div class="exec-metric">
+                    <span class="exec-metric-value">92%</span>
+                    <span class="exec-metric-label">Accuracy Image (Voting)</span>
+                </div>
+                <div class="exec-metric success">
+                    <span class="exec-metric-value">83%</span>
+                    <span class="exec-metric-label">Accuracy Texte (SVC)</span>
+                </div>
+                <div class="exec-metric secondary">
+                    <span class="exec-metric-value">27</span>
+                    <span class="exec-metric-label">Catégories Classifiées</span>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 2rem;">Contributions Principales</h2>
+            <div class="three-columns">
+                <div class="callout callout-rakuten">
+                    <div class="callout-title">🔬 Méthodologie</div>
+                    <p>Pipeline complet de preprocessing texte et image avec gestion du déséquilibre de classes (ratio
+                        1:13).</p>
+                </div>
+                <div class="callout callout-success">
+                    <div class="callout-title">🏆 Performance</div>
+                    <p>Voting System innovant combinant 3 architectures pour atteindre 92% sur les images.</p>
+                </div>
+                <div class="callout callout-info">
+                    <div class="callout-title">🚀 Application</div>
+                    <p>Interface Streamlit multimodale fonctionnelle avec visualisations et explicabilité.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TABLE OF CONTENTS ==================== -->
+        <section class="toc-page">
+            <h1 class="toc-title">Table des Matières</h1>
+
+            <nav>
+                <div class="toc-part">PARTIE I : CONTEXTE ET DONNÉES</div>
+                <div class="toc-section"><span>1.1 Le Challenge Rakuten France</span><span>6</span></div>
+                <div class="toc-section"><span>1.2 Description du Dataset</span><span>7</span></div>
+                <div class="toc-section"><span>1.3 Analyse Exploratoire (EDA)</span><span>8</span></div>
+
+                <div class="toc-part">PARTIE II : PREPROCESSING & FEATURE ENGINEERING</div>
+                <div class="toc-section"><span>2.1 Pipeline de Prétraitement Texte</span><span>11</span></div>
+                <div class="toc-section"><span>2.2 Pipeline de Prétraitement Image</span><span>13</span></div>
+                <div class="toc-section"><span>2.3 Gestion du Déséquilibre des Classes</span><span>15</span></div>
+
+                <div class="toc-part">PARTIE III : MODÉLISATION TEXTE</div>
+                <div class="toc-section"><span>3.1 Benchmark des Classifieurs</span><span>17</span></div>
+                <div class="toc-section"><span>3.2 Optimisation LinearSVC</span><span>18</span></div>
+                <div class="toc-section"><span>3.3 Résultats Détaillés par Classe</span><span>19</span></div>
+
+                <div class="toc-part">PARTIE IV : MODÉLISATION IMAGE</div>
+                <div class="toc-section"><span>4.1 Stratégie Transfer Learning</span><span>21</span></div>
+                <div class="toc-section"><span>4.2 Benchmark Machine Learning</span><span>22</span></div>
+                <div class="toc-section"><span>4.3 Approche Deep Learning</span><span>24</span></div>
+                <div class="toc-section"><span>4.4 Architectures Avancées (DINOv3, EfficientNet)</span><span>26</span>
+                </div>
+                <div class="toc-section"><span>4.5 Voting System - Modèle Final</span><span>28</span></div>
+                <div class="toc-section"><span>4.6 Tests de Robustesse</span><span>30</span></div>
+
+                <div class="toc-part">PARTIE V : FUSION MULTIMODALE</div>
+                <div class="toc-section"><span>5.1 Stratégie de Fusion Tardive</span><span>32</span></div>
+                <div class="toc-section"><span>5.2 Optimisation des Poids</span><span>33</span></div>
+                <div class="toc-section"><span>5.3 Résultats Combinés</span><span>34</span></div>
+
+                <div class="toc-part">PARTIE VI : APPLICATION STREAMLIT</div>
+                <div class="toc-section"><span>6.1 Architecture de l'Application</span><span>35</span></div>
+                <div class="toc-section"><span>6.2 Fonctionnalités et Interface</span><span>36</span></div>
+                <div class="toc-section"><span>6.3 Démonstration</span><span>37</span></div>
+
+                <div class="toc-part">PARTIE VII : CONCLUSION ET PERSPECTIVES</div>
+                <div class="toc-section"><span>7.1 Bilan du Projet</span><span>38</span></div>
+                <div class="toc-section"><span>7.2 Limites et Difficultés</span><span>39</span></div>
+                <div class="toc-section"><span>7.3 Perspectives d'Amélioration</span><span>40</span></div>
+
+                <div class="toc-part">ANNEXES</div>
+                <div class="toc-section"><span>A. Mapping des 27 Catégories</span><span>41</span></div>
+                <div class="toc-section"><span>B. Configuration Technique</span><span>42</span></div>
+                <div class="toc-section"><span>C. Références</span><span>43</span></div>
+            </nav>
+        </section>
+
+        <!-- ==================== PART I: CONTEXTE ET DONNÉES ==================== -->
+        <section class="part-divider">
+            <div class="part-number">I</div>
+            <div class="part-title">Contexte et Données</div>
+            <div class="part-subtitle">Challenge Rakuten France et analyse du dataset</div>
+        </section>
+
+        <section id="section-1-1" class="page-break">
+            <h1><span class="section-number">1.1</span> Le Challenge Rakuten France</h1>
+
+            <p class="lead">
+                Rakuten, géant mondial du e-commerce, fait face à un défi classique des marketplaces : la catégorisation
+                automatique
+                des produits mis en ligne par des vendeurs tiers. Une mauvaise catégorisation entraîne une mauvaise
+                expérience de recherche
+                et une perte de revenus significative.
+            </p>
+
+            <div class="callout callout-rakuten">
+                <div class="callout-title">🎯 Objectif du Challenge</div>
+                <p>
+                    Développer un modèle de classification multimodale capable de prédire le <strong>code catégorie
+                        (prdtypecode)</strong>
+                    d'un produit en utilisant simultanément :
+                </p>
+                <ul>
+                    <li><strong>Le Texte</strong> : Désignation (titre) et description du produit</li>
+                    <li><strong>L'Image</strong> : Visuel du produit fourni par le vendeur</li>
+                </ul>
+            </div>
+
+            <h2><span class="section-number">1.1.1</span> Contexte Métier</h2>
+            <div class="two-columns">
+                <div>
+                    <h3>Enjeux Business</h3>
+                    <ul>
+                        <li><strong>Expérience utilisateur</strong> : Navigation facilitée</li>
+                        <li><strong>Recherche produit</strong> : Résultats pertinents</li>
+                        <li><strong>Conversion</strong> : Réduction du taux de rebond</li>
+                        <li><strong>Scalabilité</strong> : Millions de produits/jour</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Défis Techniques</h3>
+                    <ul>
+                        <li><strong>Multilingue</strong> : Descriptions en plusieurs langues</li>
+                        <li><strong>Qualité variable</strong> : Images non standardisées</li>
+                        <li><strong>Ambiguïté</strong> : Produits multi-catégories</li>
+                        <li><strong>Volume</strong> : Traitement en temps réel</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2><span class="section-number">1.1.2</span> Métrique d'Évaluation</h2>
+            <div class="callout callout-info">
+                <div class="callout-title">📊 F1-Score Pondéré (Weighted)</div>
+                <p>
+                    Conformément aux règles du challenge, la métrique principale est le <strong>F1-Score
+                        weighted</strong>,
+                    qui prend en compte le déséquilibre des classes en pondérant chaque classe par son support.
+                </p>
+                <div class="formula-box">
+                    <div class="formula-title">Formule F1-Score</div>
+                    F1 = 2 × (Precision × Recall) / (Precision + Recall)<br><br>
+                    F1_weighted = Σ (support_c / total) × F1_c
+                </div>
+            </div>
+        </section>
+
+        <section id="section-1-2">
+            <h1><span class="section-number">1.2</span> Description du Dataset</h1>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">84 916</div>
+                    <div class="metric-label">Images Train</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">13 812</div>
+                    <div class="metric-label">Images Test</div>
+                </div>
+                <div class="metric-card success">
+                    <div class="metric-value">27</div>
+                    <div class="metric-label">Catégories</div>
+                </div>
+                <div class="metric-card warning">
+                    <div class="metric-value">500×500</div>
+                    <div class="metric-label">Taille Images (px)</div>
+                </div>
+            </div>
+
+            <h2><span class="section-number">1.2.1</span> Structure des Données</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Variable</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Complétude</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="highlight">designation</td>
+                        <td>String</td>
+                        <td>Titre du produit</td>
+                        <td><span class="badge badge-success">100%</span></td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">description</td>
+                        <td>String</td>
+                        <td>Description longue (HTML/brut)</td>
+                        <td><span class="badge badge-warning">65%</span></td>
+                    </tr>
+                    <tr>
+                        <td>productid</td>
+                        <td>Integer</td>
+                        <td>Identifiant unique produit</td>
+                        <td><span class="badge badge-success">100%</span></td>
+                    </tr>
+                    <tr>
+                        <td>imageid</td>
+                        <td>Integer</td>
+                        <td>Identifiant image associée</td>
+                        <td><span class="badge badge-success">100%</span></td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">prdtypecode</td>
+                        <td>Integer</td>
+                        <td>Code catégorie (target)</td>
+                        <td><span class="badge badge-success">100%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Valeurs Manquantes Critiques</div>
+                <p>
+                    <strong>35% des descriptions sont manquantes (NaN)</strong>. Cette contrainte structurelle nous
+                    oblige à concevoir
+                    un pipeline robuste qui ne dépend pas uniquement du champ description.
+                </p>
+                <p><strong>Stratégie retenue</strong> : Concaténation <code>designation + description</code> avec
+                    remplacement des NaN par chaîne vide.</p>
+            </div>
+
+            <h2><span class="section-number">1.2.2</span> Aperçu des Catégories</h2>
+            <p>Le dataset couvre 27 catégories de produits e-commerce diversifiées :</p>
+            <div class="three-columns">
+                <div class="callout callout-info" style="padding: 0.75rem;">
+                    <div class="callout-title" style="font-size: 9pt;">📚 Livres & Médias</div>
+                    <p style="font-size: 8pt; margin: 0;">Livres neufs/occasion, magazines, BD, livres anciens</p>
+                </div>
+                <div class="callout callout-success" style="padding: 0.75rem;">
+                    <div class="callout-title" style="font-size: 9pt;">🎮 Gaming & Jouets</div>
+                    <p style="font-size: 8pt; margin: 0;">Jeux vidéo, consoles, figurines, cartes, jouets</p>
+                </div>
+                <div class="callout callout-warning" style="padding: 0.75rem;">
+                    <div class="callout-title" style="font-size: 9pt;">🏠 Maison & Jardin</div>
+                    <p style="font-size: 8pt; margin: 0;">Mobilier, décoration, literie, piscines, bricolage</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-1-3">
+            <h1><span class="section-number">1.3</span> Analyse Exploratoire (EDA)</h1>
+
+            <h2><span class="section-number">1.3.1</span> Déséquilibre des Classes</h2>
+            <p>
+                L'analyse de la distribution des catégories révèle un <strong>déséquilibre significatif</strong>
+                constituant
+                l'un des défis majeurs du projet.
+            </p>
+
+            <div class="metrics-grid">
+                <div class="metric-card danger">
+                    <div class="metric-value">13.4×</div>
+                    <div class="metric-label">Ratio Max/Min</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">10 217</div>
+                    <div class="metric-label">Classe Majoritaire</div>
+                </div>
+                <div class="metric-card warning">
+                    <div class="metric-value">761</div>
+                    <div class="metric-label">Classe Minoritaire</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">3 145</div>
+                    <div class="metric-label">Moyenne/Classe</div>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Code</th>
+                        <th>Catégorie</th>
+                        <th>Effectif</th>
+                        <th>%</th>
+                        <th>Distribution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td class="highlight">2583</td>
+                        <td>Piscines et accessoires</td>
+                        <td>10 217</td>
+                        <td>12.0%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill primary" style="width: 100%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>1560</td>
+                        <td>Mobilier intérieur</td>
+                        <td>5 076</td>
+                        <td>6.0%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill primary" style="width: 50%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2060</td>
+                        <td>Décoration intérieure</td>
+                        <td>4 996</td>
+                        <td>5.9%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill primary" style="width: 49%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--gray-500);">...</td>
+                    </tr>
+                    <tr>
+                        <td>26</td>
+                        <td>1940</td>
+                        <td>Alimentation</td>
+                        <td>804</td>
+                        <td>0.9%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill warning" style="width: 8%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>27</td>
+                        <td class="danger-text">60</td>
+                        <td>Consoles de jeux</td>
+                        <td>761</td>
+                        <td>0.9%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill danger" style="width: 7%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="figures/johan/image3.png" alt="Distribution des classes"
+                    style="max-width: 90%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure :
+                        Distribution des 27 catégories - Déséquilibre significatif (ratio 1:13)</em></p>
+            </div>
+
+            <h2><span class="section-number">1.3.2</span> Analyse Textuelle</h2>
+            <div class="two-columns">
+                <div>
+                    <h3>Distribution des Longueurs</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Champ</th>
+                                <th>Moyenne</th>
+                                <th>Médiane</th>
+                                <th>Max</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Désignation</td>
+                                <td>70 car.</td>
+                                <td>65 car.</td>
+                                <td>250 car.</td>
+                            </tr>
+                            <tr>
+                                <td>Description</td>
+                                <td>450 car.</td>
+                                <td>200 car.</td>
+                                <td>12 000 car.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <h3>Mots les Plus Fréquents</h3>
+                    <p style="font-size: 9pt;">
+                        <span class="badge badge-primary">piscine</span>
+                        <span class="badge badge-primary">jeu</span>
+                        <span class="badge badge-primary">lot</span>
+                        <span class="badge badge-primary">coussin</span>
+                        <span class="badge badge-primary">kit</span>
+                        <span class="badge badge-info">enfant</span>
+                        <span class="badge badge-info">bébé</span>
+                        <span class="badge badge-info">livre</span>
+                    </p>
+                    <p style="font-size: 9pt; color: var(--gray-600);">
+                        Les termes dominants corrèlent avec les classes majoritaires (piscines, jouets).
+                    </p>
+                </div>
+            </div>
+
+            <h2><span class="section-number">1.3.3</span> Analyse des Images</h2>
+            <div class="callout callout-success">
+                <div class="callout-title">✅ Images Standardisées</div>
+                <p>
+                    Toutes les images sont uniformes en <strong>500×500 pixels</strong> au format JPEG.
+                    Cependant, la présence de <strong>bordures blanches variables</strong> autour des produits
+                    nécessite une attention particulière lors du preprocessing.
+                </p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Variabilité Intra-Classe</div>
+                <p>
+                    Grande diversité visuelle au sein d'une même catégorie. Exemple : un "livre" peut apparaître comme
+                    une couverture seule, une pile de livres, ou une image marketing composite.
+                </p>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="figures/johan/image31.png" alt="Exemples de produits"
+                    style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure : Exemples
+                        de produits par catégorie - Variété visuelle du dataset</em></p>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="figures/johan/image1.png" alt="Distribution longueur désignations"
+                    style="max-width: 80%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure :
+                        Distribution de la longueur des désignations (moyenne ~70 caractères)</em></p>
+            </div>
+        </section>
+
+        <!-- ==================== PART II: PREPROCESSING ==================== -->
+        <section class="part-divider">
+            <div class="part-number">II</div>
+            <div class="part-title">Preprocessing & Feature Engineering</div>
+            <div class="part-subtitle">Transformation des données brutes en features exploitables</div>
+        </section>
+
+        <section id="section-2-1" class="page-break">
+            <h1><span class="section-number">2.1</span> Pipeline de Prétraitement Texte</h1>
+
+            <p class="lead">
+                Le preprocessing textuel vise à transformer les descriptions produits brutes en vecteurs numériques
+                exploitables par les algorithmes de classification.
+            </p>
+
+            <h2><span class="section-number">2.1.1</span> Étapes de Nettoyage</h2>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <div class="pipeline-step-title">TEXTE BRUT</div>
+                    <div class="pipeline-step-value">HTML + NaN</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-title">NETTOYAGE</div>
+                    <div class="pipeline-step-value">Lowercase</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-title">IMPUTATION</div>
+                    <div class="pipeline-step-value">fillna("")</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-title">CONCAT</div>
+                    <div class="pipeline-step-value">title + desc</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-title">TF-IDF</div>
+                    <div class="pipeline-step-value">Vectorisation</div>
+                </div>
+            </div>
+
+            <h2><span class="section-number">2.1.2</span> Vectorisation TF-IDF</h2>
+            <p>
+                Nous avons opté pour une approche <strong>FeatureUnion</strong> combinant deux vectoriseurs
+                complémentaires :
+            </p>
+
+            <div class="two-columns">
+                <div class="callout callout-info">
+                    <div class="callout-title">📝 TF-IDF Word (N-grams)</div>
+                    <ul style="font-size: 9pt;">
+                        <li><strong>Analyzer</strong> : word</li>
+                        <li><strong>N-grams</strong> : (1, 2) - unigrams + bigrams</li>
+                        <li><strong>Max features</strong> : 120 000</li>
+                        <li><strong>Min/Max DF</strong> : 2 / 0.9</li>
+                        <li><strong>Sublinear TF</strong> : True (log scaling)</li>
+                    </ul>
+                </div>
+                <div class="callout callout-success">
+                    <div class="callout-title">🔤 TF-IDF Char (N-grams)</div>
+                    <ul style="font-size: 9pt;">
+                        <li><strong>Analyzer</strong> : char_wb (word boundaries)</li>
+                        <li><strong>N-grams</strong> : (3, 5) - trigrammes à 5-grammes</li>
+                        <li><strong>Max features</strong> : 160 000</li>
+                        <li><strong>Sublinear TF</strong> : True</li>
+                        <li><strong>Avantage</strong> : Robuste aux fautes d'orthographe</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <div class="code-title">Configuration TF-IDF (Python)</div>
+                <span class="code-keyword">from</span> sklearn.feature_extraction.text <span
+                    class="code-keyword">import</span> TfidfVectorizer
+                <span class="code-keyword">from</span> sklearn.pipeline <span class="code-keyword">import</span>
+                FeatureUnion
+
+                word_vec = TfidfVectorizer(
+                ngram_range=(<span class="code-number">1</span>, <span class="code-number">2</span>),
+                max_features=<span class="code-number">120000</span>,
+                min_df=<span class="code-number">2</span>, max_df=<span class="code-number">0.9</span>,
+                sublinear_tf=<span class="code-keyword">True</span>,
+                strip_accents=<span class="code-string">'unicode'</span>
+                )
+
+                char_vec = TfidfVectorizer(
+                analyzer=<span class="code-string">'char_wb'</span>,
+                ngram_range=(<span class="code-number">3</span>, <span class="code-number">5</span>),
+                max_features=<span class="code-number">160000</span>,
+                sublinear_tf=<span class="code-keyword">True</span>
+                )
+
+                features = FeatureUnion([(<span class="code-string">'word'</span>, word_vec), (<span
+                    class="code-string">'char'</span>, char_vec)])
+            </div>
+
+            <div class="callout callout-rakuten">
+                <div class="callout-title">💡 Justification de l'Approche</div>
+                <p>
+                    La combinaison word + char permet de capturer à la fois la <strong>sémantique</strong> (n-grams de
+                    mots)
+                    et la <strong>morphologie</strong> (n-grams de caractères). Cette dernière est particulièrement
+                    utile pour :
+                </p>
+                <ul>
+                    <li>Les fautes d'orthographe fréquentes dans les titres vendeurs</li>
+                    <li>Les mots composés et noms de marques</li>
+                    <li>Les textes multilingues</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="section-2-2">
+            <h1><span class="section-number">2.2</span> Pipeline de Prétraitement Image</h1>
+
+            <p class="lead">
+                Le preprocessing image utilise le <strong>Transfer Learning</strong> avec EfficientNet-B0 pour extraire
+                des features visuelles compactes et sémantiquement riches.
+            </p>
+
+            <h2><span class="section-number">2.2.1</span> Pipeline de Transformation</h2>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <div class="pipeline-step-title">IMAGE BRUTE</div>
+                    <div class="pipeline-step-value">500×500×3</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-title">RESIZE</div>
+                    <div class="pipeline-step-value">224×224×3</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-title">TO TENSOR</div>
+                    <div class="pipeline-step-value">[0, 1]</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-title">NORMALIZE</div>
+                    <div class="pipeline-step-value">ImageNet</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-title">CNN</div>
+                    <div class="pipeline-step-value">EfficientNet</div>
+                </div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-title">FEATURES</div>
+                    <div class="pipeline-step-value">1×1280</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="figures/johan/image29.png" alt="Pipeline de preprocessing image"
+                    style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure : Pipeline
+                        complet - Image originale → Représentation matricielle → Augmentation → Vecteur de features
+                        (1×2048)</em></p>
+            </div>
+
+            <h2><span class="section-number">2.2.2</span> Transfer Learning avec EfficientNet-B0</h2>
+            <div class="callout callout-info">
+                <div class="callout-title">📖 Principe du Transfer Learning</div>
+                <p>
+                    Réutiliser un modèle pré-entraîné sur ImageNet (1.2M images, 1000 classes) pour extraire des
+                    features
+                    génériques transférables à notre tâche de classification e-commerce.
+                </p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Architecture</th>
+                        <th>Params</th>
+                        <th>Features</th>
+                        <th>Top-1 ImageNet</th>
+                        <th>Notre Choix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>VGG-16</td>
+                        <td>138M</td>
+                        <td>4 096</td>
+                        <td>71.3%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>ResNet-50</td>
+                        <td>25M</td>
+                        <td>2 048</td>
+                        <td>76.1%</td>
+                        <td></td>
+                    </tr>
+                    <tr style="background: rgba(191, 0, 0, 0.1);">
+                        <td class="highlight">EfficientNet-B0</td>
+                        <td><strong>5.3M</strong></td>
+                        <td><strong>1 280</strong></td>
+                        <td><strong>77.1%</strong></td>
+                        <td><span class="badge badge-success">✓ Choisi</span></td>
+                    </tr>
+                    <tr>
+                        <td>EfficientNet-B3</td>
+                        <td>12M</td>
+                        <td>1 536</td>
+                        <td>81.6%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>ViT-B/16</td>
+                        <td>86M</td>
+                        <td>768</td>
+                        <td>81.8%</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="key-result">
+                <span class="metric">586×</span>
+                <span class="label">Facteur de Compression (750K → 1280 valeurs/image)</span>
+            </div>
+
+            <h2><span class="section-number">2.2.3</span> Normalisation ImageNet</h2>
+            <div class="formula-box">
+                <div class="formula-title">Paramètres de Normalisation (Obligatoires)</div>
+                mean = [0.485, 0.456, 0.406] <span class="code-comment"># RGB channels</span>
+                std = [0.229, 0.224, 0.225]
+
+                pixel_normalized = (pixel - mean) / std
+            </div>
+
+            <div class="callout callout-danger">
+                <div class="callout-title">⚠️ Normalisation Obligatoire</div>
+                <p>
+                    Ces valeurs sont calculées sur ImageNet. Le modèle a été entraîné avec ces statistiques,
+                    il est <strong>impératif</strong> de les respecter pour garantir des features cohérentes.
+                </p>
+            </div>
+        </section>
+
+        <section id="section-2-3">
+            <h1><span class="section-number">2.3</span> Gestion du Déséquilibre des Classes</h1>
+
+            <p class="lead">
+                Face au ratio de 1:13 entre classes minoritaires et majoritaires, nous avons mis en place une stratégie
+                multi-niveaux pour garantir des performances équilibrées.
+            </p>
+
+            <h2><span class="section-number">2.3.1</span> Stratégies Implémentées</h2>
+            <div class="three-columns">
+                <div class="callout callout-info">
+                    <div class="callout-title">1️⃣ Split Stratifié</div>
+                    <p style="font-size: 9pt;">
+                        <code>stratify=y</code> lors du train/val split garantit les proportions dans les deux
+                        sous-ensembles.
+                    </p>
+                </div>
+                <div class="callout callout-success">
+                    <div class="callout-title">2️⃣ Class Weights</div>
+                    <p style="font-size: 9pt;">
+                        Poids inversement proportionnels à la fréquence. Classe rare (1180) : poids 4.12, Classe
+                        fréquente (2583) : poids 0.31.
+                    </p>
+                </div>
+                <div class="callout callout-warning">
+                    <div class="callout-title">3️⃣ Data Augmentation</div>
+                    <p style="font-size: 9pt;">
+                        Oversampling visuel des classes minoritaires : rotations, zooms, miroirs → <strong>15K
+                            images/classe</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <h2><span class="section-number">2.3.2</span> Data Augmentation Image</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Technique</th>
+                        <th>Paramètres</th>
+                        <th>Objectif</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="highlight">Rotation</td>
+                        <td>±30°</td>
+                        <td>Invariance à l'orientation</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">Horizontal Flip</td>
+                        <td>p=0.5</td>
+                        <td>Invariance gauche/droite</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">Zoom</td>
+                        <td>0.8-1.2×</td>
+                        <td>Robustesse à l'échelle</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">Color Jitter</td>
+                        <td>±20%</td>
+                        <td>Robustesse aux conditions d'éclairage</td>
+                    </tr>
+                    <tr>
+                        <td>Random Crop</td>
+                        <td>224×224</td>
+                        <td>Variabilité spatiale</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">84 916</div>
+                    <div class="metric-label">Images Originales</div>
+                </div>
+                <div class="metric-card success">
+                    <div class="metric-value">405 000</div>
+                    <div class="metric-label">Après Augmentation</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">15 000</div>
+                    <div class="metric-label">Par Classe (Cible)</div>
+                </div>
+                <div class="metric-card warning">
+                    <div class="metric-value">4.8×</div>
+                    <div class="metric-label">Facteur Multiplication</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="figures/johan/image30.png" alt="Data Augmentation"
+                    style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure : Exemple
+                        d'augmentation - Image originale et 5 variations (rotation, flip, color jitter)</em></p>
+            </div>
+        </section>
+
+        <!-- ==================== PART III: MODÉLISATION TEXTE ==================== -->
+        <section class="part-divider">
+            <div class="part-number">III</div>
+            <div class="part-title">Modélisation Texte</div>
+            <div class="part-subtitle">Classification NLP avec TF-IDF et LinearSVC</div>
+        </section>
+
+        <section id="section-3-1" class="page-break">
+            <h1><span class="section-number">3.1</span> Benchmark des Classifieurs</h1>
+
+            <p class="lead">
+                Nous avons évalué plusieurs algorithmes de classification sur les features TF-IDF extraites
+                pour identifier le meilleur compromis performance/temps d'entraînement.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Modèle</th>
+                        <th>Accuracy</th>
+                        <th>F1 Weighted</th>
+                        <th>Macro F1</th>
+                        <th>Temps</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="highlight">LinearSVC (C=0.5)</td>
+                        <td><strong>0.83</strong></td>
+                        <td><strong>0.83</strong></td>
+                        <td><strong>0.82</strong></td>
+                        <td>~2 min</td>
+                        <td><span class="badge badge-success">🏆 Champion</span></td>
+                    </tr>
+                    <tr>
+                        <td>LogisticRegression</td>
+                        <td>0.81</td>
+                        <td>0.81</td>
+                        <td>0.79</td>
+                        <td>~5 min</td>
+                        <td><span class="badge badge-info">Baseline</span></td>
+                    </tr>
+                    <tr>
+                        <td>RandomForest</td>
+                        <td>0.72</td>
+                        <td>0.71</td>
+                        <td>0.69</td>
+                        <td>~15 min</td>
+                        <td><span class="badge badge-warning">Overfit</span></td>
+                    </tr>
+                    <tr>
+                        <td>MultinomialNB</td>
+                        <td>0.69</td>
+                        <td>0.68</td>
+                        <td>0.65</td>
+                        <td>~30 sec</td>
+                        <td><span class="badge badge-danger">Limité</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout callout-success">
+                <div class="callout-title">🏆 Verdict : LinearSVC</div>
+                <p>
+                    Le <strong>LinearSVC</strong> (Support Vector Classifier linéaire) domine le benchmark avec 83%
+                    d'accuracy
+                    et un F1-score de 0.83. Sa capacité à gérer les espaces de haute dimension (280K features TF-IDF)
+                    et son efficacité computationnelle en font le choix optimal.
+                </p>
+            </div>
+        </section>
+
+        <section id="section-3-2">
+            <h1><span class="section-number">3.2</span> Optimisation LinearSVC</h1>
+
+            <h2><span class="section-number">3.2.1</span> Grid Search sur l'Hyperparamètre C</h2>
+            <p>
+                Le paramètre <code>C</code> contrôle le compromis entre la marge de séparation et les erreurs de
+                classification.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>C</th>
+                        <th>Train Acc</th>
+                        <th>Val Acc</th>
+                        <th>F1 Weighted</th>
+                        <th>Gap</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0.1</td>
+                        <td>0.80</td>
+                        <td>0.80</td>
+                        <td>0.79</td>
+                        <td>0.00</td>
+                        <td>Underfitting</td>
+                    </tr>
+                    <tr style="background: rgba(16, 185, 129, 0.1);">
+                        <td class="highlight">0.5</td>
+                        <td><strong>0.86</strong></td>
+                        <td><strong>0.83</strong></td>
+                        <td><strong>0.83</strong></td>
+                        <td><strong>0.03</strong></td>
+                        <td><span class="badge badge-success">✓ Optimal</span></td>
+                    </tr>
+                    <tr>
+                        <td>1.0</td>
+                        <td>0.89</td>
+                        <td>0.82</td>
+                        <td>0.82</td>
+                        <td>0.07</td>
+                        <td>Léger overfit</td>
+                    </tr>
+                    <tr>
+                        <td>2.0</td>
+                        <td>0.92</td>
+                        <td>0.81</td>
+                        <td>0.81</td>
+                        <td>0.11</td>
+                        <td>Overfitting</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="key-result">
+                <span class="metric">C = 0.5</span>
+                <span class="label">Hyperparamètre Optimal (Meilleur compromis biais/variance)</span>
+            </div>
+
+            <h2><span class="section-number">3.2.2</span> Configuration Finale</h2>
+            <div class="code-block">
+                <div class="code-title">Pipeline Texte Final (Python)</div>
+                <span class="code-keyword">from</span> sklearn.svm <span class="code-keyword">import</span> LinearSVC
+                <span class="code-keyword">from</span> sklearn.pipeline <span class="code-keyword">import</span>
+                Pipeline
+
+                model = Pipeline([
+                (<span class="code-string">'features'</span>, FeatureUnion([
+                (<span class="code-string">'word'</span>, word_vectorizer),
+                (<span class="code-string">'char'</span>, char_vectorizer)
+                ])),
+                (<span class="code-string">'classifier'</span>, LinearSVC(C=<span class="code-number">0.5</span>))
+                ])
+            </div>
+        </section>
+
+        <section id="section-3-3">
+            <h1><span class="section-number">3.3</span> Résultats Détaillés par Classe</h1>
+
+            <p class="lead">
+                Analyse granulaire des performances du modèle LinearSVC sur chacune des 27 catégories.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Catégorie</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1-Score</th>
+                        <th>Support</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2583</td>
+                        <td>Piscines</td>
+                        <td>0.97</td>
+                        <td>0.98</td>
+                        <td class="success-text">0.98</td>
+                        <td>2042</td>
+                        <td><span class="badge badge-success">✓ Excellent</span></td>
+                    </tr>
+                    <tr>
+                        <td>2905</td>
+                        <td>Jeux PC box</td>
+                        <td>0.98</td>
+                        <td>0.98</td>
+                        <td class="success-text">0.98</td>
+                        <td>174</td>
+                        <td><span class="badge badge-success">✓ Excellent</span></td>
+                    </tr>
+                    <tr>
+                        <td>1301</td>
+                        <td>Loisirs créatifs</td>
+                        <td>0.97</td>
+                        <td>0.96</td>
+                        <td class="success-text">0.97</td>
+                        <td>161</td>
+                        <td><span class="badge badge-success">✓ Excellent</span></td>
+                    </tr>
+                    <tr>
+                        <td>2522</td>
+                        <td>Papeterie</td>
+                        <td>0.93</td>
+                        <td>0.94</td>
+                        <td class="success-text">0.94</td>
+                        <td>998</td>
+                        <td><span class="badge badge-success">✓ Excellent</span></td>
+                    </tr>
+                    <tr>
+                        <td>1160</td>
+                        <td>Cartes collection</td>
+                        <td>0.89</td>
+                        <td>0.93</td>
+                        <td class="success-text">0.91</td>
+                        <td>791</td>
+                        <td><span class="badge badge-success">✓ Excellent</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="7" style="text-align: center; background: var(--gray-100);">... (15 classes avec F1
+                            ≥ 0.85) ...</td>
+                    </tr>
+                    <tr>
+                        <td>2705</td>
+                        <td>Livres anciens</td>
+                        <td>0.76</td>
+                        <td>0.72</td>
+                        <td class="warning-text">0.74</td>
+                        <td>552</td>
+                        <td><span class="badge badge-warning">⚠️ Difficile</span></td>
+                    </tr>
+                    <tr>
+                        <td>40</td>
+                        <td>Jeux vidéo</td>
+                        <td>0.72</td>
+                        <td>0.67</td>
+                        <td class="warning-text">0.69</td>
+                        <td>502</td>
+                        <td><span class="badge badge-warning">⚠️ Difficile</span></td>
+                    </tr>
+                    <tr>
+                        <td>1180</td>
+                        <td>Figurines manga</td>
+                        <td>0.79</td>
+                        <td>0.58</td>
+                        <td class="warning-text">0.66</td>
+                        <td>153</td>
+                        <td><span class="badge badge-warning">⚠️ Difficile</span></td>
+                    </tr>
+                    <tr>
+                        <td>1281</td>
+                        <td>Jeux société</td>
+                        <td>0.65</td>
+                        <td>0.55</td>
+                        <td class="danger-text">0.60</td>
+                        <td>414</td>
+                        <td><span class="badge badge-danger">⚠️ Critique</span></td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Livres occasion</td>
+                        <td>0.54</td>
+                        <td>0.57</td>
+                        <td class="danger-text">0.56</td>
+                        <td>623</td>
+                        <td><span class="badge badge-danger">⚠️ Critique</span></td>
+                    </tr>
+                </tbody>
+                <tfoot style="background: var(--gray-100); font-weight: bold;">
+                    <tr>
+                        <td colspan="2">GLOBAL</td>
+                        <td>0.83</td>
+                        <td>0.83</td>
+                        <td class="highlight">0.83</td>
+                        <td>16 983</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="two-columns">
+                <div class="callout callout-success">
+                    <div class="callout-title">✅ Classes Très Solides (F1 ≥ 0.85)</div>
+                    <p style="font-size: 9pt;">
+                        15 catégories avec F1 ≥ 0.85 : piscines, jeux PC, papeterie, cartes, consoles, modélisme,
+                        loisirs créatifs, puériculture, mobilier, literie, alimentation, décoration, animalerie,
+                        magazines, bricolage.
+                    </p>
+                    <p style="font-size: 9pt;"><strong>Point commun</strong> : Vocabulaire spécifique et distinctif.</p>
+                </div>
+                <div class="callout callout-danger">
+                    <div class="callout-title">⚠️ Classes Difficiles (F1 < 0.70)</div>
+                            <p style="font-size: 9pt;">
+                                4 catégories problématiques : livres occasion (0.56), jeux société (0.60), figurines
+                                (0.66), jeux vidéo (0.69).
+                            </p>
+                            <p style="font-size: 9pt;"><strong>Cause</strong> : Confusion lexicale entre catégories
+                                similaires (livres neufs vs occasion, jeux vidéo vs jeux société).</p>
+                    </div>
+                </div>
+
+                <h2><span class="section-number">3.3.1</span> Rapport de Classification Détaillé</h2>
+                <div class="two-columns">
+                    <div style="text-align: center;">
+                        <img src="figures/hery/page1.png" alt="Verdict Final LinearSVC"
+                            style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                        <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Verdict
+                                final : LinearSVC C=0.5, Accuracy 83%</em></p>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="figures/hery/page2.png" alt="Classification Report"
+                            style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                        <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Rapport
+                                complet : Precision/Recall/F1 par classe</em></p>
+                    </div>
+                </div>
+        </section>
+
+        <!-- ==================== PART IV: MODÉLISATION IMAGE ==================== -->
+        <section class="part-divider">
+            <div class="part-number">IV</div>
+            <div class="part-title">Modélisation Image</div>
+            <div class="part-subtitle">Du Transfer Learning au Voting System à 92%</div>
+        </section>
+
+        <section id="section-4-1" class="page-break">
+            <h1><span class="section-number">4.1</span> Stratégie Transfer Learning</h1>
+
+            <p class="lead">
+                Face à la taille modeste du dataset (84K images) et aux contraintes de calcul, nous avons opté pour
+                le <strong>Transfer Learning</strong> plutôt qu'un entraînement from scratch.
+            </p>
+
+            <h2><span class="section-number">4.1.1</span> Trois Stratégies Possibles</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Stratégie</th>
+                        <th>Description</th>
+                        <th>Quand l'utiliser</th>
+                        <th>Notre Choix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: rgba(16, 185, 129, 0.1);">
+                        <td class="highlight">Feature Extraction</td>
+                        <td>Modèle gelé, extraction features</td>
+                        <td>Dataset petit, similaire à ImageNet</td>
+                        <td><span class="badge badge-success">✓ Phase 1</span></td>
+                    </tr>
+                    <tr style="background: rgba(245, 158, 11, 0.1);">
+                        <td class="highlight">Fine-tuning partiel</td>
+                        <td>Dégeler dernières couches</td>
+                        <td>Dataset moyen, légèrement différent</td>
+                        <td><span class="badge badge-warning">✓ Phase 2</span></td>
+                    </tr>
+                    <tr>
+                        <td>Fine-tuning complet</td>
+                        <td>Réentraîner tout le modèle</td>
+                        <td>Grand dataset, très différent</td>
+                        <td><span class="badge badge-danger">✗ Trop coûteux</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="comparison">
+                <div class="comparison-item good">
+                    <div class="comparison-title">✅ Feature Extraction</div>
+                    <ul style="font-size: 9pt;">
+                        <li>Rapide (pas de backprop)</li>
+                        <li>Fonctionne sur CPU</li>
+                        <li>Pas d'overfitting</li>
+                        <li>Reproductible à 100%</li>
+                    </ul>
+                </div>
+                <div class="comparison-item bad">
+                    <div class="comparison-title">⚠️ Limitations</div>
+                    <ul style="font-size: 9pt;">
+                        <li>Features non optimisées pour notre tâche</li>
+                        <li>Performance potentiellement limitée</li>
+                        <li>Pas d'adaptation au domaine e-commerce</li>
+                    </ul>
+                </div>
+                <span class="vs-badge">VS</span>
+            </div>
+        </section>
+
+        <section id="section-4-2">
+            <h1><span class="section-number">4.2</span> Benchmark Machine Learning</h1>
+
+            <p class="lead">
+                Dans un premier temps, nous avons traité les vecteurs de features (2048 dimensions ResNet)
+                comme des données tabulaires classiques.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Modèle</th>
+                        <th>F1-Score</th>
+                        <th>Temps</th>
+                        <th>Hardware</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Random Forest (CPU)</td>
+                        <td>0.71</td>
+                        <td>~30 min</td>
+                        <td>CPU</td>
+                        <td>Baseline</td>
+                    </tr>
+                    <tr>
+                        <td>XGBoost (GPU)</td>
+                        <td>0.72</td>
+                        <td>~10 min</td>
+                        <td>GPU</td>
+                        <td>Standard</td>
+                    </tr>
+                    <tr>
+                        <td>LightGBM</td>
+                        <td>0.71</td>
+                        <td>~5 min</td>
+                        <td>CPU</td>
+                        <td>Rapide</td>
+                    </tr>
+                    <tr style="background: rgba(191, 0, 0, 0.1);">
+                        <td class="highlight">XGBoost Heavy (CPU)</td>
+                        <td><strong>0.765</strong></td>
+                        <td><strong>6 heures</strong></td>
+                        <td>CPU 128GB RAM</td>
+                        <td><span class="badge badge-warning">Force brute</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Plafond de Performance ML</div>
+                <p>
+                    Les modèles ML classiques plafonnent autour de <strong>0.72-0.76 F1</strong>.
+                    Le XGBoost "Heavy" (300 estimateurs, profondeur 10) nécessite 6 heures de calcul pour un gain
+                    marginal.
+                    <strong>Conclusion</strong> : Il faut passer au Deep Learning pour franchir ce plafond.
+                </p>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="figures/johan/image2.jpg" alt="Podium Machine Learning"
+                    style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure : Podium ML
+                        classique - XGBoost Heavy en tête (F1=0.765) après grid search exhaustif</em></p>
+            </div>
+        </section>
+
+        <section id="section-4-3">
+            <h1><span class="section-number">4.3</span> Approche Deep Learning</h1>
+
+            <p class="lead">
+                Le passage aux réseaux de neurones denses (MLP) via PyTorch a provoqué une <strong>rupture</strong>
+                dans les performances.
+            </p>
+
+            <h2><span class="section-number">4.3.1</span> Architecture MLP</h2>
+            <div class="code-block">
+                <div class="code-title">Architecture du Réseau (PyTorch)</div>
+                Input (2048) → Dense(1024) → ReLU → Dropout(0.3)
+                → Dense(512) → ReLU → Dropout(0.3)
+                → Dense(256) → ReLU
+                → Dense(27) → Softmax
+            </div>
+
+            <h2><span class="section-number">4.3.2</span> Grid Search Configurations</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Optimizer</th>
+                        <th>Activation</th>
+                        <th>Dropout</th>
+                        <th>F1-Score</th>
+                        <th>Temps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: rgba(16, 185, 129, 0.1);">
+                        <td class="highlight">Adam</td>
+                        <td class="highlight">GELU</td>
+                        <td>0.2</td>
+                        <td class="success-text"><strong>0.9141</strong></td>
+                        <td>58 sec</td>
+                    </tr>
+                    <tr>
+                        <td>Adam</td>
+                        <td>ReLU</td>
+                        <td>0.3</td>
+                        <td>0.9023</td>
+                        <td>55 sec</td>
+                    </tr>
+                    <tr>
+                        <td>RMSProp</td>
+                        <td>GELU</td>
+                        <td>0.2</td>
+                        <td>0.8956</td>
+                        <td>62 sec</td>
+                    </tr>
+                    <tr>
+                        <td>SGD</td>
+                        <td>ReLU</td>
+                        <td>0.3</td>
+                        <td>0.8734</td>
+                        <td>70 sec</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="key-result">
+                <span class="metric">91.4%</span>
+                <span class="label">F1-Score MLP (Adam + GELU + Dropout 0.2)</span>
+            </div>
+
+            <div class="callout callout-success">
+                <div class="callout-title">🚀 Rupture de Performance</div>
+                <p>
+                    Le passage au Deep Learning a permis de <strong>briser le plafond de 76%</strong> pour atteindre
+                    <strong>91%+</strong>.
+                    L'accélération GPU (RTX 4070) réduit le temps d'entraînement de 6 heures à <strong>moins de 60
+                        secondes</strong>.
+                </p>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="figures/johan/image10.jpg" alt="Ranking Global ML+DL"
+                    style="max-width: 90%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure : Ranking
+                        global des 40 configurations testées - Le Deep Learning (F1=0.914) surpasse nettement le ML
+                        (0.765)</em></p>
+            </div>
+        </section>
+
+        <section id="section-4-4">
+            <h1><span class="section-number">4.4</span> Architectures Avancées</h1>
+
+            <p class="lead">
+                Pour maximiser la performance et la robustesse, nous avons exploré trois architectures complémentaires.
+            </p>
+
+            <div class="three-columns">
+                <div class="callout callout-rakuten">
+                    <div class="callout-title">🦖 DINOv3 (ViT-Large)</div>
+                    <p style="font-size: 9pt;"><strong>Score solo</strong> : 79.1%</p>
+                    <p style="font-size: 9pt;">Vision Transformer self-supervised. Excellente vision globale et
+                        robustesse aux transformations.</p>
+                    <p style="font-size: 9pt;"><strong>Rôle</strong> : "Patron" du vote (confiance élevée)</p>
+                </div>
+                <div class="callout callout-success">
+                    <div class="callout-title">🏆 XGBoost (ResNet)</div>
+                    <p style="font-size: 9pt;"><strong>Score solo</strong> : 80.1%</p>
+                    <p style="font-size: 9pt;">XGBoost sur features ResNet50 (2048 dims). Champion historique du
+                        benchmark ML.</p>
+                    <p style="font-size: 9pt;"><strong>Rôle</strong> : Vote prépondérant</p>
+                </div>
+                <div class="callout callout-info">
+                    <div class="callout-title">⚡ EfficientNet-B0</div>
+                    <p style="font-size: 9pt;"><strong>Score solo</strong> : ~75%</p>
+                    <p style="font-size: 9pt;">Modèle léger et rapide. Capture les détails fins (textures, grains).</p>
+                    <p style="font-size: 9pt;"><strong>Rôle</strong> : Stabilisateur</p>
+                </div>
+            </div>
+
+            <h2><span class="section-number">4.4.1</span> Cas d'Étude : Modèle Overfitté</h2>
+            <div class="callout callout-danger">
+                <div class="callout-title">⚠️ M4 ResNet "Phoenix" - Leçon d'Overfitting</div>
+                <p>
+                    Un modèle ResNet fine-tuné a atteint <strong>91% sur le train</strong> mais chutait drastiquement en
+                    validation.
+                    Ce cas illustre les dangers du sur-apprentissage et justifie notre choix de l'ensemble learning.
+                </p>
+                <table style="margin-top: 0.5rem;">
+                    <tr>
+                        <td><strong>Train Accuracy</strong></td>
+                        <td>91%</td>
+                        <td style="color: var(--danger);">← Mémorisation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Val Accuracy</strong></td>
+                        <td>~65%</td>
+                        <td style="color: var(--danger);">← Généralisation faible</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section id="section-4-5">
+            <h1><span class="section-number">4.5</span> Voting System - Modèle Final</h1>
+
+            <p class="lead">
+                Plutôt que de miser sur un seul modèle, nous avons construit un <strong>Voting Classifier</strong>
+                exploitant la complémentarité des architectures.
+            </p>
+
+            <h2><span class="section-number">4.5.1</span> Principe de l'Ensemble</h2>
+            <div class="callout callout-info">
+                <div class="callout-title">💡 Orthogonalité des Erreurs</div>
+                <p>
+                    L'objectif est d'exploiter le fait que les modèles font des erreurs différentes.
+                    Là où DINOv3 se trompe (confusion visuelle), XGBoost peut avoir raison (basé sur textures), et
+                    vice-versa.
+                </p>
+            </div>
+
+            <h2><span class="section-number">4.5.2</span> Pondération des Votes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Modèle</th>
+                        <th>Score Solo</th>
+                        <th>Poids</th>
+                        <th>Rôle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="highlight">DINOv3</td>
+                        <td>79.1%</td>
+                        <td><strong>0.40</strong></td>
+                        <td>Vision globale, très confiant</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">XGBoost/ResNet</td>
+                        <td>80.1%</td>
+                        <td><strong>0.35</strong></td>
+                        <td>Champion ML, textures</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">EfficientNet</td>
+                        <td>~75%</td>
+                        <td><strong>0.25</strong></td>
+                        <td>Stabilisateur, détails fins</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="key-result" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <span class="metric">92%</span>
+                <span class="label">Accuracy Voting System (Score Final Image)</span>
+            </div>
+
+            <h2><span class="section-number">4.5.3</span> Calibration de Confiance</h2>
+            <p>
+                Un défi technique majeur fut la <strong>"dilution de confiance"</strong> : XGBoost, trop prudent
+                (confiance 20-40%),
+                tirait la moyenne vers le bas. Solution : <strong>Sharpening</strong> (élévation au cube des
+                probabilités).
+            </p>
+
+            <div class="formula-box">
+                <div class="formula-title">Sharpening des Probabilités</div>
+                p_calibrated = p³ / Σ(p³) <span class="code-comment"># Renforce les probabilités dominantes</span>
+
+                <span class="code-comment"># Résultat : XGBoost passe de confiance 30% → 60%+</span>
+                <span class="code-comment"># Le Voting franchit le seuil d'automatisation (80%)</span>
+            </div>
+
+            <h2><span class="section-number">4.5.4</span> Visualisation du Voting System</h2>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="figures/johan/image32.png" alt="Focus Battle - Comparaison modèles"
+                    style="max-width: 95%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure : Focus
+                        Battle - Comparaison des zones d'attention (EfficientNet, DINOv3, XGBoost) sur une image
+                        test</em></p>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="figures/johan/image25.png" alt="Rapport technique - Grad-CAM et confiances"
+                    style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure : Rapport
+                        technique détaillé - Heatmaps Grad-CAM + confiances par modèle + décision finale du Voting</em>
+                </p>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="figures/johan/image14.png" alt="Exemples de décisions Voting"
+                    style="max-width: 90%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure : Exemples
+                        de décisions - Accord majoritaire vs désaccord (correction par l'ensemble)</em></p>
+            </div>
+        </section>
+
+        <section id="section-4-6">
+            <h1><span class="section-number">4.6</span> Tests de Robustesse</h1>
+
+            <p class="lead">
+                Pour valider la fiabilité industrielle du modèle, nous avons mené des <strong>"crash-tests"</strong>
+                simulant des conditions dégradées.
+            </p>
+
+            <h2><span class="section-number">4.6.1</span> Test de Rotation 360°</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Modèle</th>
+                        <th>Stabilité</th>
+                        <th>Comportement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Phoenix (Overfitté)</td>
+                        <td class="danger-text">Instable</td>
+                        <td>Chute drastique à certains angles</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">DINOv3</td>
+                        <td class="success-text">Stable</td>
+                        <td>Ligne quasi-plate quel que soit l'angle</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">Voting System</td>
+                        <td class="success-text">Très stable</td>
+                        <td>Compensation collective des faiblesses</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2><span class="section-number">4.6.2</span> Test de Résistance au Bruit</h2>
+            <div class="callout callout-success">
+                <div class="callout-title">✅ Robustesse Validée</div>
+                <p>
+                    Face à la dégradation d'image (bruit numérique, flou), le <strong>Voting System</strong> conserve
+                    une performance acceptable là où les modèles individuels s'effondrent. Cette robustesse est
+                    essentielle
+                    pour traiter les photos de qualité variable soumises par les vendeurs.
+                </p>
+            </div>
+
+            <h2><span class="section-number">4.6.3</span> Capacité d'Automatisation</h2>
+            <p>Seuil d'automatisation fixé à <strong>80% de confiance</strong> (pas d'intervention humaine requise).</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Modèle</th>
+                        <th>Produits Automatisés (/60)</th>
+                        <th>Taux</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>XGBoost seul</td>
+                        <td>6</td>
+                        <td>10%</td>
+                    </tr>
+                    <tr>
+                        <td>DINOv3 seul</td>
+                        <td>46</td>
+                        <td>77%</td>
+                    </tr>
+                    <tr style="background: rgba(16, 185, 129, 0.1);">
+                        <td class="highlight">Voting System</td>
+                        <td><strong>53</strong></td>
+                        <td class="success-text"><strong>88%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ==================== PART V: FUSION MULTIMODALE ==================== -->
+        <section class="part-divider">
+            <div class="part-number">V</div>
+            <div class="part-title">Fusion Multimodale</div>
+            <div class="part-subtitle">Combinaison Texte + Image pour une classification robuste</div>
+        </section>
+
+        <section id="section-5-1" class="page-break">
+            <h1><span class="section-number">5.1</span> Stratégie de Fusion Tardive</h1>
+
+            <p class="lead">
+                La fusion multimodale combine les prédictions des modèles texte et image pour exploiter
+                la complémentarité des deux sources d'information.
+            </p>
+
+            <h2><span class="section-number">5.1.1</span> Types de Fusion</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Avantages</th>
+                        <th>Notre Choix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Early Fusion</td>
+                        <td>Concaténation des features brutes</td>
+                        <td>Interactions fines</td>
+                        <td></td>
+                    </tr>
+                    <tr style="background: rgba(16, 185, 129, 0.1);">
+                        <td class="highlight">Late Fusion</td>
+                        <td>Moyenne pondérée des probabilités</td>
+                        <td>Simple, modulaire, interprétable</td>
+                        <td><span class="badge badge-success">✓ Choisi</span></td>
+                    </tr>
+                    <tr>
+                        <td>Hybrid Fusion</td>
+                        <td>Combinaison des deux</td>
+                        <td>Flexibilité maximale</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="formula-box">
+                <div class="formula-title">Late Fusion - Formule</div>
+                P_final(classe) = α × P_image(classe) + (1-α) × P_texte(classe)
+
+                <span class="code-comment"># Avec α = 0.6 (poids image) et (1-α) = 0.4 (poids texte)</span>
+            </div>
+
+            <h2><span class="section-number">5.1.2</span> Complémentarité des Modalités</h2>
+            <div class="callout callout-info">
+                <div class="callout-title">💡 Exemple de Synergie</div>
+                <p>
+                    <strong>Cas</strong> : Image d'une forme ronde bleue → Modèle image prédit "Piscine"<br>
+                    <strong>Texte</strong> : "DVD Le Grand Bleu" → Modèle texte prédit "DVD"<br>
+                    <strong>Fusion</strong> : Le texte corrige l'erreur visuelle → Classe finale "DVD"
+                </p>
+            </div>
+        </section>
+
+        <section id="section-5-2">
+            <h1><span class="section-number">5.2</span> Optimisation des Poids</h1>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">60%</div>
+                    <div class="metric-label">Poids Image</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">40%</div>
+                    <div class="metric-label">Poids Texte</div>
+                </div>
+                <div class="metric-card success">
+                    <div class="metric-value">92%</div>
+                    <div class="metric-label">Image seule</div>
+                </div>
+                <div class="metric-card warning">
+                    <div class="metric-value">83%</div>
+                    <div class="metric-label">Texte seul</div>
+                </div>
+            </div>
+
+            <div class="callout callout-rakuten">
+                <div class="callout-title">🎯 Justification du Ratio 60/40</div>
+                <p>
+                    Le modèle image (Voting 92%) étant plus performant que le modèle texte (83%),
+                    un poids supérieur lui est attribué. Cependant, le texte reste crucial pour :
+                </p>
+                <ul>
+                    <li>Corriger les ambiguïtés visuelles (ex: boîtes de jeux similaires)</li>
+                    <li>Les produits où l'image est peu discriminante</li>
+                    <li>Les cas où la description contient des mots-clés décisifs</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="section-5-3">
+            <h1><span class="section-number">5.3</span> Résultats Combinés</h1>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Configuration</th>
+                        <th>Accuracy</th>
+                        <th>F1 Weighted</th>
+                        <th>Avantage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Texte seul (LinearSVC)</td>
+                        <td>83%</td>
+                        <td>0.83</td>
+                        <td>Rapide, interprétable</td>
+                    </tr>
+                    <tr>
+                        <td>Image seule (Voting)</td>
+                        <td>92%</td>
+                        <td>~0.92</td>
+                        <td>Haute performance</td>
+                    </tr>
+                    <tr style="background: rgba(191, 0, 0, 0.1);">
+                        <td class="highlight">Fusion Multimodale</td>
+                        <td><strong>~94%</strong></td>
+                        <td><strong>~0.93</strong></td>
+                        <td>Robustesse maximale</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout callout-success">
+                <div class="callout-title">✅ Gain de la Fusion</div>
+                <p>
+                    La fusion apporte un gain de <strong>+2 points</strong> par rapport au meilleur modèle seul (image).
+                    Plus important encore, elle améliore la <strong>robustesse</strong> sur les cas difficiles où
+                    une seule modalité peut se tromper.
+                </p>
+            </div>
+        </section>
+
+        <!-- ==================== PART VI: APPLICATION STREAMLIT ==================== -->
+        <section class="part-divider">
+            <div class="part-number">VI</div>
+            <div class="part-title">Application Streamlit</div>
+            <div class="part-subtitle">Interface de démonstration interactive</div>
+        </section>
+
+        <section id="section-6-1" class="page-break">
+            <h1><span class="section-number">6.1</span> Architecture de l'Application</h1>
+
+            <div class="code-block">
+                <div class="code-title">Structure du Projet</div>
+                src/streamlit/
+                ├── app.py <span class="code-comment"># Page d'accueil</span>
+                ├── config.py <span class="code-comment"># Configuration (paths, paramètres)</span>
+                ├── pages/
+                │ ├── 1_Données <span class="code-comment"># Stats du dataset (84K produits)</span>
+                │ ├── 2_Preprocessing <span class="code-comment"># Pipeline NLP et image</span>
+                │ ├── 3_Modèles <span class="code-comment"># Comparaison des modèles</span>
+                │ ├── 4_Démo <span class="code-comment"># Classification interactive</span>
+                │ ├── 5_Performance <span class="code-comment"># Métriques et confusion matrix</span>
+                │ ├── 6_Conclusions <span class="code-comment"># Résultats et perspectives</span>
+                │ └── 8_Explicabilité <span class="code-comment"># SHAP, LIME, Grad-CAM</span>
+                ├── utils/ <span class="code-comment"># Code métier (classifiers)</span>
+                └── tests/ <span class="code-comment"># Tests pytest</span>
+            </div>
+
+            <h2><span class="section-number">6.1.1</span> Configuration</h2>
+            <div class="code-block">
+                <div class="code-title">Extrait config.py</div>
+                MODEL_CONFIG = {
+                <span class="code-string">"use_mock"</span>: <span class="code-keyword">False</span>,
+                <span class="code-string">"fusion_weights"</span>: (<span class="code-number">0.6</span>, <span
+                    class="code-number">0.4</span>), <span class="code-comment"># image, texte</span>
+                <span class="code-string">"top_k"</span>: <span class="code-number">5</span>,
+                <span class="code-string">"confidence_threshold"</span>: <span class="code-number">0.1</span>
+                }
+            </div>
+        </section>
+
+        <section id="section-6-2">
+            <h1><span class="section-number">6.2</span> Fonctionnalités</h1>
+
+            <div class="three-columns">
+                <div class="callout callout-info">
+                    <div class="callout-title">📝 Classification Texte</div>
+                    <p style="font-size: 9pt;">Saisie d'un titre/description → Prédiction instantanée avec top-5
+                        catégories.</p>
+                </div>
+                <div class="callout callout-success">
+                    <div class="callout-title">🖼️ Classification Image</div>
+                    <p style="font-size: 9pt;">Upload d'image → Voting System → Prédiction avec confiance.</p>
+                </div>
+                <div class="callout callout-warning">
+                    <div class="callout-title">🔀 Multimodal</div>
+                    <p style="font-size: 9pt;">Fusion temps réel texte + image avec pondération configurable.</p>
+                </div>
+            </div>
+
+            <h2><span class="section-number">6.2.1</span> Commandes de Lancement</h2>
+            <div class="code-block">
+                <div class="code-title">Installation et Lancement</div>
+                <span class="code-comment"># Installation des dépendances</span>
+                pip install -r requirements.txt
+
+                <span class="code-comment"># Télécharger les modèles depuis Google Drive → /models</span>
+
+                <span class="code-comment"># Lancer l'application</span>
+                streamlit run src/streamlit/app.py
+            </div>
+        </section>
+
+        <section id="section-6-3" class="page-break">
+            <h1><span class="section-number">6.3</span> Captures d'Écran de l'Application</h1>
+
+            <p class="lead">
+                Aperçu visuel des principales pages de l'application Streamlit.
+            </p>
+
+            <h2><span class="section-number">6.3.1</span> Page d'Accueil</h2>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="figures/streamlit_home.png" alt="Page d'accueil Streamlit"
+                    style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure 1 : Page
+                        d'accueil présentant le projet et la navigation</em></p>
+            </div>
+
+            <h2><span class="section-number">6.3.2</span> Exploration des Données</h2>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="figures/streamlit_donnees.png" alt="Page Données"
+                    style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure 2 :
+                        Statistiques du dataset (84 916 produits, 27 catégories)</em></p>
+            </div>
+
+            <h2><span class="section-number">6.3.3</span> Pipeline de Preprocessing</h2>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="figures/streamlit_preprocessing.png" alt="Page Preprocessing"
+                    style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure 3 :
+                        Visualisation des pipelines de preprocessing texte et image</em></p>
+            </div>
+
+            <h2><span class="section-number">6.3.4</span> Métriques de Performance</h2>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="figures/streamlit_performance.png" alt="Page Performance"
+                    style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure 4 :
+                        Métriques détaillées et matrice de confusion</em></p>
+            </div>
+
+            <h2><span class="section-number">6.3.5</span> Conclusions</h2>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="figures/streamlit_conclusions.png" alt="Page Conclusions"
+                    style="max-width: 100%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure 5 : Synthèse
+                        des résultats et perspectives</em></p>
+            </div>
+        </section>
+
+        <!-- ==================== PART VII: CONCLUSION ==================== -->
+        <section class="part-divider">
+            <div class="part-number">VII</div>
+            <div class="part-title">Conclusion et Perspectives</div>
+            <div class="part-subtitle">Bilan, limites et pistes d'amélioration</div>
+        </section>
+
+        <section id="section-7-1" class="page-break">
+            <h1><span class="section-number">7.1</span> Bilan du Projet</h1>
+
+            <div class="exec-metrics">
+                <div class="exec-metric">
+                    <span class="exec-metric-value">✓</span>
+                    <span class="exec-metric-label">Objectifs Atteints</span>
+                </div>
+                <div class="exec-metric success">
+                    <span class="exec-metric-value">92%</span>
+                    <span class="exec-metric-label">Performance Image</span>
+                </div>
+                <div class="exec-metric secondary">
+                    <span class="exec-metric-value">83%</span>
+                    <span class="exec-metric-label">Performance Texte</span>
+                </div>
+            </div>
+
+            <h2><span class="section-number">7.1.1</span> Réalisations</h2>
+            <ul class="check-list">
+                <li>Pipeline complet de preprocessing texte et image</li>
+                <li>Gestion efficace du déséquilibre de classes (ratio 1:13)</li>
+                <li>Benchmark exhaustif des modèles ML et DL</li>
+                <li>Voting System innovant combinant 3 architectures</li>
+                <li>Application Streamlit multimodale fonctionnelle</li>
+                <li>Tests de robustesse validant la fiabilité industrielle</li>
+            </ul>
+
+            <h2><span class="section-number">7.1.2</span> Contributions Techniques</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Contribution</th>
+                        <th>Innovation</th>
+                        <th>Impact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Voting System</td>
+                        <td>Fusion DINOv3 + XGBoost + EfficientNet</td>
+                        <td>+13% vs baseline</td>
+                    </tr>
+                    <tr>
+                        <td>Calibration Sharpening</td>
+                        <td>Alignement des confiances inter-modèles</td>
+                        <td>88% automatisation</td>
+                    </tr>
+                    <tr>
+                        <td>FeatureUnion TF-IDF</td>
+                        <td>Word + Char n-grams combinés</td>
+                        <td>Robustesse multilingue</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="section-7-2">
+            <h1><span class="section-number">7.2</span> Limites et Difficultés</h1>
+
+            <div class="two-columns">
+                <div class="callout callout-danger">
+                    <div class="callout-title">⚠️ Limites Techniques</div>
+                    <ul style="font-size: 9pt;">
+                        <li><strong>Ambiguïté visuelle</strong> : Boîtes PS4/Xbox indiscernables sans texte</li>
+                        <li><strong>Dépendance GPU</strong> : DINOv3 nécessite accélération CUDA</li>
+                        <li><strong>Taille modèles</strong> : >3GB, incompatible avec Git</li>
+                        <li><strong>Classes confuses</strong> : Livres neufs/occasion difficiles à distinguer</li>
+                    </ul>
+                </div>
+                <div class="callout callout-warning">
+                    <div class="callout-title">⚠️ Difficultés Rencontrées</div>
+                    <ul style="font-size: 9pt;">
+                        <li><strong>Synchronisation modèles</strong> : Dictionnaires de labels désalignés</li>
+                        <li><strong>Overfitting</strong> : ResNet "Phoenix" mémorisait les images</li>
+                        <li><strong>Temps de calcul</strong> : Feature extraction ~1h30 sur CPU</li>
+                        <li><strong>Missing descriptions</strong> : 35% de NaN à gérer</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-7-3">
+            <h1><span class="section-number">7.3</span> Perspectives d'Amélioration</h1>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Piste</th>
+                        <th>Description</th>
+                        <th>Gain Estimé</th>
+                        <th>Effort</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="highlight">OCR sur Images</td>
+                        <td>Lire le texte présent sur les images (titres, marques)</td>
+                        <td>+3-5%</td>
+                        <td>Moyen</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">CamemBERT/BERT</td>
+                        <td>Remplacer TF-IDF par embeddings contextuels</td>
+                        <td>+5-8%</td>
+                        <td>Élevé</td>
+                    </tr>
+                    <tr>
+                        <td>Early Fusion</td>
+                        <td>Concaténer features avant classification</td>
+                        <td>+2-3%</td>
+                        <td>Moyen</td>
+                    </tr>
+                    <tr>
+                        <td>Fine-tuning complet</td>
+                        <td>Réentraîner DINOv3 sur le dataset</td>
+                        <td>+3-5%</td>
+                        <td>Très élevé</td>
+                    </tr>
+                    <tr>
+                        <td>Déploiement Cloud</td>
+                        <td>API REST sur AWS/GCP</td>
+                        <td>Scalabilité</td>
+                        <td>Moyen</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout callout-success">
+                <div class="callout-title">🚀 Prochaine Étape Prioritaire : OCR</div>
+                <p>
+                    L'intégration d'un module OCR (PaddleOCR, Tesseract) permettrait de "lire" directement le texte
+                    présent sur les images (titre du livre, nom de la marque), créant des features textuelles
+                    artificielles
+                    qui renforceraient la robustesse du modèle face aux produits mal décrits.
+                </p>
+            </div>
+        </section>
+
+        <!-- ==================== ANNEXES ==================== -->
+        <section class="part-divider">
+            <div class="part-number">A</div>
+            <div class="part-title">Annexes</div>
+            <div class="part-subtitle">Données complémentaires et références</div>
+        </section>
+
+        <section id="annexe-a" class="page-break">
+            <h1><span class="section-number">A</span> Mapping des 27 Catégories</h1>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Catégorie</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>10</td>
+                        <td>📚 Livres</td>
+                        <td>Livres occasion</td>
+                    </tr>
+                    <tr>
+                        <td>40</td>
+                        <td>🎮 Jeux vidéo</td>
+                        <td>Jeux vidéo, consoles et accessoires</td>
+                    </tr>
+                    <tr>
+                        <td>50</td>
+                        <td>🖥️ Gaming PC</td>
+                        <td>Accessoires gaming PC</td>
+                    </tr>
+                    <tr>
+                        <td>60</td>
+                        <td>🕹️ Consoles</td>
+                        <td>Consoles de jeux vidéo</td>
+                    </tr>
+                    <tr>
+                        <td>1140</td>
+                        <td>🎭 Figurines</td>
+                        <td>Figurines et objets de collection</td>
+                    </tr>
+                    <tr>
+                        <td>1160</td>
+                        <td>🃏 Cartes</td>
+                        <td>Cartes de collection (Pokemon, Magic)</td>
+                    </tr>
+                    <tr>
+                        <td>1180</td>
+                        <td>🦸 Figurines pop</td>
+                        <td>Figurines de jeux et mangas</td>
+                    </tr>
+                    <tr>
+                        <td>1280</td>
+                        <td>🧸 Jouets enfants</td>
+                        <td>Jouets et jeux pour enfants</td>
+                    </tr>
+                    <tr>
+                        <td>1281</td>
+                        <td>🎲 Jeux société</td>
+                        <td>Jeux de société et puzzles</td>
+                    </tr>
+                    <tr>
+                        <td>1300</td>
+                        <td>✈️ Modélisme</td>
+                        <td>Modélisme et miniatures</td>
+                    </tr>
+                    <tr>
+                        <td>1301</td>
+                        <td>🎨 Loisirs créatifs</td>
+                        <td>Loisirs créatifs et bricolage enfant</td>
+                    </tr>
+                    <tr>
+                        <td>1302</td>
+                        <td>🎃 Déguisements</td>
+                        <td>Déguisements et accessoires de fête</td>
+                    </tr>
+                    <tr>
+                        <td>1320</td>
+                        <td>👶 Puériculture</td>
+                        <td>Équipement bébé et puériculture</td>
+                    </tr>
+                    <tr>
+                        <td>1560</td>
+                        <td>🪑 Mobilier</td>
+                        <td>Mobilier intérieur</td>
+                    </tr>
+                    <tr>
+                        <td>1920</td>
+                        <td>🛏️ Literie</td>
+                        <td>Literie et linge de maison</td>
+                    </tr>
+                    <tr>
+                        <td>1940</td>
+                        <td>🍽️ Alimentation</td>
+                        <td>Épicerie et alimentation</td>
+                    </tr>
+                    <tr>
+                        <td>2060</td>
+                        <td>🏠 Déco maison</td>
+                        <td>Décoration intérieure</td>
+                    </tr>
+                    <tr>
+                        <td>2220</td>
+                        <td>🐾 Animalerie</td>
+                        <td>Produits pour animaux</td>
+                    </tr>
+                    <tr>
+                        <td>2280</td>
+                        <td>📰 Magazines</td>
+                        <td>Magazines et revues</td>
+                    </tr>
+                    <tr>
+                        <td>2403</td>
+                        <td>📖 Livres neufs</td>
+                        <td>Livres, BD, magazines neufs</td>
+                    </tr>
+                    <tr>
+                        <td>2462</td>
+                        <td>💿 Jeux PC</td>
+                        <td>Jeux vidéo PC en téléchargement</td>
+                    </tr>
+                    <tr>
+                        <td>2522</td>
+                        <td>✏️ Papeterie</td>
+                        <td>Fournitures de bureau et papeterie</td>
+                    </tr>
+                    <tr>
+                        <td>2582</td>
+                        <td>🌳 Jardin</td>
+                        <td>Mobilier et équipement de jardin</td>
+                    </tr>
+                    <tr>
+                        <td>2583</td>
+                        <td>🏊 Piscine</td>
+                        <td>Piscines et accessoires</td>
+                    </tr>
+                    <tr>
+                        <td>2585</td>
+                        <td>🔧 Bricolage</td>
+                        <td>Outillage et bricolage</td>
+                    </tr>
+                    <tr>
+                        <td>2705</td>
+                        <td>📜 Livres anciens</td>
+                        <td>Livres anciens et de collection</td>
+                    </tr>
+                    <tr>
+                        <td>2905</td>
+                        <td>📦 Jeux PC box</td>
+                        <td>Jeux vidéo PC en boîte</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="annexe-b">
+            <h1><span class="section-number">B</span> Configuration Technique</h1>
+
+            <h2>B.1 Environnement</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Composant</th>
+                        <th>Version/Spec</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Python</td>
+                        <td>3.10+</td>
+                    </tr>
+                    <tr>
+                        <td>PyTorch</td>
+                        <td>2.0+</td>
+                    </tr>
+                    <tr>
+                        <td>scikit-learn</td>
+                        <td>1.3+</td>
+                    </tr>
+                    <tr>
+                        <td>Streamlit</td>
+                        <td>1.28+</td>
+                    </tr>
+                    <tr>
+                        <td>GPU</td>
+                        <td>NVIDIA RTX 4070 (12GB VRAM)</td>
+                    </tr>
+                    <tr>
+                        <td>RAM</td>
+                        <td>16-128 GB</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>B.2 Fichiers Modèles (Google Drive)</h2>
+            <div class="code-block">
+                <div class="code-title">Modèles à télécharger</div>
+                models/
+                ├── M1_IMAGE_DeepLearning_DINOv3.pth <span class="code-comment"># ~1.2 GB</span>
+                ├── M2_IMAGE_Classic_XGBoost.json <span class="code-comment"># ~850 MB</span>
+                ├── M2_IMAGE_XGBoost_Encoder.pkl <span class="code-comment"># ~1 KB</span>
+                ├── M3_IMAGE_Classic_EfficientNetB0.pth <span class="code-comment"># ~16 MB</span>
+                ├── text_classifier.joblib <span class="code-comment"># ~32 MB</span>
+                └── category_mapping.json <span class="code-comment"># ~4 KB</span>
+            </div>
+        </section>
+
+        <section id="annexe-c">
+            <h1><span class="section-number">C</span> Références</h1>
+
+            <h2>C.1 Articles et Documentation</h2>
+            <ol style="font-size: 9pt;">
+                <li><strong>EfficientNet</strong> : Tan, M., & Le, Q. (2019). "EfficientNet: Rethinking Model Scaling
+                    for CNNs." ICML 2019.</li>
+                <li><strong>DINOv2</strong> : Oquab, M. et al. (2023). "DINOv2: Learning Robust Visual Features without
+                    Supervision." Meta AI.</li>
+                <li><strong>XGBoost</strong> : Chen, T., & Guestrin, C. (2016). "XGBoost: A Scalable Tree Boosting
+                    System." KDD 2016.</li>
+                <li><strong>TF-IDF</strong> : Scikit-learn Documentation. TfidfVectorizer.</li>
+                <li><strong>Transfer Learning</strong> : PyTorch Documentation. Models and pre-trained weights.</li>
+            </ol>
+
+            <h2>C.2 Ressources Projet</h2>
+            <ul style="font-size: 9pt;">
+                <li><strong>Repository GitHub</strong> : <a
+                        href="https://github.com/DataScientest-Studio/OCT25_BMLE_RAKUTEN"
+                        target="_blank">https://github.com/DataScientest-Studio/OCT25_BMLE_RAKUTEN</a></li>
+                <li><strong>Challenge Rakuten</strong> : Rakuten Institute of Technology</li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <section
+            style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--gray-200); text-align: center; position: relative;">
+            <div
+                style="position: absolute; top: -3px; left: 50%; transform: translateX(-50%); width: 60px; height: 3px; background: var(--primary);">
+            </div>
+            <p style="color: var(--gray-600); font-size: 10pt; font-weight: 500; letter-spacing: 0.5px;">
+                Projet Rakuten — Classification Multimodale
+            </p>
+            <p
+                style="color: var(--gray-400); font-size: 9pt; margin-top: 0.5rem; letter-spacing: 1px; text-transform: uppercase;">
+                Machine Learning Engineer — DataScientest × Mines Paris - PSL
+            </p>
+            <p style="color: var(--gray-400); font-size: 9pt; font-style: italic; margin-top: 1.5rem;">
+                Février 2025
+            </p>
+        </section>
+
+    </div>
+
+    <script>
+        // Enhanced print functionality
+        document.querySelector('.print-button').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Add a class for print preparation
+            document.body.classList.add('preparing-print');
+
+            // Small delay to ensure all styles are applied
+            setTimeout(function () {
+                window.print();
+                document.body.classList.remove('preparing-print');
+            }, 100);
+        });
+
+        // Keyboard shortcut: Ctrl+P or Cmd+P
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                // Let browser handle it naturally
+            }
+        });
+    </script>
+</body>
+
+</html>

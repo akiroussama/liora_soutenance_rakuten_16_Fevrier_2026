@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Multimodale Rakuten | Soutenance BMLE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Outfit:wght@300;500;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Palette Light Mode - Professional */
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+
+            /* Rakuten Brand Colors */
+            --rakuten-red: #bf0000;
+            --rakuten-dark: #8b0000;
+            --accent-blue: #2563eb;
+            --accent-purple: #7c3aed;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f59e0b;
+            --accent-green: #10b981;
+
+            /* Status Colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+
+            /* UI Elements */
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --border-light: #e2e8f0;
+            --glass-border: rgba(30, 58, 95, 0.1);
+            --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --card-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-light);
+            background-image:
+                linear-gradient(rgba(191, 0, 0, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(191, 0, 0, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            line-height: 1.5;
+        }
+
+        header {
+            padding: 1rem 3rem;
+            min-height: 100px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.98);
+            border-bottom: 2px solid rgba(191, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            z-index: 100;
+            position: relative;
+        }
+
+        .header-left {
+            justify-self: start;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-center {
+            justify-self: center;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-right {
+            justify-self: end;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .institution-badge {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(191, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        .institution-info {
+            line-height: 1.3;
+            text-align: right;
+        }
+
+        .institution-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .institution-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--rakuten-red);
+        }
+
+        .institution-sub {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            opacity: 0.9;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .logo-sub {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--rakuten-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(191, 0, 0, 0.3);
+        }
+
+        .slide-counter {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--rakuten-red);
+            font-weight: 700;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 200;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rakuten-red), var(--accent-purple));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        main {
+            position: relative;
+            height: calc(100vh - 100px);
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: translateX(80px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 2rem 3rem 1rem;
+            padding-top: 5%;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .slide.prev {
+            transform: translateX(-80px);
+            opacity: 0;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title {
+            font-size: 4.2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            text-align: center;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-title .accent {
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.65rem;
+            color: var(--text-muted);
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto 2rem;
+            line-height: 1.5;
+        }
+
+        .slide-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--glass-border);
+        }
+
+        .section-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-right: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .section-badge.data {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+        }
+
+        .section-badge.model {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+        }
+
+        .section-badge.results {
+            background: linear-gradient(135deg, var(--accent-orange), var(--rakuten-red));
+        }
+
+        .slide-title {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .content-full {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .content-single {
+            max-width: 1250px;
+            margin: 0 auto;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.2s ease;
+            margin: 0.5rem 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-hover);
+            border-color: var(--rakuten-red);
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 0.6rem;
+            display: block;
+            color: var(--rakuten-red);
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.45rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--text-main);
+        }
+
+        .card-text {
+            color: var(--text-muted);
+            line-height: 1.5;
+            font-size: 1.2rem;
+        }
+
+        /* Metric Cards */
+        .metric-card {
+            background: white;
+            padding: 1.2rem;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--glass-border);
+        }
+
+        .metric-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.1rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-card.success .metric-value {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-card.warning .metric-value {
+            background: linear-gradient(135deg, var(--accent-orange), var(--warning));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-label {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+            line-height: 1.3;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: var(--bg-white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            font-size: 1.2rem;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--rakuten-red), var(--rakuten-dark));
+            color: white;
+            padding: 0.85rem 1.1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.15rem;
+        }
+
+        td {
+            padding: 0.75rem 1.1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(191, 0, 0, 0.03);
+        }
+
+        .highlight {
+            color: var(--rakuten-red);
+            font-weight: 600;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(124, 58, 237, 0.08));
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 12px;
+            padding: 1.1rem 1.4rem;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(6, 182, 212, 0.08));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 1.1rem 1.4rem;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+        }
+
+        .success-box-title {
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(239, 68, 68, 0.08));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            padding: 1.1rem 1.4rem;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+        }
+
+        .warning-box-title {
+            font-weight: 600;
+            color: var(--accent-orange);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        /* TOC Items - Editorial Magazine Style */
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.6rem 2rem;
+        }
+
+        .toc-entry {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 0;
+            cursor: pointer;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toc-entry::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--rakuten-red), var(--accent-purple));
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toc-entry:hover::before {
+            width: 100%;
+        }
+
+        .toc-entry:hover {
+            transform: translateX(6px);
+        }
+
+        .toc-entry:hover .toc-num {
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            color: white;
+            transform: scale(1.1) rotate(-2deg);
+        }
+
+        .toc-entry:hover .toc-title {
+            color: var(--rakuten-red);
+        }
+
+        .toc-num {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            min-width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: var(--rakuten-red);
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .toc-content {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toc-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: color 0.3s ease;
+            letter-spacing: -0.01em;
+        }
+
+        .toc-page {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            opacity: 0.7;
+            padding: 0.2rem 0.5rem;
+            background: rgba(0,0,0,0.03);
+            border-radius: 4px;
+        }
+
+        /* Staggered animation for TOC entries */
+        .slide.active .toc-entry {
+            animation: tocSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+        .slide.active .toc-entry:nth-child(1) { animation-delay: 0.05s; }
+        .slide.active .toc-entry:nth-child(2) { animation-delay: 0.1s; }
+        .slide.active .toc-entry:nth-child(3) { animation-delay: 0.15s; }
+        .slide.active .toc-entry:nth-child(4) { animation-delay: 0.2s; }
+        .slide.active .toc-entry:nth-child(5) { animation-delay: 0.25s; }
+        .slide.active .toc-entry:nth-child(6) { animation-delay: 0.3s; }
+
+        @keyframes tocSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin: 0.15rem;
+        }
+
+        .tag-blue { background: rgba(37, 99, 235, 0.1); color: var(--accent-blue); }
+        .tag-green { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); }
+        .tag-orange { background: rgba(245, 158, 11, 0.1); color: var(--accent-orange); }
+        .tag-red { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .tag-purple { background: rgba(124, 58, 237, 0.1); color: var(--accent-purple); }
+
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.55rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.25rem;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: '→';
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        /* Dataflow / Pipeline */
+        .dataflow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.9rem;
+            margin: 1.6rem 0;
+            flex-wrap: wrap;
+        }
+
+        .dataflow-box {
+            padding: 0.9rem 1.1rem;
+            background: white;
+            border: 2px solid var(--rakuten-red);
+            border-radius: 10px;
+            text-align: center;
+            min-width: 120px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .dataflow-box.highlight-box {
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+        }
+
+        .dataflow-arrow {
+            font-size: 1.65rem;
+            color: var(--accent-orange);
+        }
+
+        /* Voting Visual */
+        .voting-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.3rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .model-card {
+            background: white;
+            border: 2px solid var(--border-light);
+            border-radius: 14px;
+            padding: 1.3rem;
+            text-align: center;
+            min-width: 175px;
+            transition: all 0.3s ease;
+        }
+
+        .model-card:hover {
+            border-color: var(--rakuten-red);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .model-icon {
+            font-size: 2.75rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .model-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--text-main);
+        }
+
+        .model-score {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: var(--rakuten-red);
+        }
+
+        .model-weight {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        .voting-arrow {
+            font-size: 2rem;
+            color: var(--rakuten-red);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+        }
+
+        .final-card {
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            border: none;
+            color: white;
+        }
+
+        .final-card .model-name,
+        .final-card .model-score {
+            color: white;
+        }
+
+        .final-card .model-weight {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Team Grid */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .team-member {
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-3px);
+            border-color: var(--rakuten-red);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .team-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .team-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            z-index: 200;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--rakuten-red);
+            transition: all 0.2s ease;
+            font-size: 1.2rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(191, 0, 0, 0.08);
+            transform: scale(1.1);
+        }
+
+        .nav-separator {
+            width: 1px;
+            height: 20px;
+            background: rgba(191, 0, 0, 0.15);
+        }
+
+        /* Code */
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(191, 0, 0, 0.08);
+            padding: 0.15rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: var(--rakuten-red);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide.active .card {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .slide.active .card:nth-child(1) { animation-delay: 0.1s; }
+        .slide.active .card:nth-child(2) { animation-delay: 0.2s; }
+        .slide.active .card:nth-child(3) { animation-delay: 0.3s; }
+        .slide.active .card:nth-child(4) { animation-delay: 0.35s; }
+        .slide.active .card:nth-child(5) { animation-delay: 0.4s; }
+        .slide.active .card:nth-child(6) { animation-delay: 0.45s; }
+
+        .slide.active table {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            animation-delay: 0.15s;
+        }
+
+        .slide.active .info-box,
+        .slide.active .success-box,
+        .slide.active .warning-box {
+            animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            animation-delay: 0.3s;
+        }
+
+        .slide.active .slide-header {
+            animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .slide.active .metric-card {
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .text-center { text-align: center; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+
+        @media print {
+            .slide {
+                page-break-after: always;
+                min-height: auto;
+                padding: 1rem;
+            }
+            nav { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-left">
+            <div class="logo-icon">R</div>
+        </div>
+        <div class="header-center">
+            <div class="logo">
+                Rakuten Challenge
+                <span class="logo-sub">Classification Multimodale de Produits</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="institution-badge">
+                <div class="institution-info">
+                    <div class="institution-label">Formation</div>
+                    <div class="institution-name">DataScientest</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="slides-container">
+
+        <!-- ===================== SLIDE 0: COVER ===================== -->
+        <div class="slide active">
+            <div class="content-full text-center">
+                <h1 class="hero-title">Classification <span class="accent">Multimodale</span><br>
+                    <span style="font-size: 0.5em; font-weight: 500;">Produits E-Commerce — Challenge Rakuten France</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Approche hybride combinant <strong>texte</strong> et <strong>image</strong> avec un système de vote innovant
+                    pour classifier automatiquement des produits parmi 27 catégories.
+                </p>
+
+                <div class="grid-4 mt-2">
+                    <div class="metric-card">
+                        <div class="metric-value">84 916</div>
+                        <div class="metric-label">Produits analysés</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">27</div>
+                        <div class="metric-label">Catégories</div>
+                    </div>
+                    <div class="metric-card success">
+                        <div class="metric-value">92%</div>
+                        <div class="metric-label">Accuracy Image</div>
+                    </div>
+                    <div class="metric-card warning">
+                        <div class="metric-value">83%</div>
+                        <div class="metric-label">Accuracy Texte</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; font-size: 1rem;">
+                    <span style="font-weight: 600; color: var(--text-main);">Johan Frachon</span>
+                    <span style="color: var(--rakuten-red);">•</span>
+                    <span style="font-weight: 600; color: var(--text-main);">Liviu Andronic</span>
+                    <span style="color: var(--rakuten-red);">•</span>
+                    <span style="font-weight: 600; color: var(--text-main);">Hery M. Ralaimanantsoa</span>
+                    <span style="color: var(--rakuten-red);">•</span>
+                    <span style="font-weight: 600; color: var(--text-main);">Oussama Akir</span>
+                </div>
+
+                <div style="margin-top: 1rem; color: var(--text-muted); font-size: 1rem;">
+                    <strong>Mentor : Antoine</strong> — Février 2025
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 1: SOMMAIRE ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header" style="border-bottom: none; margin-bottom: 0.8rem;">
+                    <h2 class="slide-title" style="font-size: 2.2rem; letter-spacing: -0.03em;">
+                        <span style="color: var(--rakuten-red);">—</span> Sommaire
+                    </h2>
+                </div>
+
+                <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1.5rem; font-style: italic;">
+                    Classification multimodale en 11 étapes clés
+                </p>
+
+                <div class="toc-grid">
+                    <!-- Colonne 1 -->
+                    <div>
+                        <div class="toc-entry" onclick="goToSlide(2)">
+                            <div class="toc-num">01</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Le Challenge Rakuten</span>
+                                <span class="toc-page">03</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(3)">
+                            <div class="toc-num">02</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Déséquilibre des Classes</span>
+                                <span class="toc-page">04</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(4)">
+                            <div class="toc-num">03</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Preprocessing</span>
+                                <span class="toc-page">05</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(5)">
+                            <div class="toc-num">04</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Modélisation Texte</span>
+                                <span class="toc-page">06</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(6)">
+                            <div class="toc-num">05</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Modélisation Image</span>
+                                <span class="toc-page">07</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(7)">
+                            <div class="toc-num">06</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Voting System</span>
+                                <span class="toc-page">08</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Colonne 2 -->
+                    <div>
+                        <div class="toc-entry" onclick="goToSlide(8)">
+                            <div class="toc-num">07</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Fusion Multimodale</span>
+                                <span class="toc-page">09</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(9)">
+                            <div class="toc-num">08</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Architecture End-to-End</span>
+                                <span class="toc-page">10</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(10)">
+                            <div class="toc-num">09</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Distribution Visuelle</span>
+                                <span class="toc-page">11</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(11)">
+                            <div class="toc-num">10</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Exemples de Prédictions</span>
+                                <span class="toc-page">12</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(12)">
+                            <div class="toc-num">11</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Conclusion & Perspectives</span>
+                                <span class="toc-page">13</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.95rem;">
+                        <span style="width: 12px; height: 12px; background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan)); border-radius: 50%;"></span>
+                        Texte : 83%
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.95rem;">
+                        <span style="width: 12px; height: 12px; background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple)); border-radius: 50%;"></span>
+                        Image : 92%
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.95rem;">
+                        <span style="width: 12px; height: 12px; background: linear-gradient(135deg, var(--accent-orange), var(--warning)); border-radius: 50%;"></span>
+                        Fusion : ~94%
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 2: CHALLENGE ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">Contexte</span>
+                    <h2 class="slide-title">Le Challenge Rakuten France</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="warning-box">
+                            <div class="warning-box-title">🎯 Objectif</div>
+                            <p>Classifier automatiquement des produits e-commerce parmi <strong>27 catégories</strong> en utilisant le texte (titre + description) et l'image du produit.</p>
+                        </div>
+
+                        <div class="card" style="padding: 0.7rem 1rem; margin-top: 0.5rem;">
+                            <div class="card-title" style="font-size: 1.1rem; margin-bottom: 0.2rem;">Enjeux Business</div>
+                            <ul class="feature-list" style="font-size: 0.95rem;">
+                                <li style="padding: 0.15rem 0; font-size: 0.95rem;">Améliorer l'expérience de recherche</li>
+                                <li style="padding: 0.15rem 0; font-size: 0.95rem;">Réduire le taux de rebond</li>
+                                <li style="padding: 0.15rem 0; font-size: 0.95rem;">Automatiser millions de produits/jour</li>
+                                <li style="padding: 0.15rem 0; font-size: 0.95rem;">Traiter données multilingues</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="grid-2" style="gap: 0.8rem;">
+                            <div class="metric-card">
+                                <div class="metric-value">84 916</div>
+                                <div class="metric-label">Produits Train</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">13 812</div>
+                                <div class="metric-label">Produits Test</div>
+                            </div>
+                            <div class="metric-card success">
+                                <div class="metric-value">27</div>
+                                <div class="metric-label">Catégories</div>
+                            </div>
+                            <div class="metric-card warning">
+                                <div class="metric-value">35%</div>
+                                <div class="metric-label">Descriptions NaN</div>
+                            </div>
+                        </div>
+
+                        <div class="info-box mt-1">
+                            <div class="info-box-title">📊 Métrique d'évaluation</div>
+                            <p><strong>F1-Score weighted</strong> : prend en compte le déséquilibre des classes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 3: DÉSÉQUILIBRE ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge data">Données</span>
+                    <h2 class="slide-title">Déséquilibre des Classes</h2>
+                </div>
+
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">L'analyse révèle un <strong>déséquilibre significatif</strong> constituant un défi majeur du projet.</p>
+
+                <div class="grid-2">
+                    <div>
+                        <table>
+                            <tr>
+                                <th>Rang</th>
+                                <th>Catégorie</th>
+                                <th>Effectif</th>
+                                <th>%</th>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td class="highlight">Piscines</td>
+                                <td>10 217</td>
+                                <td>12.0%</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Mobilier</td>
+                                <td>5 076</td>
+                                <td>6.0%</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Déco</td>
+                                <td>4 996</td>
+                                <td>5.9%</td>
+                            </tr>
+                            <tr>
+                                <td>...</td>
+                                <td>...</td>
+                                <td>...</td>
+                                <td>...</td>
+                            </tr>
+                            <tr>
+                                <td>27</td>
+                                <td class="highlight">Consoles</td>
+                                <td>761</td>
+                                <td>0.9%</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div>
+                        <div class="grid-2" style="gap: 0.8rem;">
+                            <div class="metric-card warning">
+                                <div class="metric-value">13×</div>
+                                <div class="metric-label">Ratio Max/Min</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">3 145</div>
+                                <div class="metric-label">Moyenne/Classe</div>
+                            </div>
+                        </div>
+
+                        <div class="success-box mt-1">
+                            <div class="success-box-title">✅ Solutions adoptées</div>
+                            <p>
+                                <span class="tag tag-green">class_weight='balanced'</span>
+                                <span class="tag tag-blue">F1-Score weighted</span>
+                                <span class="tag tag-purple">Oversampling</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 4: PREPROCESSING ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">Pipeline</span>
+                    <h2 class="slide-title">Preprocessing</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-icon">📝</div>
+                        <div class="card-title">Pipeline Texte — TF-IDF</div>
+
+                        <div class="dataflow-container" style="justify-content: flex-start; margin: 1rem 0;">
+                            <div class="dataflow-box">HTML+NaN</div>
+                            <span class="dataflow-arrow">→</span>
+                            <div class="dataflow-box">Clean</div>
+                            <span class="dataflow-arrow">→</span>
+                            <div class="dataflow-box">Concat</div>
+                            <span class="dataflow-arrow">→</span>
+                            <div class="dataflow-box highlight-box">TF-IDF</div>
+                        </div>
+
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">FeatureUnion combinant :</p>
+                        <div class="mt-1">
+                            <span class="tag tag-blue">Word n-grams (1,2)</span>
+                            <span class="tag tag-purple">Char n-grams (3,5)</span>
+                            <span class="tag tag-green">280K features</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">🖼️</div>
+                        <div class="card-title">Pipeline Image — Transfer Learning</div>
+
+                        <div class="dataflow-container" style="justify-content: flex-start; margin: 1rem 0;">
+                            <div class="dataflow-box">500×500</div>
+                            <span class="dataflow-arrow">→</span>
+                            <div class="dataflow-box">224×224</div>
+                            <span class="dataflow-arrow">→</span>
+                            <div class="dataflow-box">Normalize</div>
+                            <span class="dataflow-arrow">→</span>
+                            <div class="dataflow-box highlight-box">CNN</div>
+                        </div>
+
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Extraction de features via :</p>
+                        <div class="mt-1">
+                            <span class="tag tag-red">ResNet50 (2048)</span>
+                            <span class="tag tag-green">EfficientNet-B0</span>
+                            <span class="tag tag-orange">ImageNet weights</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box mt-1">
+                    <div class="info-box-title">💡 Justification</div>
+                    <p>La combinaison <strong>word + char TF-IDF</strong> capture sémantique et morphologie, robuste aux fautes d'orthographe et textes multilingues.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 5: TEXTE ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge model">Texte</span>
+                    <h2 class="slide-title">Modélisation Texte — LinearSVC</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <table>
+                            <tr>
+                                <th>Modèle</th>
+                                <th>F1-Score</th>
+                                <th>Temps</th>
+                            </tr>
+                            <tr>
+                                <td>Logistic Regression</td>
+                                <td>0.79</td>
+                                <td>~2 min</td>
+                            </tr>
+                            <tr>
+                                <td>Multinomial NB</td>
+                                <td>0.76</td>
+                                <td>~30 sec</td>
+                            </tr>
+                            <tr style="background: rgba(16, 185, 129, 0.1);">
+                                <td class="highlight">LinearSVC (C=0.5)</td>
+                                <td class="highlight">0.83</td>
+                                <td>~3 min</td>
+                            </tr>
+                            <tr>
+                                <td>Random Forest</td>
+                                <td>0.68</td>
+                                <td>~15 min</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div class="metric-card" style="padding: 2rem;">
+                            <div class="metric-value" style="font-size: 3.5rem;">83%</div>
+                            <div class="metric-label">Accuracy LinearSVC</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="success-box mt-1">
+                    <div class="success-box-title">✅ Champion Texte</div>
+                    <p><strong>LinearSVC</strong> avec <code>class_weight='balanced'</code> et <code>C=0.5</code> optimisé par GridSearch. F1-Score weighted : <strong>0.827</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 6: IMAGE BENCHMARK ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge model">Image</span>
+                    <h2 class="slide-title">Modélisation Image — ML vs Deep Learning</h2>
+                </div>
+
+                <table>
+                    <tr>
+                        <th>Modèle</th>
+                        <th>F1-Score</th>
+                        <th>Temps</th>
+                        <th>Hardware</th>
+                        <th>Verdict</th>
+                    </tr>
+                    <tr>
+                        <td>Random Forest</td>
+                        <td>0.71</td>
+                        <td>~30 min</td>
+                        <td>CPU</td>
+                        <td><span class="tag tag-blue">Baseline</span></td>
+                    </tr>
+                    <tr>
+                        <td>XGBoost GPU</td>
+                        <td>0.72</td>
+                        <td>~10 min</td>
+                        <td>GPU</td>
+                        <td><span class="tag tag-blue">Standard</span></td>
+                    </tr>
+                    <tr>
+                        <td>XGBoost Heavy</td>
+                        <td>0.765</td>
+                        <td>6 heures</td>
+                        <td>CPU 128GB</td>
+                        <td><span class="tag tag-orange">Plafond ML</span></td>
+                    </tr>
+                    <tr style="background: rgba(16, 185, 129, 0.1);">
+                        <td class="highlight">MLP (Adam + GELU)</td>
+                        <td class="highlight">0.914</td>
+                        <td>58 sec</td>
+                        <td>GPU</td>
+                        <td><span class="tag tag-green">🚀 Rupture</span></td>
+                    </tr>
+                </table>
+
+                <div class="grid-2 mt-1">
+                    <div class="warning-box">
+                        <div class="warning-box-title">⚠️ Plafond ML</div>
+                        <p>Les modèles classiques plafonnent à ~76% malgré 6h de calcul.</p>
+                    </div>
+                    <div class="success-box">
+                        <div class="success-box-title">🚀 Rupture Deep Learning</div>
+                        <p>MLP atteint <strong>91.4%</strong> en 58 secondes sur GPU RTX 4070.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 7: VOTING SYSTEM ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge results">Innovation</span>
+                    <h2 class="slide-title">Voting System — Modèle Final Image</h2>
+                </div>
+
+                <p style="color: var(--text-muted); margin-bottom: 1rem; text-align: center;">Exploitation de la <strong>complémentarité</strong> des architectures : les modèles font des erreurs différentes.</p>
+
+                <div class="voting-container">
+                    <div class="model-card">
+                        <div class="model-icon">🦖</div>
+                        <div class="model-name">DINOv3</div>
+                        <div class="model-score">79.1%</div>
+                        <div class="model-weight">Poids: 0.40</div>
+                    </div>
+                    <span class="voting-arrow">→</span>
+                    <div class="model-card">
+                        <div class="model-icon">🌲</div>
+                        <div class="model-name">XGBoost</div>
+                        <div class="model-score">80.1%</div>
+                        <div class="model-weight">Poids: 0.35</div>
+                    </div>
+                    <span class="voting-arrow">→</span>
+                    <div class="model-card">
+                        <div class="model-icon">⚡</div>
+                        <div class="model-name">EfficientNet</div>
+                        <div class="model-score">~75%</div>
+                        <div class="model-weight">Poids: 0.25</div>
+                    </div>
+                    <span class="voting-arrow" style="font-size: 2rem;">⇒</span>
+                    <div class="model-card final-card">
+                        <div class="model-icon">🏆</div>
+                        <div class="model-name">VOTING</div>
+                        <div class="model-score" style="font-size: 1.8rem;">92%</div>
+                        <div class="model-weight">Final</div>
+                    </div>
+                </div>
+
+                <div class="grid-2 mt-1">
+                    <div class="info-box">
+                        <div class="info-box-title">💡 Orthogonalité des Erreurs</div>
+                        <p>Où DINOv3 se trompe, XGBoost peut avoir raison, et vice-versa.</p>
+                    </div>
+                    <div class="success-box">
+                        <div class="success-box-title">🔧 Calibration (Sharpening)</div>
+                        <p><code>p³/Σp³</code> pour renforcer la confiance → 88% d'automatisation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 8: FUSION ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge results">Fusion</span>
+                    <h2 class="slide-title">Fusion Multimodale — Late Fusion</h2>
+                </div>
+
+                <div class="dataflow-container" style="margin: 2rem 0;">
+                    <div class="dataflow-box" style="border-color: var(--accent-green);">
+                        <strong>Image</strong><br>92%
+                    </div>
+                    <span class="dataflow-arrow">×0.6</span>
+                    <div class="dataflow-box" style="border-color: var(--accent-purple);">
+                        <strong>+</strong><br>Late Fusion
+                    </div>
+                    <span class="dataflow-arrow">×0.4</span>
+                    <div class="dataflow-box" style="border-color: var(--accent-orange);">
+                        <strong>Texte</strong><br>83%
+                    </div>
+                    <span class="dataflow-arrow" style="font-size: 1.5rem;">=</span>
+                    <div class="dataflow-box highlight-box" style="background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple)); color: white; border: none;">
+                        <strong>Final</strong><br>~94%
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-title">Exemple de Synergie</div>
+                        <div class="card-text">
+                            <strong>Image</strong> : Forme ronde bleue → "Piscine" ❌<br>
+                            <strong>Texte</strong> : "DVD Le Grand Bleu" → "DVD" ✓<br>
+                            <strong>Fusion</strong> : Le texte corrige l'erreur visuelle
+                        </div>
+                    </div>
+
+                    <div>
+                        <table>
+                            <tr>
+                                <th>Configuration</th>
+                                <th>Accuracy</th>
+                            </tr>
+                            <tr>
+                                <td>Texte seul</td>
+                                <td>83%</td>
+                            </tr>
+                            <tr>
+                                <td>Image seule</td>
+                                <td>92%</td>
+                            </tr>
+                            <tr style="background: rgba(16, 185, 129, 0.1);">
+                                <td class="highlight">Fusion Multimodale</td>
+                                <td class="highlight">~94%</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 9: ARCHITECTURE COMPLETE ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge results">Vue Globale</span>
+                    <h2 class="slide-title">Architecture End-to-End</h2>
+                </div>
+
+                <div style="text-align: center; margin: 1rem 0;">
+                    <svg viewBox="0 0 900 320" style="max-width: 100%; height: auto;">
+                        <!-- Input Data -->
+                        <rect x="10" y="120" width="100" height="80" rx="10" fill="#f3f4f6" stroke="#bf0000" stroke-width="2"/>
+                        <text x="60" y="155" text-anchor="middle" font-family="Outfit" font-size="14" font-weight="600" fill="#1e293b">Produit</text>
+                        <text x="60" y="175" text-anchor="middle" font-family="Outfit" font-size="11" fill="#64748b">Texte + Image</text>
+
+                        <!-- Arrow 1 -->
+                        <path d="M 115 160 L 155 160" stroke="#f59e0b" stroke-width="3" fill="none" marker-end="url(#arrowOrange)"/>
+
+                        <!-- Text Pipeline -->
+                        <rect x="160" y="40" width="120" height="70" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                        <text x="220" y="70" text-anchor="middle" font-family="Outfit" font-size="13" font-weight="600" fill="#2563eb">TF-IDF</text>
+                        <text x="220" y="90" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#64748b">280K features</text>
+
+                        <!-- Image Pipeline -->
+                        <rect x="160" y="210" width="120" height="70" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="220" y="240" text-anchor="middle" font-family="Outfit" font-size="13" font-weight="600" fill="#d97706">Transfer Learning</text>
+                        <text x="220" y="260" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#64748b">ResNet/EfficientNet</text>
+
+                        <!-- Arrows to models -->
+                        <path d="M 285 75 L 325 75" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+                        <path d="M 285 245 L 325 245" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arrowOrange)"/>
+
+                        <!-- Text Model -->
+                        <rect x="330" y="40" width="110" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                        <text x="385" y="65" text-anchor="middle" font-family="Outfit" font-size="13" font-weight="700" fill="#1e40af">LinearSVC</text>
+                        <text x="385" y="85" text-anchor="middle" font-family="Fira Code" font-size="16" font-weight="700" fill="#2563eb">83%</text>
+
+                        <!-- Image Voting -->
+                        <rect x="330" y="180" width="180" height="100" rx="8" fill="#dcfce7" stroke="#10b981" stroke-width="2"/>
+                        <text x="420" y="205" text-anchor="middle" font-family="Outfit" font-size="13" font-weight="700" fill="#047857">Voting System</text>
+                        <text x="360" y="230" text-anchor="middle" font-family="Fira Code" font-size="9" fill="#64748b">DINOv3</text>
+                        <text x="420" y="230" text-anchor="middle" font-family="Fira Code" font-size="9" fill="#64748b">XGBoost</text>
+                        <text x="480" y="230" text-anchor="middle" font-family="Fira Code" font-size="9" fill="#64748b">EffNet</text>
+                        <text x="420" y="260" text-anchor="middle" font-family="Fira Code" font-size="18" font-weight="700" fill="#10b981">92%</text>
+
+                        <!-- Arrows to Fusion -->
+                        <path d="M 445 75 L 570 130" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+                        <path d="M 515 210 L 570 170" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+
+                        <!-- Late Fusion -->
+                        <rect x="575" y="110" width="130" height="100" rx="10" fill="linear-gradient(135deg, #fef2f2, #fce7f3)" stroke="#bf0000" stroke-width="3"/>
+                        <text x="640" y="145" text-anchor="middle" font-family="Outfit" font-size="14" font-weight="700" fill="#bf0000">Late Fusion</text>
+                        <text x="640" y="170" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#64748b">α=0.6 img</text>
+                        <text x="640" y="185" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#64748b">(1-α)=0.4 txt</text>
+
+                        <!-- Final Arrow -->
+                        <path d="M 710 160 L 760 160" stroke="#bf0000" stroke-width="3" fill="none" marker-end="url(#arrowRed)"/>
+
+                        <!-- Final Result -->
+                        <rect x="765" y="110" width="120" height="100" rx="12" fill="url(#gradientRed)"/>
+                        <text x="825" y="150" text-anchor="middle" font-family="Outfit" font-size="14" font-weight="700" fill="white">PRÉDICTION</text>
+                        <text x="825" y="185" text-anchor="middle" font-family="Fira Code" font-size="24" font-weight="800" fill="white">~94%</text>
+
+                        <!-- Defs for arrows and gradients -->
+                        <defs>
+                            <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/>
+                            </marker>
+                            <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/>
+                            </marker>
+                            <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#10b981"/>
+                            </marker>
+                            <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#bf0000"/>
+                            </marker>
+                            <linearGradient id="gradientRed" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#bf0000"/>
+                                <stop offset="100%" style="stop-color:#7c3aed"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+
+                <div class="grid-3" style="margin-top: 1rem;">
+                    <div class="info-box" style="text-align: center;">
+                        <div class="info-box-title" style="justify-content: center;">📝 Branche Texte</div>
+                        <p>TF-IDF → LinearSVC</p>
+                    </div>
+                    <div class="success-box" style="text-align: center;">
+                        <div class="success-box-title" style="justify-content: center;">🖼️ Branche Image</div>
+                        <p>CNN → Voting (3 modèles)</p>
+                    </div>
+                    <div class="warning-box" style="text-align: center;">
+                        <div class="warning-box-title" style="justify-content: center;">🔀 Fusion</div>
+                        <p>Late Fusion pondérée</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 10: DISTRIBUTION VISUELLE ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge data">Visualisation</span>
+                    <h2 class="slide-title">Distribution des 27 Catégories</h2>
+                </div>
+
+                <div style="text-align: center; margin: 0.5rem 0;">
+                    <svg viewBox="0 0 850 280" style="max-width: 100%; height: auto;">
+                        <!-- Bars representing the distribution - approximated -->
+                        <rect x="20" y="30" width="28" height="180" rx="3" fill="url(#barGradient1)"/>
+                        <rect x="52" y="80" width="28" height="130" rx="3" fill="url(#barGradient2)"/>
+                        <rect x="84" y="85" width="28" height="125" rx="3" fill="url(#barGradient2)"/>
+                        <rect x="116" y="95" width="28" height="115" rx="3" fill="url(#barGradient2)"/>
+                        <rect x="148" y="100" width="28" height="110" rx="3" fill="url(#barGradient2)"/>
+                        <rect x="180" y="105" width="28" height="105" rx="3" fill="url(#barGradient3)"/>
+                        <rect x="212" y="110" width="28" height="100" rx="3" fill="url(#barGradient3)"/>
+                        <rect x="244" y="115" width="28" height="95" rx="3" fill="url(#barGradient3)"/>
+                        <rect x="276" y="120" width="28" height="90" rx="3" fill="url(#barGradient3)"/>
+                        <rect x="308" y="125" width="28" height="85" rx="3" fill="url(#barGradient3)"/>
+                        <rect x="340" y="130" width="28" height="80" rx="3" fill="url(#barGradient3)"/>
+                        <rect x="372" y="135" width="28" height="75" rx="3" fill="url(#barGradient3)"/>
+                        <rect x="404" y="140" width="28" height="70" rx="3" fill="url(#barGradient3)"/>
+                        <rect x="436" y="145" width="28" height="65" rx="3" fill="url(#barGradient4)"/>
+                        <rect x="468" y="150" width="28" height="60" rx="3" fill="url(#barGradient4)"/>
+                        <rect x="500" y="155" width="28" height="55" rx="3" fill="url(#barGradient4)"/>
+                        <rect x="532" y="160" width="28" height="50" rx="3" fill="url(#barGradient4)"/>
+                        <rect x="564" y="165" width="28" height="45" rx="3" fill="url(#barGradient4)"/>
+                        <rect x="596" y="170" width="28" height="40" rx="3" fill="url(#barGradient4)"/>
+                        <rect x="628" y="175" width="28" height="35" rx="3" fill="url(#barGradient4)"/>
+                        <rect x="660" y="180" width="28" height="30" rx="3" fill="url(#barGradient5)"/>
+                        <rect x="692" y="183" width="28" height="27" rx="3" fill="url(#barGradient5)"/>
+                        <rect x="724" y="186" width="28" height="24" rx="3" fill="url(#barGradient5)"/>
+                        <rect x="756" y="189" width="28" height="21" rx="3" fill="url(#barGradient5)"/>
+                        <rect x="788" y="192" width="28" height="18" rx="3" fill="url(#barGradient5)"/>
+                        <rect x="820" y="195" width="28" height="15" rx="3" fill="url(#barGradient5)"/>
+
+                        <!-- Axis line -->
+                        <line x1="15" y1="210" x2="855" y2="210" stroke="#e2e8f0" stroke-width="2"/>
+
+                        <!-- Labels -->
+                        <text x="34" y="225" text-anchor="middle" font-family="Fira Code" font-size="7" fill="#64748b">Piscines</text>
+                        <text x="34" y="25" text-anchor="middle" font-family="Fira Code" font-size="9" font-weight="700" fill="#bf0000">10K</text>
+                        <text x="834" y="225" text-anchor="middle" font-family="Fira Code" font-size="7" fill="#64748b">Consoles</text>
+                        <text x="834" y="192" text-anchor="middle" font-family="Fira Code" font-size="9" font-weight="700" fill="#7c3aed">761</text>
+
+                        <!-- Arrow showing imbalance -->
+                        <path d="M 50 250 Q 430 280 810 250" stroke="#bf0000" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
+                        <text x="430" y="270" text-anchor="middle" font-family="Outfit" font-size="12" font-weight="700" fill="#bf0000">Ratio 13:1</text>
+
+                        <defs>
+                            <linearGradient id="barGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#bf0000"/>
+                                <stop offset="100%" style="stop-color:#dc2626"/>
+                            </linearGradient>
+                            <linearGradient id="barGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#f59e0b"/>
+                                <stop offset="100%" style="stop-color:#fbbf24"/>
+                            </linearGradient>
+                            <linearGradient id="barGradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#10b981"/>
+                                <stop offset="100%" style="stop-color:#34d399"/>
+                            </linearGradient>
+                            <linearGradient id="barGradient4" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6"/>
+                                <stop offset="100%" style="stop-color:#60a5fa"/>
+                            </linearGradient>
+                            <linearGradient id="barGradient5" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8b5cf6"/>
+                                <stop offset="100%" style="stop-color:#a78bfa"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+
+                <div class="grid-2" style="margin-top: 1rem;">
+                    <div class="warning-box">
+                        <div class="warning-box-title">⚠️ Défi Majeur</div>
+                        <p>La classe majoritaire (Piscines) contient <strong>13× plus</strong> d'exemples que la minoritaire (Consoles). Sans traitement, le modèle ignorerait les classes rares.</p>
+                    </div>
+                    <div class="success-box">
+                        <div class="success-box-title">✅ Stratégies Adoptées</div>
+                        <p>
+                            <span class="tag tag-green">class_weight='balanced'</span><br>
+                            <span class="tag tag-blue">F1-Score weighted</span><br>
+                            <span class="tag tag-purple">Oversampling ciblé</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 11: EXEMPLES PRATIQUES ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge results">Démo</span>
+                    <h2 class="slide-title">Exemples de Prédictions</h2>
+                </div>
+
+                <p style="color: var(--text-muted); margin-bottom: 1rem; text-align: center; font-size: 1.1rem;">
+                    Cas réels montrant la <strong>complémentarité texte/image</strong> et la robustesse du système.
+                </p>
+
+                <div class="grid-3" style="gap: 1.2rem;">
+                    <!-- Example 1: Clear case -->
+                    <div class="card" style="border-left: 4px solid var(--accent-green);">
+                        <div style="text-align: center; margin-bottom: 0.8rem;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 12px; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">📚</div>
+                        </div>
+                        <div class="card-title" style="text-align: center; color: var(--accent-green);">✓ Cas Clair</div>
+                        <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; margin: 0.5rem 0; font-size: 0.95rem;">
+                            <strong>Texte:</strong> "Harry Potter tome 1"<br>
+                            <strong>Image:</strong> Couverture livre
+                        </div>
+                        <div style="text-align: center;">
+                            <span class="tag tag-green" style="font-size: 1rem;">→ Livres (99%)</span>
+                        </div>
+                    </div>
+
+                    <!-- Example 2: Ambiguous - Image helps -->
+                    <div class="card" style="border-left: 4px solid var(--accent-blue);">
+                        <div style="text-align: center; margin-bottom: 0.8rem;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">🏊</div>
+                        </div>
+                        <div class="card-title" style="text-align: center; color: var(--accent-blue);">🖼️ Image Décisive</div>
+                        <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; margin: 0.5rem 0; font-size: 0.95rem;">
+                            <strong>Texte:</strong> "Accessoire bleu"<br>
+                            <strong>Image:</strong> Bouée piscine
+                        </div>
+                        <div style="text-align: center;">
+                            <span class="tag tag-blue" style="font-size: 1rem;">→ Piscine (92%)</span>
+                        </div>
+                    </div>
+
+                    <!-- Example 3: Ambiguous - Text helps -->
+                    <div class="card" style="border-left: 4px solid var(--accent-purple);">
+                        <div style="text-align: center; margin-bottom: 0.8rem;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #f3e8ff, #e9d5ff); border-radius: 12px; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">💿</div>
+                        </div>
+                        <div class="card-title" style="text-align: center; color: var(--accent-purple);">📝 Texte Décisif</div>
+                        <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; margin: 0.5rem 0; font-size: 0.95rem;">
+                            <strong>Texte:</strong> "DVD Le Grand Bleu"<br>
+                            <strong>Image:</strong> Pochette bleue
+                        </div>
+                        <div style="text-align: center;">
+                            <span class="tag tag-purple" style="font-size: 1rem;">→ DVD/Film (87%)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box mt-1" style="text-align: center;">
+                    <div class="info-box-title" style="justify-content: center;">💡 Synergie Multimodale</div>
+                    <p>Quand l'image est ambiguë, le texte tranche. Quand le texte est vague, l'image décide. <strong>La fusion combine le meilleur des deux mondes.</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 12: CONCLUSION ===================== -->
+        <div class="slide">
+            <div class="content-full text-center">
+                <h1 class="hero-title" style="font-size: 2.5rem;">Conclusion & Perspectives</h1>
+
+                <div class="grid-3 mt-2">
+                    <div class="metric-card">
+                        <div class="metric-value">92%</div>
+                        <div class="metric-label">Image Voting</div>
+                    </div>
+                    <div class="metric-card success">
+                        <div class="metric-value">83%</div>
+                        <div class="metric-label">Texte SVC</div>
+                    </div>
+                    <div class="metric-card warning">
+                        <div class="metric-value">~94%</div>
+                        <div class="metric-label">Fusion</div>
+                    </div>
+                </div>
+
+                <div class="grid-3 mt-2" style="max-width: 900px; margin-left: auto; margin-right: auto;">
+                    <div class="card text-center">
+                        <div class="card-icon" style="margin: 0 auto 0.5rem;">🔬</div>
+                        <div class="card-title">Méthodologie</div>
+                        <div class="card-text">Pipeline complet avec gestion du déséquilibre</div>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-icon" style="margin: 0 auto 0.5rem;">🏆</div>
+                        <div class="card-title">Performance</div>
+                        <div class="card-text">Voting System innovant à 92%</div>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-icon" style="margin: 0 auto 0.5rem;">🚀</div>
+                        <div class="card-title">Application</div>
+                        <div class="card-text">Interface Streamlit fonctionnelle</div>
+                    </div>
+                </div>
+
+                <div class="success-box mt-2" style="max-width: 700px; margin-left: auto; margin-right: auto;">
+                    <div class="success-box-title">🎯 Perspectives d'amélioration</div>
+                    <p>
+                        <span class="tag tag-green">OCR +3-5%</span>
+                        <span class="tag tag-blue">CamemBERT +5-8%</span>
+                        <span class="tag tag-purple">Fine-tuning DINOv3</span>
+                        <span class="tag tag-orange">Déploiement Cloud</span>
+                    </p>
+                </div>
+
+                <p style="margin-top: 2rem; color: var(--text-muted); font-size: 1.1rem;">
+                    <strong style="color: var(--rakuten-red);">Merci !</strong> — Questions ?
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Navigation -->
+    <nav>
+        <button class="nav-btn" onclick="prevSlide()" title="Précédent">←</button>
+        <div class="nav-separator"></div>
+        <span class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">13</span></span>
+        <div class="nav-separator"></div>
+        <button class="nav-btn" onclick="nextSlide()" title="Suivant">→</button>
+    </nav>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let currentSlide = 0;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index === currentSlide) slide.classList.add('active');
+                else if (index < currentSlide) slide.classList.add('prev');
+            });
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            document.getElementById('progress-fill').style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+        }
+
+        function nextSlide() { if (currentSlide < totalSlides - 1) { currentSlide++; updateSlide(); } }
+        function prevSlide() { if (currentSlide > 0) { currentSlide--; updateSlide(); } }
+        function goToSlide(index) { if (index >= 0 && index < totalSlides) { currentSlide = index; updateSlide(); } }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            else if (e.key === 'Home') { e.preventDefault(); goToSlide(0); }
+            else if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
+        });
+
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+        document.addEventListener('touchend', (e) => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+        });
+
+        updateSlide();
+    </script>
+</body>
+
+</html>

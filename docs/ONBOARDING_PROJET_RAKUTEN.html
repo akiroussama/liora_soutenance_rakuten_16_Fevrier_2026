@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding Projet Rakuten - Guide Complet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #eee;
+            overflow: hidden;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 40px 60px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Title Slide */
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(ellipse at center, rgba(231, 76, 60, 0.15) 0%, transparent 70%);
+        }
+
+        .title-slide h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #e74c3c 0%, #f39c12 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title-slide h2 {
+            font-size: 1.8rem;
+            color: #bdc3c7;
+            margin-bottom: 40px;
+        }
+
+        .title-slide .subtitle {
+            font-size: 1.2rem;
+            color: #95a5a6;
+        }
+
+        .title-slide .emoji-big {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        /* Section Badge */
+        .section-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .section-badge.intro { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+        .section-badge.architecture { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .section-badge.preprocessing { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); }
+        .section-badge.classification { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .section-badge.code { background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); }
+        .section-badge.choix { background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); }
+        .section-badge.next { background: linear-gradient(135deg, #e056fd 0%, #be2edd 100%); }
+
+        /* Slide Title */
+        .slide-title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #ecf0f1;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, #e74c3c, #f39c12) 1;
+            padding-bottom: 15px;
+        }
+
+        /* Content Styles */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content p {
+            font-size: 1.25rem;
+            line-height: 1.8;
+            color: #bdc3c7;
+        }
+
+        .content p.large {
+            font-size: 1.4rem;
+        }
+
+        .highlight {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .highlight-green {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        .highlight-blue {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(231, 76, 60, 0.2);
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #f39c12;
+        }
+
+        .card p, .card li {
+            font-size: 1.1rem;
+            color: #bdc3c7;
+        }
+
+        .card.green h3 { color: #2ecc71; }
+        .card.blue h3 { color: #3498db; }
+        .card.purple h3 { color: #9b59b6; }
+        .card.red h3 { color: #e74c3c; }
+        .card.teal h3 { color: #1abc9c; }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border-left: 4px solid #e74c3c;
+            margin: 10px 0;
+        }
+
+        .code-block code {
+            color: #d4d4d4;
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .code-block .keyword { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+        .code-block .number { color: #b5cea8; }
+        .code-block .comment { color: #6a9955; }
+        .code-block .function { color: #dcdcaa; }
+        .code-block .class { color: #4ec9b0; }
+        .code-block .decorator { color: #d7ba7d; }
+
+        .code-title {
+            font-size: 0.85rem;
+            color: #95a5a6;
+            margin-bottom: 8px;
+            font-family: monospace;
+        }
+
+        /* Info Boxes */
+        .info, .warning, .tip, .important, .question {
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .info {
+            background: rgba(52, 152, 219, 0.2);
+            border-left: 4px solid #3498db;
+        }
+
+        .warning {
+            background: rgba(241, 196, 15, 0.2);
+            border-left: 4px solid #f1c40f;
+        }
+
+        .tip {
+            background: rgba(39, 174, 96, 0.2);
+            border-left: 4px solid #27ae60;
+        }
+
+        .important {
+            background: rgba(231, 76, 60, 0.2);
+            border-left: 4px solid #e74c3c;
+        }
+
+        .question {
+            background: rgba(155, 89, 182, 0.2);
+            border-left: 4px solid #9b59b6;
+        }
+
+        /* Lists */
+        ul, ol {
+            padding-left: 30px;
+        }
+
+        li {
+            font-size: 1.15rem;
+            margin: 12px 0;
+            color: #bdc3c7;
+            line-height: 1.6;
+        }
+
+        li::marker {
+            color: #e74c3c;
+        }
+
+        /* Stats */
+        .stat-box {
+            text-align: center;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-box .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #e74c3c 0%, #f39c12 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-box .label {
+            font-size: 0.95rem;
+            color: #95a5a6;
+            margin-top: 10px;
+        }
+
+        .stat-box.green .number {
+            background: linear-gradient(135deg, #2ecc71 0%, #1abc9c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-box.blue .number {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Tables */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-table th {
+            background: rgba(231, 76, 60, 0.3);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .comparison-table .best {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        /* Flow Diagram */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .flow-step {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            min-width: 140px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .flow-step:hover {
+            border-color: #e74c3c;
+            transform: scale(1.05);
+        }
+
+        .flow-step .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .flow-step .label {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+
+        .flow-step.active {
+            border-color: #2ecc71;
+            background: rgba(46, 204, 113, 0.2);
+        }
+
+        .flow-step.pending {
+            border-color: #95a5a6;
+            opacity: 0.6;
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: #f39c12;
+        }
+
+        /* Navigation */
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 25px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn {
+            background: rgba(231, 76, 60, 0.3);
+            border: none;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            background: #e74c3c;
+            transform: scale(1.05);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            color: #95a5a6;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #e74c3c, #f39c12);
+            z-index: 1000;
+            transition: width 0.3s;
+        }
+
+        /* Help Modal */
+        .help-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .help-modal.active {
+            display: flex;
+        }
+
+        .help-content {
+            background: #1e1e1e;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .help-content h3 {
+            color: #f39c12;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .shortcut {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .shortcut kbd {
+            background: #333;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-family: monospace;
+            color: #f39c12;
+        }
+
+        /* Slide Menu */
+        .slide-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 350px;
+            height: 100%;
+            background: rgba(20, 20, 30, 0.98);
+            z-index: 1500;
+            padding: 30px;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .slide-menu.active {
+            display: block;
+        }
+
+        .slide-menu h3 {
+            color: #f39c12;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 12px 15px;
+            color: #bdc3c7;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: rgba(231, 76, 60, 0.2);
+            color: #fff;
+        }
+
+        .menu-item.active {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        .menu-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-section-title {
+            font-size: 0.8rem;
+            color: #95a5a6;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* Architecture Diagram */
+        .architecture-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(231, 76, 60, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 10px;
+        }
+
+        .architecture-box h4 {
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+
+        .architecture-box p {
+            font-size: 0.9rem;
+            color: #95a5a6;
+        }
+
+        .architecture-connector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #f39c12;
+            padding: 10px 0;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #e74c3c, #f39c12, #2ecc71);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 5px;
+            width: 15px;
+            height: 15px;
+            background: #e74c3c;
+            border-radius: 50%;
+            border: 3px solid #1a1a2e;
+        }
+
+        .timeline-item.done::before {
+            background: #2ecc71;
+        }
+
+        .timeline-item h4 {
+            color: #f39c12;
+            margin-bottom: 8px;
+        }
+
+        .timeline-item p {
+            font-size: 1rem;
+            color: #95a5a6;
+        }
+
+        /* File Tree */
+        .file-tree {
+            font-family: 'Consolas', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .file-tree .folder {
+            color: #f39c12;
+        }
+
+        .file-tree .file {
+            color: #3498db;
+        }
+
+        .file-tree .file-py { color: #2ecc71; }
+        .file-tree .file-npy { color: #9b59b6; }
+        .file-tree .file-json { color: #e74c3c; }
+        .file-tree .file-html { color: #f39c12; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .grid-3 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .slide { padding: 20px 30px; }
+            .slide-title { font-size: 1.8rem; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .title-slide h1 { font-size: 2.5rem; }
+        }
+
+        /* Print styles */
+        @media print {
+            .nav-controls, .progress-bar, .slide-menu, .help-modal { display: none !important; }
+            .slide { display: block !important; position: relative !important; page-break-after: always; }
+            body { background: white; color: black; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="presentation" id="presentation">
+
+        <!-- SLIDE 1: Titre Principal -->
+        <div class="slide title-slide active">
+            <div class="emoji-big">🚀</div>
+            <h1>Projet Rakuten</h1>
+            <h2>Classification de Produits E-commerce</h2>
+            <p class="subtitle">Guide Complet d'Onboarding - Tout ce qu'il faut savoir</p>
+            <div style="margin-top: 40px; color: #95a5a6;">
+                <p>Classification automatique de 27 categories de produits</p>
+                <p style="margin-top: 10px;">Images + Texte = Prediction</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Bienvenue -->
+        <div class="slide">
+            <span class="section-badge intro">Introduction</span>
+            <h2 class="slide-title">Bienvenue dans le Projet Rakuten</h2>
+            <div class="content">
+                <p class="large">Ce guide va t'expliquer <span class="highlight">tout ce qu'on a fait</span> jusqu'a maintenant, <span class="highlight-green">pourquoi on l'a fait</span>, et <span class="highlight-blue">comment continuer</span>.</p>
+
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="card green">
+                        <h3>Ce que tu vas apprendre</h3>
+                        <ul>
+                            <li>L'objectif du projet</li>
+                            <li>L'architecture technique</li>
+                            <li>Le preprocessing des images</li>
+                            <li>La classification ML</li>
+                            <li>Les choix techniques et pourquoi</li>
+                            <li>Le code important explique</li>
+                        </ul>
+                    </div>
+                    <div class="card blue">
+                        <h3>Prerequis</h3>
+                        <ul>
+                            <li>Python 3.8+</li>
+                            <li>Notions de ML/Deep Learning</li>
+                            <li>PyTorch basics</li>
+                            <li>scikit-learn</li>
+                        </ul>
+                        <div class="tip" style="margin-top: 15px;">
+                            Pas d'inquietude, tout sera explique en detail !
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Objectif du Projet -->
+        <div class="slide">
+            <span class="section-badge intro">Introduction</span>
+            <h2 class="slide-title">L'Objectif : Classer 27 Categories de Produits</h2>
+            <div class="content">
+                <div class="important">
+                    <strong>Mission :</strong> Etant donne une image et une description textuelle d'un produit, predire automatiquement sa categorie parmi 27 classes.
+                </div>
+
+                <div class="grid-4" style="margin-top: 20px;">
+                    <div class="stat-box">
+                        <div class="number">98,728</div>
+                        <div class="label">Images totales</div>
+                    </div>
+                    <div class="stat-box green">
+                        <div class="number">84,916</div>
+                        <div class="label">Train</div>
+                    </div>
+                    <div class="stat-box blue">
+                        <div class="number">13,812</div>
+                        <div class="label">Test</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">27</div>
+                        <div class="label">Classes</div>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="margin-top: 30px;">
+                    <div class="card">
+                        <h3>Exemples de Categories</h3>
+                        <ul>
+                            <li><strong>10</strong> - Livres</li>
+                            <li><strong>1160</strong> - Cartes collection</li>
+                            <li><strong>2583</strong> - Piscine/Jardin</li>
+                            <li><strong>1920</strong> - Linge maison</li>
+                            <li><strong>2585</strong> - Bricolage</li>
+                        </ul>
+                    </div>
+                    <div class="card purple">
+                        <h3>Defi Principal</h3>
+                        <p>Les classes sont <span class="highlight-red">desequilibrees</span> :</p>
+                        <ul>
+                            <li>Classe majoritaire : 10,217 images</li>
+                            <li>Classe minoritaire : 804 images</li>
+                            <li><strong>Ratio : 12.7x</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Pipeline Global -->
+        <div class="slide">
+            <span class="section-badge architecture">Architecture</span>
+            <h2 class="slide-title">Le Pipeline Global du Projet</h2>
+            <div class="content">
+                <p>Voici les grandes etapes du projet, de la donnee brute a la prediction finale :</p>
+
+                <div class="flow-diagram" style="margin-top: 30px;">
+                    <div class="flow-step active">
+                        <div class="icon">📷</div>
+                        <div class="label">Images<br>500x500 px</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step active">
+                        <div class="icon">🔧</div>
+                        <div class="label">Preprocessing<br>224x224 px</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step active">
+                        <div class="icon">🧠</div>
+                        <div class="label">EfficientNet<br>Feature Extraction</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step active">
+                        <div class="icon">📊</div>
+                        <div class="label">Features<br>1280 dim</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step active">
+                        <div class="icon">🎯</div>
+                        <div class="label">MLP<br>Classification</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step active">
+                        <div class="icon">✅</div>
+                        <div class="label">Prediction<br>27 classes</div>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="margin-top: 30px;">
+                    <div class="card green">
+                        <h3>Etapes Terminees</h3>
+                        <ul>
+                            <li>✅ Preprocessing Images (EfficientNet-B0)</li>
+                            <li>✅ Extraction Features (1280 dimensions)</li>
+                            <li>✅ Classification (MLP : 60.36% accuracy)</li>
+                            <li>✅ Documentation complete</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="opacity: 0.7;">
+                        <h3>Etapes a Venir</h3>
+                        <ul>
+                            <li>⏳ Preprocessing Texte (TF-IDF / BERT)</li>
+                            <li>⏳ Classification Texte</li>
+                            <li>⏳ Fusion Multimodale</li>
+                            <li>⏳ Optimisation / Fine-tuning</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Structure des Fichiers -->
+        <div class="slide">
+            <span class="section-badge architecture">Architecture</span>
+            <h2 class="slide-title">Structure du Projet</h2>
+            <div class="content">
+                <div class="grid-2">
+                    <div>
+                        <h3 style="color: #f39c12; margin-bottom: 15px;">Arborescence</h3>
+                        <div class="file-tree">
+<span class="folder">implementation/</span>
+├── <span class="folder">preprocessing/</span>
+│   ├── <span class="file-py">image_config.py</span>      <span class="comment"># Configuration</span>
+│   ├── <span class="file-py">image_preprocessing.py</span> <span class="comment"># Pipeline preprocessing</span>
+│   ├── <span class="file-py">image_transforms.py</span>   <span class="comment"># Augmentations</span>
+│   ├── <span class="file-py">image_dataset.py</span>      <span class="comment"># Dataset PyTorch</span>
+│   └── <span class="file-py">feature_extractor.py</span>  <span class="comment"># Extraction CNN</span>
+│
+├── <span class="folder">outputs/</span>
+│   ├── <span class="file-npy">train_features_efficientnet_b0.npy</span>
+│   ├── <span class="file-npy">test_features_efficientnet_b0.npy</span>
+│   ├── <span class="file-npy">train_labels.npy</span>
+│   └── <span class="file-json">metadata.json</span>
+│
+├── <span class="folder">models/</span>
+│   ├── <span class="file-py">best_model_mlp.joblib</span>  <span class="comment"># Meilleur modele</span>
+│   └── <span class="file-py">scaler.joblib</span>
+│
+├── <span class="file-py">run_preprocessing.py</span>     <span class="comment"># Script principal</span>
+└── <span class="file-py">run_classification.py</span>    <span class="comment"># Script classification</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color: #f39c12; margin-bottom: 15px;">Description des Modules</h3>
+                        <div class="card" style="margin-bottom: 15px;">
+                            <h3>preprocessing/</h3>
+                            <p>Contient tout le code pour transformer les images brutes en features numeriques exploitables par le ML.</p>
+                        </div>
+                        <div class="card" style="margin-bottom: 15px;">
+                            <h3>outputs/</h3>
+                            <p>Stocke les features extraites (fichiers .npy) et les metadonnees du preprocessing.</p>
+                        </div>
+                        <div class="card">
+                            <h3>models/</h3>
+                            <p>Contient les modeles entraines et le scaler pour normaliser les features.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Pourquoi le Transfer Learning -->
+        <div class="slide">
+            <span class="section-badge choix">Choix Techniques</span>
+            <h2 class="slide-title">Pourquoi le Transfer Learning ?</h2>
+            <div class="content">
+                <div class="question">
+                    <strong>Question :</strong> Pourquoi ne pas entrainer un CNN from scratch sur nos 85K images ?
+                </div>
+
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="card red">
+                        <h3>From Scratch - Problemes</h3>
+                        <ul>
+                            <li><strong>85K images = trop peu</strong> pour un CNN profond</li>
+                            <li>Risque eleve d'<span class="highlight-red">overfitting</span></li>
+                            <li>Necessiterait des <strong>semaines</strong> d'entrainement</li>
+                            <li>Besoin de <strong>GPU puissant</strong></li>
+                            <li>Hyperparameter tuning complexe</li>
+                        </ul>
+                    </div>
+                    <div class="card green">
+                        <h3>Transfer Learning - Avantages</h3>
+                        <ul>
+                            <li>Modele pre-entraine sur <strong>1.2M images</strong> ImageNet</li>
+                            <li>Features generiques deja apprises</li>
+                            <li>Extraction rapide (<strong>20 min</strong> sur CPU)</li>
+                            <li>Pas besoin de GPU pour l'extraction</li>
+                            <li>Resultats excellents immediatement</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info" style="margin-top: 20px;">
+                    <strong>Transfer Learning = </strong> Utiliser un modele deja entraine sur un gros dataset (ImageNet) et reutiliser ses "connaissances" pour notre probleme specifique.
+                </div>
+
+                <div class="tip">
+                    <strong>Analogie :</strong> C'est comme embaucher quelqu'un qui sait deja conduire plutot que de lui apprendre from scratch. On lui apprend juste les specificites de la nouvelle voiture.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Pourquoi EfficientNet-B0 -->
+        <div class="slide">
+            <span class="section-badge choix">Choix Techniques</span>
+            <h2 class="slide-title">Pourquoi EfficientNet-B0 ?</h2>
+            <div class="content">
+                <p>Plusieurs modeles etaient possibles. Voici notre analyse :</p>
+
+                <table class="comparison-table">
+                    <tr>
+                        <th>Modele</th>
+                        <th>Feature Dim</th>
+                        <th>Input Size</th>
+                        <th>Parametres</th>
+                        <th>Top-1 ImageNet</th>
+                        <th>Choix ?</th>
+                    </tr>
+                    <tr>
+                        <td>ResNet-18</td>
+                        <td>512</td>
+                        <td>224x224</td>
+                        <td>11.7M</td>
+                        <td>69.8%</td>
+                        <td>Trop simple</td>
+                    </tr>
+                    <tr>
+                        <td>ResNet-50</td>
+                        <td>2048</td>
+                        <td>224x224</td>
+                        <td>25.6M</td>
+                        <td>76.1%</td>
+                        <td>Bon mais lourd</td>
+                    </tr>
+                    <tr style="background: rgba(46, 204, 113, 0.2);">
+                        <td><strong>EfficientNet-B0</strong></td>
+                        <td class="best">1280</td>
+                        <td>224x224</td>
+                        <td class="best">5.3M</td>
+                        <td class="best">77.1%</td>
+                        <td class="best">✅ CHOISI</td>
+                    </tr>
+                    <tr>
+                        <td>EfficientNet-B4</td>
+                        <td>1792</td>
+                        <td>380x380</td>
+                        <td>19M</td>
+                        <td>82.9%</td>
+                        <td>Trop lourd</td>
+                    </tr>
+                    <tr>
+                        <td>ViT-B/16</td>
+                        <td>768</td>
+                        <td>224x224</td>
+                        <td>86M</td>
+                        <td>77.9%</td>
+                        <td>Trop gros</td>
+                    </tr>
+                </table>
+
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="card green">
+                        <h3>Pourquoi EfficientNet-B0 gagne ?</h3>
+                        <ul>
+                            <li><strong>Meilleur ratio performance/taille</strong></li>
+                            <li>1280 features = richesse suffisante</li>
+                            <li>5.3M params = rapide a executer</li>
+                            <li>224x224 = standard, pas de resize special</li>
+                        </ul>
+                    </div>
+                    <div class="card blue">
+                        <h3>Compound Scaling</h3>
+                        <p>EfficientNet utilise un <strong>compound coefficient</strong> pour scaler equilibrement :</p>
+                        <ul>
+                            <li>Profondeur (depth)</li>
+                            <li>Largeur (width)</li>
+                            <li>Resolution (resolution)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Preprocessing - Vue d'ensemble -->
+        <div class="slide">
+            <span class="section-badge preprocessing">Preprocessing</span>
+            <h2 class="slide-title">Etape 1 : Preprocessing des Images</h2>
+            <div class="content">
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <div class="icon">📷</div>
+                        <div class="label">Image Brute<br>JPEG 500x500</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="icon">📐</div>
+                        <div class="label">Resize<br>224x224</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="icon">🔢</div>
+                        <div class="label">Normalisation<br>ImageNet</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="icon">🧠</div>
+                        <div class="label">EfficientNet<br>Forward Pass</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="icon">📊</div>
+                        <div class="label">Features<br>1280-dim</div>
+                    </div>
+                </div>
+
+                <div class="grid-3" style="margin-top: 30px;">
+                    <div class="card">
+                        <h3>1. Resize</h3>
+                        <p>500x500 → 224x224</p>
+                        <p style="margin-top: 10px; font-size: 0.9rem;">Interpolation bilineaire pour garder la qualite</p>
+                    </div>
+                    <div class="card">
+                        <h3>2. Normalisation</h3>
+                        <p>Valeurs ImageNet :</p>
+                        <div style="font-family: monospace; font-size: 0.85rem; margin-top: 10px;">
+                            mean = [0.485, 0.456, 0.406]<br>
+                            std = [0.229, 0.224, 0.225]
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>3. Extraction</h3>
+                        <p>EfficientNet-B0 sans la derniere couche</p>
+                        <p style="margin-top: 10px; font-size: 0.9rem;">Output: vecteur de 1280 floats</p>
+                    </div>
+                </div>
+
+                <div class="warning" style="margin-top: 20px;">
+                    <strong>Important :</strong> La normalisation ImageNet est <strong>obligatoire</strong> car le modele a ete entraine avec ces valeurs. Sans ca, les features seraient inutiles.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: Code - Feature Extractor -->
+        <div class="slide">
+            <span class="section-badge code">Code</span>
+            <h2 class="slide-title">Code Cle : L'Extracteur de Features</h2>
+            <div class="content">
+                <p>Voici le coeur du preprocessing - la classe <code>ImageFeatureExtractor</code> :</p>
+
+                <div class="code-title">feature_extractor.py - Initialisation du modele</div>
+                <div class="code-block">
+                    <code><span class="keyword">class</span> <span class="class">ImageFeatureExtractor</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>, model_name=<span class="string">'efficientnet_b0'</span>):
+        <span class="comment"># Auto-detection GPU/CPU</span>
+        <span class="keyword">self</span>.device = torch.device(<span class="string">'cuda'</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">'cpu'</span>)
+
+        <span class="comment"># Charger EfficientNet pre-entraine</span>
+        model = models.efficientnet_b0(weights=<span class="string">'IMAGENET1K_V1'</span>)
+
+        <span class="comment"># IMPORTANT: Supprimer la couche de classification</span>
+        <span class="comment"># On garde seulement les features (1280 dimensions)</span>
+        model.classifier = nn.Identity()
+
+        <span class="comment"># Mode evaluation (pas de dropout, batchnorm fixe)</span>
+        <span class="keyword">self</span>.model = model.eval().to(<span class="keyword">self</span>.device)
+
+        <span class="comment"># Desactiver les gradients (inference only)</span>
+        <span class="keyword">for</span> param <span class="keyword">in</span> <span class="keyword">self</span>.model.parameters():
+            param.requires_grad = <span class="number">False</span></code>
+                </div>
+
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="tip">
+                        <strong>model.classifier = nn.Identity()</strong><br>
+                        Cette ligne est cruciale ! On remplace la couche de classification (1000 classes ImageNet) par une couche identite. Ainsi, la sortie est le vecteur de features brut.
+                    </div>
+                    <div class="info">
+                        <strong>model.eval()</strong><br>
+                        Met le modele en mode evaluation. Les layers comme Dropout et BatchNorm se comportent differemment en train vs eval.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: Code - Extraction Batch -->
+        <div class="slide">
+            <span class="section-badge code">Code</span>
+            <h2 class="slide-title">Code Cle : Extraction par Batch</h2>
+            <div class="content">
+                <div class="code-title">feature_extractor.py - Extraction des features</div>
+                <div class="code-block">
+                    <code><span class="keyword">def</span> <span class="function">extract_features</span>(<span class="keyword">self</span>, dataloader):
+    <span class="string">"""Extrait les features de toutes les images."""</span>
+    features_list = []
+
+    <span class="comment"># IMPORTANT: torch.no_grad() pour economiser la memoire</span>
+    <span class="keyword">with</span> torch.no_grad():
+        <span class="keyword">for</span> batch <span class="keyword">in</span> tqdm(dataloader, desc=<span class="string">"Extracting"</span>):
+            images = batch[<span class="number">0</span>].to(<span class="keyword">self</span>.device)
+
+            <span class="comment"># Forward pass dans EfficientNet</span>
+            features = <span class="keyword">self</span>.model(images)
+
+            <span class="comment"># Flatten: (batch, 1280, 1, 1) -> (batch, 1280)</span>
+            features = features.view(features.size(<span class="number">0</span>), -<span class="number">1</span>)
+
+            <span class="comment"># GPU -> CPU -> NumPy</span>
+            features_list.append(features.cpu().numpy())
+
+    <span class="comment"># Concatener tous les batches</span>
+    <span class="keyword">return</span> np.vstack(features_list)  <span class="comment"># Shape: (N, 1280)</span></code>
+                </div>
+
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="card">
+                        <h3>Pourquoi torch.no_grad() ?</h3>
+                        <ul>
+                            <li>On ne fait pas de backpropagation</li>
+                            <li>Economise ~50% de memoire GPU</li>
+                            <li>Accelere l'execution</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Pourquoi .cpu().numpy() ?</h3>
+                        <ul>
+                            <li>Les tenseurs GPU ne peuvent pas etre converties directement</li>
+                            <li>On doit d'abord les ramener sur CPU</li>
+                            <li>Puis convertir en NumPy pour sklearn</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: Code - Transforms -->
+        <div class="slide">
+            <span class="section-badge code">Code</span>
+            <h2 class="slide-title">Code Cle : Les Transformations</h2>
+            <div class="content">
+                <p>On utilise <strong>Albumentations</strong> pour les transformations d'images (plus rapide que torchvision) :</p>
+
+                <div class="code-title">image_transforms.py - Transformations pour validation/inference</div>
+                <div class="code-block">
+                    <code><span class="keyword">import</span> albumentations <span class="keyword">as</span> A
+<span class="keyword">from</span> albumentations.pytorch <span class="keyword">import</span> ToTensorV2
+
+<span class="keyword">def</span> <span class="function">get_val_transforms</span>(input_size=<span class="number">224</span>):
+    <span class="string">"""Transformations pour validation/test (pas d'augmentation)."""</span>
+    <span class="keyword">return</span> A.Compose([
+        <span class="comment"># 1. Resize a la taille attendue par le modele</span>
+        A.Resize(input_size, input_size),
+
+        <span class="comment"># 2. Normalisation ImageNet (OBLIGATOIRE)</span>
+        A.Normalize(
+            mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>],
+            std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>],
+        ),
+
+        <span class="comment"># 3. Conversion en tensor PyTorch</span>
+        <span class="comment"># (H, W, C) -> (C, H, W) et uint8 -> float32</span>
+        ToTensorV2(),
+    ])</code>
+                </div>
+
+                <div class="important" style="margin-top: 20px;">
+                    <strong>Pourquoi ces valeurs de normalisation ?</strong><br>
+                    Ce sont les statistiques calculees sur ImageNet (1.2M images). Le modele EfficientNet a ete entraine avec ces valeurs. Si on utilise d'autres valeurs, les features extraites seront incorrectes !
+                </div>
+
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="card blue">
+                        <h3>Albumentations vs Torchvision</h3>
+                        <ul>
+                            <li>2-3x plus rapide</li>
+                            <li>Plus de transformations disponibles</li>
+                            <li>Meilleure API pour l'augmentation</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>ToTensorV2</h3>
+                        <p>Convertit :</p>
+                        <ul>
+                            <li>HWC → CHW (format PyTorch)</li>
+                            <li>uint8 [0-255] → float32 [0-1]</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: Resultats Preprocessing -->
+        <div class="slide">
+            <span class="section-badge preprocessing">Preprocessing</span>
+            <h2 class="slide-title">Resultats du Preprocessing</h2>
+            <div class="content">
+                <div class="grid-4">
+                    <div class="stat-box">
+                        <div class="number">84,916</div>
+                        <div class="label">Images Train</div>
+                    </div>
+                    <div class="stat-box green">
+                        <div class="number">13,812</div>
+                        <div class="label">Images Test</div>
+                    </div>
+                    <div class="stat-box blue">
+                        <div class="number">1,280</div>
+                        <div class="label">Dimensions Features</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">~45 min</div>
+                        <div class="label">Temps Total</div>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="margin-top: 30px;">
+                    <div class="card">
+                        <h3>Fichiers Generes</h3>
+                        <table class="comparison-table" style="font-size: 0.9rem;">
+                            <tr>
+                                <th>Fichier</th>
+                                <th>Taille</th>
+                                <th>Shape</th>
+                            </tr>
+                            <tr>
+                                <td>train_features_efficientnet_b0.npy</td>
+                                <td>~435 MB</td>
+                                <td>(84916, 1280)</td>
+                            </tr>
+                            <tr>
+                                <td>test_features_efficientnet_b0.npy</td>
+                                <td>~71 MB</td>
+                                <td>(13812, 1280)</td>
+                            </tr>
+                            <tr>
+                                <td>train_labels.npy</td>
+                                <td>~340 KB</td>
+                                <td>(84916,)</td>
+                            </tr>
+                            <tr>
+                                <td>metadata.json</td>
+                                <td>~2 KB</td>
+                                <td>-</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="card green">
+                        <h3>Statistiques Features</h3>
+                        <ul>
+                            <li><strong>Mean :</strong> 0.3842</li>
+                            <li><strong>Std :</strong> 0.5691</li>
+                            <li><strong>Min :</strong> 0.0</li>
+                            <li><strong>Max :</strong> 12.47</li>
+                        </ul>
+                        <div class="tip" style="margin-top: 15px; font-size: 0.9rem;">
+                            Les features sont positives (ReLU) et relativement bien distribuees.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info" style="margin-top: 20px;">
+                    <strong>Note :</strong> Les features sont sauvegardees en <code>.npy</code> (format NumPy) pour un chargement ultra-rapide. Un fichier de 435 MB se charge en moins de 2 secondes.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: Classification - Vue d'ensemble -->
+        <div class="slide">
+            <span class="section-badge classification">Classification</span>
+            <h2 class="slide-title">Etape 2 : Classification des Features</h2>
+            <div class="content">
+                <p>Maintenant qu'on a les features (1280 dim), on peut entrainer un classifieur dessus.</p>
+
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <div class="icon">📊</div>
+                        <div class="label">Features<br>(84916, 1280)</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="icon">✂️</div>
+                        <div class="label">Split<br>80/20</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="icon">📏</div>
+                        <div class="label">StandardScaler<br>Normalisation</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="icon">🎯</div>
+                        <div class="label">Modeles<br>LR/RF/MLP</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="icon">📈</div>
+                        <div class="label">Evaluation<br>F1-weighted</div>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="margin-top: 30px;">
+                    <div class="card">
+                        <h3>Split des Donnees</h3>
+                        <ul>
+                            <li><strong>Train :</strong> 67,932 (80%)</li>
+                            <li><strong>Validation :</strong> 16,984 (20%)</li>
+                            <li>Split <strong>stratifie</strong> (proportions conservees)</li>
+                        </ul>
+                    </div>
+                    <div class="card blue">
+                        <h3>Modeles Testes</h3>
+                        <ul>
+                            <li>Logistic Regression (baseline)</li>
+                            <li>Random Forest (ensemble)</li>
+                            <li><strong>MLP Neural Network</strong> (gagnant)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="warning" style="margin-top: 20px;">
+                    <strong>Gestion du desequilibre :</strong> On utilise <code>class_weight='balanced'</code> pour tous les modeles. Cela penalise plus fortement les erreurs sur les classes minoritaires.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 14: Pourquoi StandardScaler -->
+        <div class="slide">
+            <span class="section-badge choix">Choix Techniques</span>
+            <h2 class="slide-title">Pourquoi StandardScaler ?</h2>
+            <div class="content">
+                <div class="question">
+                    <strong>Question :</strong> Les features sont deja normalisees par EfficientNet, pourquoi re-normaliser ?
+                </div>
+
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="card red">
+                        <h3>Sans StandardScaler</h3>
+                        <ul>
+                            <li>Features ont des echelles differentes</li>
+                            <li>Certaines dimensions dominent</li>
+                            <li>Gradients instables pour MLP</li>
+                            <li>Logistic Regression converge lentement</li>
+                        </ul>
+                    </div>
+                    <div class="card green">
+                        <h3>Avec StandardScaler</h3>
+                        <ul>
+                            <li>Chaque dimension a mean=0, std=1</li>
+                            <li>Toutes les features contribuent equitablement</li>
+                            <li>Convergence plus rapide</li>
+                            <li>Meilleure stabilite numerique</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-title" style="margin-top: 20px;">StandardScaler en action</div>
+                <div class="code-block">
+                    <code><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+
+scaler = StandardScaler()
+
+<span class="comment"># Fit sur TRAIN seulement (eviter data leakage)</span>
+X_train_scaled = scaler.fit_transform(X_train)
+
+<span class="comment"># Transform sur VAL/TEST avec les stats du train</span>
+X_val_scaled = scaler.transform(X_val)
+X_test_scaled = scaler.transform(X_test)
+
+<span class="comment"># Sauvegarder le scaler pour inference</span>
+joblib.dump(scaler, <span class="string">'models/scaler.joblib'</span>)</code>
+                </div>
+
+                <div class="important" style="margin-top: 15px;">
+                    <strong>Data Leakage :</strong> On ne doit JAMAIS fit le scaler sur les donnees de validation/test. Sinon, on "triche" en utilisant des informations du futur.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 15: Les 3 Modeles -->
+        <div class="slide">
+            <span class="section-badge classification">Classification</span>
+            <h2 class="slide-title">Les 3 Modeles Testes</h2>
+            <div class="content">
+                <div class="grid-3">
+                    <div class="card">
+                        <h3>Logistic Regression</h3>
+                        <p><strong>Type :</strong> Lineaire</p>
+                        <p><strong>Avantages :</strong></p>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Simple et interpretable</li>
+                            <li>Baseline solide</li>
+                            <li>Peu d'overfitting</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><strong>Inconvenients :</strong></p>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Frontiere lineaire seulement</li>
+                            <li>Limite pour patterns complexes</li>
+                        </ul>
+                    </div>
+                    <div class="card blue">
+                        <h3>Random Forest</h3>
+                        <p><strong>Type :</strong> Ensemble d'arbres</p>
+                        <p><strong>Avantages :</strong></p>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Gere bien les features nombreuses</li>
+                            <li>Feature importance</li>
+                            <li>Robuste aux outliers</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><strong>Inconvenients :</strong></p>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Tendance a l'overfitting</li>
+                            <li>Modele volumineux</li>
+                        </ul>
+                    </div>
+                    <div class="card green">
+                        <h3>MLP (Neural Network)</h3>
+                        <p><strong>Type :</strong> Deep Learning</p>
+                        <p><strong>Avantages :</strong></p>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Capture patterns non-lineaires</li>
+                            <li>Flexible architecture</li>
+                            <li>Early stopping</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><strong>Inconvenients :</strong></p>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Hyperparametres nombreux</li>
+                            <li>Boite noire</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info" style="margin-top: 20px;">
+                    <strong>Strategie :</strong> On commence par le plus simple (Logistic Regression) pour avoir une baseline, puis on monte en complexite.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 16: Code - MLP Configuration -->
+        <div class="slide">
+            <span class="section-badge code">Code</span>
+            <h2 class="slide-title">Code Cle : Configuration du MLP</h2>
+            <div class="content">
+                <div class="code-title">run_classification.py - Configuration MLP</div>
+                <div class="code-block">
+                    <code><span class="keyword">from</span> sklearn.neural_network <span class="keyword">import</span> MLPClassifier
+
+mlp = MLPClassifier(
+    <span class="comment"># Architecture: 1280 -> 512 -> 256 -> 128 -> 27</span>
+    hidden_layer_sizes=(<span class="number">512</span>, <span class="number">256</span>, <span class="number">128</span>),
+
+    <span class="comment"># Activation: ReLU (standard pour MLP)</span>
+    activation=<span class="string">'relu'</span>,
+
+    <span class="comment"># Optimizer: Adam (adaptatif, bon par defaut)</span>
+    solver=<span class="string">'adam'</span>,
+
+    <span class="comment"># Regularisation L2 (evite overfitting)</span>
+    alpha=<span class="number">0.001</span>,
+
+    <span class="comment"># Batch size: assez grand pour stabilite</span>
+    batch_size=<span class="number">256</span>,
+
+    <span class="comment"># Learning rate adaptatif</span>
+    learning_rate=<span class="string">'adaptive'</span>,
+    learning_rate_init=<span class="number">0.001</span>,
+
+    <span class="comment"># IMPORTANT: Early stopping pour eviter overfitting</span>
+    early_stopping=<span class="number">True</span>,
+    validation_fraction=<span class="number">0.1</span>,
+    n_iter_no_change=<span class="number">10</span>,
+
+    max_iter=<span class="number">100</span>,
+    random_state=<span class="number">42</span>
+)</code>
+                </div>
+
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="card">
+                        <h3>Architecture (512, 256, 128)</h3>
+                        <p>Reduction progressive des dimensions :</p>
+                        <div style="font-family: monospace; margin-top: 10px; font-size: 0.9rem;">
+                            1280 → 512 → 256 → 128 → 27
+                        </div>
+                        <p style="margin-top: 10px; font-size: 0.9rem;">Cree un "bottleneck" qui force le modele a apprendre une representation compacte.</p>
+                    </div>
+                    <div class="card green">
+                        <h3>Early Stopping</h3>
+                        <p>Arrete l'entrainement quand la performance sur validation stagne.</p>
+                        <ul style="font-size: 0.9rem;">
+                            <li>10% des donnees pour validation interne</li>
+                            <li>Arret apres 10 epochs sans amelioration</li>
+                            <li>Sauvegarde du meilleur modele</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 17: Resultats Comparaison -->
+        <div class="slide">
+            <span class="section-badge classification">Classification</span>
+            <h2 class="slide-title">Resultats : Comparaison des Modeles</h2>
+            <div class="content">
+                <table class="comparison-table">
+                    <tr>
+                        <th>Modele</th>
+                        <th>Train Acc</th>
+                        <th>Val Acc</th>
+                        <th>Train F1</th>
+                        <th>Val F1</th>
+                        <th>Temps</th>
+                        <th>Overfitting</th>
+                    </tr>
+                    <tr style="background: rgba(46, 204, 113, 0.2);">
+                        <td><strong>MLP</strong></td>
+                        <td>89.99%</td>
+                        <td class="best">60.36%</td>
+                        <td>0.8996</td>
+                        <td class="best">0.6016</td>
+                        <td>161s</td>
+                        <td>29.6%</td>
+                    </tr>
+                    <tr>
+                        <td>Random Forest</td>
+                        <td>99.47%</td>
+                        <td>56.35%</td>
+                        <td>0.9947</td>
+                        <td>0.5438</td>
+                        <td>109s</td>
+                        <td style="color: #e74c3c;">43.1%</td>
+                    </tr>
+                    <tr>
+                        <td>Logistic Regression</td>
+                        <td>68.91%</td>
+                        <td>54.66%</td>
+                        <td>0.6899</td>
+                        <td>0.5545</td>
+                        <td>406s</td>
+                        <td style="color: #2ecc71;">14.3%</td>
+                    </tr>
+                </table>
+
+                <div class="grid-2" style="margin-top: 30px;">
+                    <div class="card green">
+                        <h3>Gagnant : MLP</h3>
+                        <ul>
+                            <li><strong>60.36%</strong> de validation accuracy</li>
+                            <li><strong>0.6016</strong> F1-weighted</li>
+                            <li>Bon compromis performance/overfitting</li>
+                            <li>Temps d'entrainement raisonnable</li>
+                        </ul>
+                    </div>
+                    <div class="card red">
+                        <h3>Random Forest : Trop d'Overfitting</h3>
+                        <ul>
+                            <li>99.47% train vs 56.35% val</li>
+                            <li>Gap de 43% = memorisation</li>
+                            <li>Ne generalise pas bien</li>
+                            <li>Modele de 1.3 GB !</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info" style="margin-top: 20px;">
+                    <strong>Note :</strong> 60% peut sembler faible, mais c'est normal pour 27 classes avec des images produits qui peuvent etre visuellement similaires. Le texte aidera beaucoup !
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 18: Analyse des Erreurs -->
+        <div class="slide">
+            <span class="section-badge classification">Classification</span>
+            <h2 class="slide-title">Analyse : Classes Difficiles</h2>
+            <div class="content">
+                <p>Certaines classes sont bien classifiees, d'autres non. Pourquoi ?</p>
+
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="card green">
+                        <h3>Classes Bien Classifiees (F1 > 0.79)</h3>
+                        <table class="comparison-table" style="font-size: 0.9rem;">
+                            <tr>
+                                <th>Classe</th>
+                                <th>Nom</th>
+                                <th>F1</th>
+                                <th>Pourquoi ?</th>
+                            </tr>
+                            <tr>
+                                <td>1160</td>
+                                <td>Cartes collection</td>
+                                <td class="best">0.89</td>
+                                <td>Visuellement distinct</td>
+                            </tr>
+                            <tr>
+                                <td>2583</td>
+                                <td>Piscine/Jardin</td>
+                                <td class="best">0.83</td>
+                                <td>Couleurs typiques</td>
+                            </tr>
+                            <tr>
+                                <td>1920</td>
+                                <td>Linge maison</td>
+                                <td class="best">0.79</td>
+                                <td>Textures reconnaissables</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="card red">
+                        <h3>Classes Difficiles (F1 < 0.40)</h3>
+                        <table class="comparison-table" style="font-size: 0.9rem;">
+                            <tr>
+                                <th>Classe</th>
+                                <th>Nom</th>
+                                <th>F1</th>
+                                <th>Pourquoi ?</th>
+                            </tr>
+                            <tr>
+                                <td>1281</td>
+                                <td>Jeux educatifs</td>
+                                <td>0.28</td>
+                                <td>Confusion avec 1280</td>
+                            </tr>
+                            <tr>
+                                <td>1280</td>
+                                <td>Jouets enfants</td>
+                                <td>0.37</td>
+                                <td>Grande variabilite</td>
+                            </tr>
+                            <tr>
+                                <td>2220</td>
+                                <td>Animalerie</td>
+                                <td>0.39</td>
+                                <td>Sous-representee</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="warning" style="margin-top: 20px;">
+                    <strong>Confusions principales :</strong>
+                    <ul>
+                        <li>1280 ↔ 1281 : Jouets vs Jeux educatifs (visuellement identiques)</li>
+                        <li>10 ↔ 40 : Livres vs Jeux video (boites similaires)</li>
+                        <li>2060 ↔ 2582 : Decoration vs Mobilier exterieur</li>
+                    </ul>
+                </div>
+
+                <div class="tip" style="margin-top: 15px;">
+                    <strong>Solution :</strong> Le texte (titre, description) permettra de distinguer ces categories visuellement similaires !
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 19: Comment Utiliser le Modele -->
+        <div class="slide">
+            <span class="section-badge code">Code</span>
+            <h2 class="slide-title">Comment Utiliser le Modele Entraine</h2>
+            <div class="content">
+                <p>Voici comment faire une prediction sur une nouvelle image :</p>
+
+                <div class="code-title">Inference complete</div>
+                <div class="code-block">
+                    <code><span class="keyword">import</span> joblib
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">from</span> preprocessing <span class="keyword">import</span> ImageFeatureExtractor
+
+<span class="comment"># 1. Charger le modele et le scaler</span>
+model = joblib.load(<span class="string">'models/best_model_mlp.joblib'</span>)
+scaler = joblib.load(<span class="string">'models/scaler.joblib'</span>)
+
+<span class="comment"># 2. Creer l'extracteur de features</span>
+extractor = ImageFeatureExtractor(model_name=<span class="string">'efficientnet_b0'</span>)
+
+<span class="comment"># 3. Extraire les features de la nouvelle image</span>
+features = extractor.extract_from_paths([<span class="string">'chemin/vers/image.jpg'</span>])
+
+<span class="comment"># 4. Normaliser avec le MEME scaler que l'entrainement</span>
+features_scaled = scaler.transform(features)
+
+<span class="comment"># 5. Predire</span>
+prediction = model.predict(features_scaled)
+probabilities = model.predict_proba(features_scaled)
+
+<span class="keyword">print</span>(f<span class="string">"Classe predite: {prediction[0]}"</span>)
+<span class="keyword">print</span>(f<span class="string">"Confiance: {probabilities.max():.2%}"</span>)</code>
+                </div>
+
+                <div class="important" style="margin-top: 20px;">
+                    <strong>Points critiques :</strong>
+                    <ul>
+                        <li>Utiliser le <strong>meme scaler</strong> que l'entrainement</li>
+                        <li>Utiliser le <strong>meme modele EfficientNet</strong> (B0)</li>
+                        <li>Les images doivent etre en <strong>RGB</strong> (pas de grayscale)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 20: Les Class Weights -->
+        <div class="slide">
+            <span class="section-badge choix">Choix Techniques</span>
+            <h2 class="slide-title">Gestion du Desequilibre : Class Weights</h2>
+            <div class="content">
+                <p>Avec 27 classes desequilibrees, on doit penaliser differemment les erreurs :</p>
+
+                <div class="code-title">Calcul des class weights</div>
+                <div class="code-block">
+                    <code><span class="keyword">from</span> sklearn.utils.class_weight <span class="keyword">import</span> compute_class_weight
+
+<span class="comment"># Formule: w_c = n_samples / (n_classes * n_samples_c)</span>
+class_weights = compute_class_weight(
+    class_weight=<span class="string">'balanced'</span>,
+    classes=np.unique(y_train),
+    y=y_train
+)
+
+<span class="comment"># Exemple de poids calcules:</span>
+<span class="comment"># Classe 2583 (majoritaire, 10K images): weight = 0.31</span>
+<span class="comment"># Classe 1940 (minoritaire, 800 images): weight = 3.92</span></code>
+                </div>
+
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="card">
+                        <h3>Sans Class Weights</h3>
+                        <ul>
+                            <li>Le modele favorise les classes majoritaires</li>
+                            <li>Classes minoritaires ignorees</li>
+                            <li>Accuracy peut etre bonne mais F1 faible</li>
+                        </ul>
+                    </div>
+                    <div class="card green">
+                        <h3>Avec Class Weights</h3>
+                        <ul>
+                            <li>Erreurs sur classes rares = plus penalisees</li>
+                            <li>Le modele apprend toutes les classes</li>
+                            <li>Meilleur F1-weighted</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info" style="margin-top: 20px;">
+                    <strong>Impact :</strong> Une erreur sur la classe 1940 (weight=3.92) coute 12.6x plus cher qu'une erreur sur 2583 (weight=0.31).
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 21: Fichiers Importants -->
+        <div class="slide">
+            <span class="section-badge architecture">Architecture</span>
+            <h2 class="slide-title">Resume : Fichiers a Connaitre</h2>
+            <div class="content">
+                <div class="grid-2">
+                    <div>
+                        <h3 style="color: #2ecc71; margin-bottom: 15px;">Scripts Principaux</h3>
+                        <div class="card" style="margin-bottom: 15px;">
+                            <h3>run_preprocessing.py</h3>
+                            <p>Script qui extrait les features de toutes les images.</p>
+                            <div style="font-family: monospace; font-size: 0.85rem; margin-top: 10px; color: #95a5a6;">
+                                python run_preprocessing.py
+                            </div>
+                        </div>
+                        <div class="card" style="margin-bottom: 15px;">
+                            <h3>run_classification.py</h3>
+                            <p>Script qui entraine et compare les modeles.</p>
+                            <div style="font-family: monospace; font-size: 0.85rem; margin-top: 10px; color: #95a5a6;">
+                                python run_classification.py
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color: #3498db; margin-bottom: 15px;">Modules Cles</h3>
+                        <div class="card blue" style="margin-bottom: 15px;">
+                            <h3>preprocessing/feature_extractor.py</h3>
+                            <p>Classe <code>ImageFeatureExtractor</code> - le coeur de l'extraction.</p>
+                        </div>
+                        <div class="card blue" style="margin-bottom: 15px;">
+                            <h3>preprocessing/image_config.py</h3>
+                            <p>Toute la configuration : chemins, hyperparametres, mapping classes.</p>
+                        </div>
+                        <div class="card blue">
+                            <h3>preprocessing/image_transforms.py</h3>
+                            <p>Transformations Albumentations pour preprocessing.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 22: Prochaines Etapes -->
+        <div class="slide">
+            <span class="section-badge next">Prochaines Etapes</span>
+            <h2 class="slide-title">Et Maintenant ? La Suite du Projet</h2>
+            <div class="content">
+                <div class="timeline">
+                    <div class="timeline-item done">
+                        <h4>Etape 1 : Preprocessing Images</h4>
+                        <p>EfficientNet-B0 → 1280 features par image</p>
+                    </div>
+                    <div class="timeline-item done">
+                        <h4>Etape 2 : Classification Images</h4>
+                        <p>MLP → 60.36% accuracy sur 27 classes</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Etape 3 : Preprocessing Texte</h4>
+                        <p>TF-IDF ou embeddings BERT sur designation + description</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Etape 4 : Classification Texte</h4>
+                        <p>Entrainer un classifieur sur les features texte</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Etape 5 : Fusion Multimodale</h4>
+                        <p>Combiner Image + Texte pour une meilleure precision</p>
+                    </div>
+                </div>
+
+                <div class="tip" style="margin-top: 20px;">
+                    <strong>Prediction :</strong> La fusion multimodale devrait atteindre <strong>75-85%</strong> d'accuracy car le texte aide a distinguer les classes visuellement similaires.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 23: Ressources -->
+        <div class="slide">
+            <span class="section-badge intro">Ressources</span>
+            <h2 class="slide-title">Documentation et Ressources</h2>
+            <div class="content">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Documentation Interne</h3>
+                        <ul>
+                            <li><strong>BIBLE_PREPROCESSING_IMAGES.md</strong><br>Guide complet du preprocessing</li>
+                            <li><strong>BIBLE_CLASSIFICATION_IMAGES.md</strong><br>Guide complet de la classification</li>
+                            <li><strong>PRESENTATION_PREPROCESSING.html</strong><br>Slides preprocessing</li>
+                            <li><strong>PRESENTATION_CLASSIFICATION.html</strong><br>Slides classification</li>
+                        </ul>
+                    </div>
+                    <div class="card blue">
+                        <h3>Ressources Externes</h3>
+                        <ul>
+                            <li><a href="https://arxiv.org/abs/1905.11946" style="color: #3498db;">EfficientNet Paper</a></li>
+                            <li><a href="https://scikit-learn.org/stable/" style="color: #3498db;">scikit-learn Docs</a></li>
+                            <li><a href="https://pytorch.org/docs/" style="color: #3498db;">PyTorch Documentation</a></li>
+                            <li><a href="https://albumentations.ai/" style="color: #3498db;">Albumentations</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="important" style="margin-top: 30px;">
+                    <strong>Questions ?</strong><br>
+                    N'hesite pas a explorer le code, lire les commentaires, et experimenter. Tout est documente dans les fichiers BIBLE_*.md !
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 24: Fin -->
+        <div class="slide title-slide">
+            <div class="emoji-big">🎉</div>
+            <h1>Bienvenue dans l'Equipe !</h1>
+            <h2>Tu es pret a contribuer au projet</h2>
+            <p class="subtitle" style="margin-top: 30px;">
+                Preprocessing ✅ | Classification ✅ | Texte ⏳ | Fusion ⏳
+            </p>
+            <div style="margin-top: 40px;">
+                <div class="stat-box" style="display: inline-block; margin: 10px;">
+                    <div class="number">60.36%</div>
+                    <div class="label">Accuracy Images</div>
+                </div>
+                <div class="stat-box green" style="display: inline-block; margin: 10px;">
+                    <div class="number">27</div>
+                    <div class="label">Classes</div>
+                </div>
+                <div class="stat-box blue" style="display: inline-block; margin: 10px;">
+                    <div class="number">98K</div>
+                    <div class="label">Images</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">
+            ← Precedent
+        </button>
+        <span class="slide-counter">
+            <span id="currentSlide">1</span> / <span id="totalSlides">24</span>
+        </span>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">
+            Suivant →
+        </button>
+        <button class="nav-btn" onclick="toggleMenu()" title="Menu (M)">
+            ☰
+        </button>
+        <button class="nav-btn" onclick="toggleHelp()" title="Aide (?)">
+            ?
+        </button>
+    </div>
+
+    <!-- Slide Menu -->
+    <div class="slide-menu" id="slideMenu">
+        <h3>Navigation</h3>
+        <div class="menu-section">
+            <div class="menu-section-title">Introduction</div>
+            <div class="menu-item" onclick="goToSlide(1)">1. Titre</div>
+            <div class="menu-item" onclick="goToSlide(2)">2. Bienvenue</div>
+            <div class="menu-item" onclick="goToSlide(3)">3. Objectif du Projet</div>
+        </div>
+        <div class="menu-section">
+            <div class="menu-section-title">Architecture</div>
+            <div class="menu-item" onclick="goToSlide(4)">4. Pipeline Global</div>
+            <div class="menu-item" onclick="goToSlide(5)">5. Structure Fichiers</div>
+        </div>
+        <div class="menu-section">
+            <div class="menu-section-title">Choix Techniques</div>
+            <div class="menu-item" onclick="goToSlide(6)">6. Pourquoi Transfer Learning</div>
+            <div class="menu-item" onclick="goToSlide(7)">7. Pourquoi EfficientNet-B0</div>
+            <div class="menu-item" onclick="goToSlide(14)">14. Pourquoi StandardScaler</div>
+            <div class="menu-item" onclick="goToSlide(20)">20. Class Weights</div>
+        </div>
+        <div class="menu-section">
+            <div class="menu-section-title">Preprocessing</div>
+            <div class="menu-item" onclick="goToSlide(8)">8. Vue d'ensemble</div>
+            <div class="menu-item" onclick="goToSlide(12)">12. Resultats</div>
+        </div>
+        <div class="menu-section">
+            <div class="menu-section-title">Code Important</div>
+            <div class="menu-item" onclick="goToSlide(9)">9. Feature Extractor</div>
+            <div class="menu-item" onclick="goToSlide(10)">10. Extraction Batch</div>
+            <div class="menu-item" onclick="goToSlide(11)">11. Transforms</div>
+            <div class="menu-item" onclick="goToSlide(16)">16. Config MLP</div>
+            <div class="menu-item" onclick="goToSlide(19)">19. Utiliser le Modele</div>
+        </div>
+        <div class="menu-section">
+            <div class="menu-section-title">Classification</div>
+            <div class="menu-item" onclick="goToSlide(13)">13. Vue d'ensemble</div>
+            <div class="menu-item" onclick="goToSlide(15)">15. Les 3 Modeles</div>
+            <div class="menu-item" onclick="goToSlide(17)">17. Resultats</div>
+            <div class="menu-item" onclick="goToSlide(18)">18. Analyse Erreurs</div>
+        </div>
+        <div class="menu-section">
+            <div class="menu-section-title">Conclusion</div>
+            <div class="menu-item" onclick="goToSlide(21)">21. Fichiers Importants</div>
+            <div class="menu-item" onclick="goToSlide(22)">22. Prochaines Etapes</div>
+            <div class="menu-item" onclick="goToSlide(23)">23. Ressources</div>
+            <div class="menu-item" onclick="goToSlide(24)">24. Fin</div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="help-modal" id="helpModal">
+        <div class="help-content">
+            <h3>Raccourcis Clavier</h3>
+            <div class="shortcut">
+                <span>Slide suivante</span>
+                <kbd>→</kbd> ou <kbd>Espace</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Slide precedente</span>
+                <kbd>←</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Premiere slide</span>
+                <kbd>Home</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Derniere slide</span>
+                <kbd>End</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Menu navigation</span>
+                <kbd>M</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Plein ecran</span>
+                <kbd>F</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Imprimer/PDF</span>
+                <kbd>P</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Cette aide</span>
+                <kbd>?</kbd> ou <kbd>H</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Fermer</span>
+                <kbd>Escape</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Aller a slide N</span>
+                <kbd>1-9</kbd>
+            </div>
+            <button class="nav-btn" style="margin-top: 20px; width: 100%;" onclick="toggleHelp()">Fermer</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+
+            if (n > totalSlides) currentSlide = 1;
+            if (n < 1) currentSlide = totalSlides;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('progressBar').style.width = (currentSlide / totalSlides * 100) + '%';
+
+            // Update menu
+            document.querySelectorAll('.menu-item').forEach((item, index) => {
+                item.classList.remove('active');
+            });
+
+            // Update buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        function goToSlide(n) {
+            currentSlide = n;
+            showSlide(currentSlide);
+            toggleMenu();
+        }
+
+        function toggleMenu() {
+            document.getElementById('slideMenu').classList.toggle('active');
+        }
+
+        function toggleHelp() {
+            document.getElementById('helpModal').classList.toggle('active');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            // Close modals on Escape
+            if (e.key === 'Escape') {
+                document.getElementById('helpModal').classList.remove('active');
+                document.getElementById('slideMenu').classList.remove('active');
+                return;
+            }
+
+            // Don't handle keys if modal is open
+            if (document.getElementById('helpModal').classList.contains('active')) return;
+
+            switch(e.key) {
+                case 'ArrowRight':
+                case ' ':
+                    e.preventDefault();
+                    changeSlide(1);
+                    break;
+                case 'ArrowLeft':
+                    changeSlide(-1);
+                    break;
+                case 'Home':
+                    currentSlide = 1;
+                    showSlide(currentSlide);
+                    break;
+                case 'End':
+                    currentSlide = totalSlides;
+                    showSlide(currentSlide);
+                    break;
+                case 'm':
+                case 'M':
+                    toggleMenu();
+                    break;
+                case 'f':
+                case 'F':
+                    toggleFullscreen();
+                    break;
+                case 'p':
+                case 'P':
+                    window.print();
+                    break;
+                case '?':
+                case 'h':
+                case 'H':
+                    toggleHelp();
+                    break;
+                default:
+                    // Number keys for quick navigation
+                    if (e.key >= '1' && e.key <= '9') {
+                        const slideNum = parseInt(e.key);
+                        if (slideNum <= totalSlides) {
+                            currentSlide = slideNum;
+                            showSlide(currentSlide);
+                        }
+                    }
+            }
+        });
+
+        // Click outside to close menu
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('slideMenu');
+            const helpModal = document.getElementById('helpModal');
+
+            if (menu.classList.contains('active') &&
+                !menu.contains(e.target) &&
+                !e.target.closest('.nav-btn')) {
+                menu.classList.remove('active');
+            }
+
+            if (helpModal.classList.contains('active') &&
+                !helpModal.querySelector('.help-content').contains(e.target)) {
+                helpModal.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification d'Images - Projet Rakuten</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 50%, #d1d8e0 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            overflow: hidden;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 40px 60px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Title Slide */
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(ellipse at center, rgba(155, 89, 182, 0.1) 0%, transparent 70%);
+        }
+
+        .title-slide h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title-slide h2 {
+            font-size: 1.8rem;
+            color: #5d6d7e;
+            margin-bottom: 40px;
+        }
+
+        .title-slide .subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+
+        /* Section Badge */
+        .section-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .section-badge.data { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .section-badge.model { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .section-badge.results { background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%); }
+        .section-badge.analysis { background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); }
+        .section-badge.next { background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); }
+
+        /* Slide Title */
+        .slide-title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, #9b59b6, #8e44ad) 1;
+            padding-bottom: 15px;
+        }
+
+        /* Content Styles */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #34495e;
+        }
+
+        /* Cards */
+        .card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(155, 89, 182, 0.2);
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #9b59b6;
+        }
+
+        .card p, .card li {
+            font-size: 1.1rem;
+            color: #5d6d7e;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #2c3e50;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            border-left: 4px solid #9b59b6;
+        }
+
+        .code-block code {
+            color: #ecf0f1;
+            white-space: pre;
+        }
+
+        .code-block .keyword { color: #9b59b6; }
+        .code-block .string { color: #e74c3c; }
+        .code-block .number { color: #2ecc71; }
+        .code-block .comment { color: #95a5a6; }
+        .code-block .function { color: #f1c40f; }
+
+        /* Info Boxes */
+        .info, .warning, .tip, .important {
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .info {
+            background: rgba(52, 152, 219, 0.15);
+            border-left: 4px solid #3498db;
+            color: #2c3e50;
+        }
+
+        .warning {
+            background: rgba(241, 196, 15, 0.2);
+            border-left: 4px solid #f1c40f;
+            color: #2c3e50;
+        }
+
+        .tip {
+            background: rgba(39, 174, 96, 0.15);
+            border-left: 4px solid #27ae60;
+            color: #2c3e50;
+        }
+
+        .important {
+            background: rgba(155, 89, 182, 0.15);
+            border-left: 4px solid #9b59b6;
+            color: #2c3e50;
+        }
+
+        /* Lists */
+        ul, ol {
+            padding-left: 30px;
+        }
+
+        li {
+            font-size: 1.2rem;
+            margin: 12px 0;
+            color: #34495e;
+            line-height: 1.6;
+        }
+
+        li::marker {
+            color: #9b59b6;
+        }
+
+        /* Stats */
+        .stat-box {
+            text-align: center;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 15px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-box .number {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-box .label {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        .stat-box.best {
+            border: 2px solid #27ae60;
+            background: rgba(39, 174, 96, 0.05);
+        }
+
+        .stat-box.best .number {
+            background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            color: #34495e;
+        }
+
+        .comparison-table th {
+            background: #9b59b6;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(155, 89, 182, 0.1);
+        }
+
+        .comparison-table tr.best {
+            background: rgba(39, 174, 96, 0.15);
+        }
+
+        /* Flow Diagram */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .flow-step {
+            background: #ffffff;
+            border: 2px solid #9b59b6;
+            border-radius: 10px;
+            padding: 15px 25px;
+            text-align: center;
+            min-width: 120px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            color: #2c3e50;
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: #9b59b6;
+        }
+
+        /* Navigation */
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: #ffffff;
+            border: 2px solid #9b59b6;
+            color: #9b59b6;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn:hover {
+            background: #9b59b6;
+            color: #ffffff;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            z-index: 100;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            transition: width 0.3s;
+        }
+
+        /* Slide Counter */
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 1rem;
+            color: #7f8c8d;
+            z-index: 100;
+            background: #ffffff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Highlight */
+        .highlight {
+            color: #9b59b6;
+            font-weight: 600;
+        }
+
+        .highlight-green {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .highlight-red {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        /* Icon */
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        /* Center content */
+        .center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Animated background orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: #9b59b6;
+            top: -100px;
+            right: -100px;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: #3498db;
+            bottom: -50px;
+            left: -50px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 30px); }
+        }
+
+        /* Formula */
+        .formula {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            margin: 15px 0;
+            color: #2c3e50;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Architecture Diagram */
+        .architecture {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .layer {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .layer small {
+            display: block;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .arrow {
+            font-size: 1.5rem;
+            color: #9b59b6;
+        }
+
+        /* Menu & Help buttons */
+        .menu-btn, .help-btn, .print-btn {
+            position: fixed;
+            top: 20px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-btn {
+            left: 20px;
+            background: #ffffff;
+            border: 2px solid #9b59b6;
+            color: #9b59b6;
+        }
+
+        .menu-btn:hover {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .print-btn {
+            right: 80px;
+            background: #ffffff;
+            border: 2px solid #27ae60;
+            color: #27ae60;
+        }
+
+        .print-btn:hover {
+            background: #27ae60;
+            color: white;
+        }
+
+        .help-btn {
+            right: 20px;
+            background: #ffffff;
+            border: 2px solid #3498db;
+            color: #3498db;
+        }
+
+        .help-btn:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        /* Help Modal */
+        .help-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .help-modal.active {
+            display: flex;
+        }
+
+        .help-content {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .help-content h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .help-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .help-content td {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #34495e;
+        }
+
+        .help-content td:first-child {
+            font-weight: 600;
+            color: #9b59b6;
+            width: 100px;
+        }
+
+        .help-close {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        /* Slide Menu */
+        .slide-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 350px;
+            height: 100%;
+            background: #ffffff;
+            z-index: 1000;
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .slide-menu.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        .slide-menu-header {
+            padding: 25px;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slide-menu-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .menu-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .slide-menu-list {
+            padding: 15px;
+        }
+
+        .slide-menu-item {
+            padding: 12px 15px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #34495e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slide-menu-item:hover {
+            background: rgba(155, 89, 182, 0.1);
+        }
+
+        .slide-menu-item.active {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .slide-menu-item .slide-num {
+            background: rgba(155, 89, 182, 0.2);
+            color: #9b59b6;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .slide-menu-item.active .slide-num {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .menu-overlay.active {
+            display: block;
+        }
+
+        /* Element animations */
+        .slide.active .card,
+        .slide.active .stat-box,
+        .slide.active .info,
+        .slide.active .warning,
+        .slide.active .tip,
+        .slide.active .important,
+        .slide.active .code-block,
+        .slide.active .flow-step,
+        .slide.active .layer {
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        .slide.active .card:nth-child(1), .slide.active .stat-box:nth-child(1), .slide.active .layer:nth-child(1) { animation-delay: 0.1s; }
+        .slide.active .card:nth-child(2), .slide.active .stat-box:nth-child(2), .slide.active .layer:nth-child(2) { animation-delay: 0.15s; }
+        .slide.active .card:nth-child(3), .slide.active .stat-box:nth-child(3), .slide.active .layer:nth-child(3) { animation-delay: 0.2s; }
+        .slide.active .card:nth-child(4), .slide.active .stat-box:nth-child(4), .slide.active .layer:nth-child(4) { animation-delay: 0.25s; }
+        .slide.active .layer:nth-child(5) { animation-delay: 0.3s; }
+        .slide.active .layer:nth-child(6) { animation-delay: 0.35s; }
+        .slide.active .layer:nth-child(7) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Print styles */
+        @media print {
+            body { background: white !important; }
+            .slide {
+                display: block !important;
+                page-break-after: always;
+                position: relative !important;
+                height: auto !important;
+                min-height: 100vh;
+                padding: 40px !important;
+            }
+            .nav-controls, .slide-counter, .progress-container, .menu-btn, .help-btn, .print-btn, .orb { display: none !important; }
+            .card, .stat-box, .info, .warning, .tip, .important, .code-block, .flow-step, .layer {
+                animation: none !important;
+                opacity: 1 !important;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .grid-3 { grid-template-columns: repeat(2, 1fr); }
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .slide { padding: 20px 30px; }
+            .slide-title { font-size: 1.8rem; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="presentation" id="presentation">
+
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide active">
+            <h1>Classification d'Images</h1>
+            <h2>Projet Rakuten - Étape 3</h2>
+            <p class="subtitle">Entraînement et Comparaison de Modèles ML</p>
+            <div style="margin-top: 40px; color: #7f8c8d;">
+                <p>84,916 images | 27 catégories | MLP 60.36%</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Contexte -->
+        <div class="slide">
+            <span class="section-badge">Contexte</span>
+            <h2 class="slide-title">Rappel du Pipeline</h2>
+            <div class="content">
+                <div class="flow-diagram">
+                    <div class="flow-step" style="background: rgba(39, 174, 96, 0.1); border-color: #27ae60;">
+                        <strong>Étape 1</strong><br>
+                        <small>Exploration</small>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step" style="background: rgba(39, 174, 96, 0.1); border-color: #27ae60;">
+                        <strong>Étape 2</strong><br>
+                        <small>Preprocessing</small>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step" style="background: rgba(155, 89, 182, 0.2); border-color: #9b59b6; border-width: 3px;">
+                        <strong>Étape 3</strong><br>
+                        <small>Classification</small>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step">
+                        <strong>Étape 4</strong><br>
+                        <small>Texte</small>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step">
+                        <strong>Étape 5</strong><br>
+                        <small>Fusion</small>
+                    </div>
+                </div>
+                <div class="info" style="margin-top: 30px;">
+                    <p><strong>Objectif :</strong> Entraîner des classificateurs sur les features extraites par EfficientNet-B0 pour prédire les 27 catégories de produits.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Données d'entrée -->
+        <div class="slide">
+            <span class="section-badge data">Données</span>
+            <h2 class="slide-title">Features d'Entrée</h2>
+            <div class="content">
+                <div class="grid-4">
+                    <div class="stat-box">
+                        <div class="number">84,916</div>
+                        <div class="label">Images Train</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">1,280</div>
+                        <div class="label">Dimensions</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">27</div>
+                        <div class="label">Classes</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">13,812</div>
+                        <div class="label">Images Test</div>
+                    </div>
+                </div>
+                <div class="code-block" style="margin-top: 20px;">
+                    <code><span class="comment"># Données prétraitées</span>
+X_train.shape = (<span class="number">84916</span>, <span class="number">1280</span>)  <span class="comment"># Features EfficientNet</span>
+y_train.shape = (<span class="number">84916</span>,)        <span class="comment"># Labels 0-26</span>
+X_test.shape  = (<span class="number">13812</span>, <span class="number">1280</span>)  <span class="comment"># Pour prédictions</span></code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Split Train/Val -->
+        <div class="slide">
+            <span class="section-badge data">Données</span>
+            <h2 class="slide-title">Split Train / Validation</h2>
+            <div class="content">
+                <div class="grid-2">
+                    <div class="stat-box">
+                        <div class="number">67,932</div>
+                        <div class="label">Train (80%)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">16,984</div>
+                        <div class="label">Validation (20%)</div>
+                    </div>
+                </div>
+                <div class="code-block" style="margin-top: 20px;">
+                    <code><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+
+X_train, X_val, y_train, y_val = <span class="function">train_test_split</span>(
+    X_train_full, y_train_full,
+    test_size=<span class="number">0.2</span>,
+    random_state=<span class="number">42</span>,
+    stratify=y_train_full  <span class="comment"># Préserve la distribution</span>
+)</code>
+                </div>
+                <div class="tip">
+                    <p><strong>Stratifié :</strong> Chaque classe garde la même proportion dans train et val.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Déséquilibre -->
+        <div class="slide">
+            <span class="section-badge data">Données</span>
+            <h2 class="slide-title">Déséquilibre des Classes</h2>
+            <div class="content">
+                <div class="grid-3">
+                    <div class="stat-box">
+                        <div class="number">10,217</div>
+                        <div class="label">Classe Max (2583)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">804</div>
+                        <div class="label">Classe Min (1940)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">12.7x</div>
+                        <div class="label">Ratio Max/Min</div>
+                    </div>
+                </div>
+                <div class="warning" style="margin-top: 20px;">
+                    <p><strong>Problème :</strong> Un modèle naïf prédirait toujours les classes majoritaires !</p>
+                </div>
+                <div class="tip">
+                    <p><strong>Solution :</strong> Utiliser <code>class_weight='balanced'</code> pour pénaliser plus les erreurs sur classes rares.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Normalisation -->
+        <div class="slide">
+            <span class="section-badge data">Données</span>
+            <h2 class="slide-title">Normalisation des Features</h2>
+            <div class="content">
+                <div class="info">
+                    <p><strong>StandardScaler</strong> : Centre les données (mean=0) et normalise (std=1)</p>
+                </div>
+                <div class="formula">
+                    x_scaled = (x - μ) / σ
+                </div>
+                <div class="code-block">
+                    <code><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+
+scaler = <span class="function">StandardScaler</span>()
+X_train_scaled = scaler.<span class="function">fit_transform</span>(X_train)
+X_val_scaled = scaler.<span class="function">transform</span>(X_val)  <span class="comment"># Utilise les stats de train!</span></code>
+                </div>
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="card">
+                        <h3>Avant</h3>
+                        <p>Mean: 0.42, Std: 0.89</p>
+                    </div>
+                    <div class="card">
+                        <h3>Après</h3>
+                        <p>Mean: 0.00, Std: 1.00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Modèles testés -->
+        <div class="slide">
+            <span class="section-badge model">Modèles</span>
+            <h2 class="slide-title">Modèles Entraînés</h2>
+            <div class="content">
+                <div class="grid-3">
+                    <div class="card center">
+                        <div class="icon">📊</div>
+                        <h3>Logistic Regression</h3>
+                        <p>Modèle linéaire, baseline rapide</p>
+                    </div>
+                    <div class="card center">
+                        <div class="icon">🌳</div>
+                        <h3>Random Forest</h3>
+                        <p>Ensemble de 200 arbres</p>
+                    </div>
+                    <div class="card center" style="border: 2px solid #27ae60;">
+                        <div class="icon">🧠</div>
+                        <h3>MLP</h3>
+                        <p>Réseau de neurones</p>
+                        <small class="highlight-green">★ Meilleur</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Logistic Regression -->
+        <div class="slide">
+            <span class="section-badge model">Modèles</span>
+            <h2 class="slide-title">Logistic Regression</h2>
+            <div class="content">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Principe</h3>
+                        <p>Frontière de décision <strong>linéaire</strong> dans l'espace des features.</p>
+                        <div class="formula" style="font-size: 1.2rem;">
+                            P(y=k|x) = softmax(Wx + b)
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Configuration</h3>
+                        <ul>
+                            <li>max_iter = 1000</li>
+                            <li>class_weight = 'balanced'</li>
+                            <li>solver = 'lbfgs'</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="code-block" style="margin-top: 20px;">
+                    <code>model = <span class="function">LogisticRegression</span>(
+    max_iter=<span class="number">1000</span>,
+    class_weight=<span class="string">'balanced'</span>,
+    random_state=<span class="number">42</span>
+)</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Random Forest -->
+        <div class="slide">
+            <span class="section-badge model">Modèles</span>
+            <h2 class="slide-title">Random Forest</h2>
+            <div class="content">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Principe</h3>
+                        <p>Ensemble de <strong>200 Decision Trees</strong> indépendants.</p>
+                        <p style="margin-top: 10px;">Vote majoritaire pour la prédiction finale.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Configuration</h3>
+                        <ul>
+                            <li>n_estimators = 200</li>
+                            <li>max_depth = 30</li>
+                            <li>class_weight = 'balanced'</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="warning" style="margin-top: 20px;">
+                    <p><strong>Attention :</strong> Forte tendance à l'overfitting (train 99.5% vs val 56.3%)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: MLP Architecture -->
+        <div class="slide">
+            <span class="section-badge model">Modèles</span>
+            <h2 class="slide-title">MLP : Architecture</h2>
+            <div class="content">
+                <div class="architecture">
+                    <div class="layer">
+                        <strong>Input</strong>
+                        <small>1280</small>
+                    </div>
+                    <span class="arrow">→</span>
+                    <div class="layer">
+                        <strong>Dense</strong>
+                        <small>512</small>
+                    </div>
+                    <span class="arrow">→</span>
+                    <div class="layer">
+                        <strong>Dense</strong>
+                        <small>256</small>
+                    </div>
+                    <span class="arrow">→</span>
+                    <div class="layer">
+                        <strong>Dense</strong>
+                        <small>128</small>
+                    </div>
+                    <span class="arrow">→</span>
+                    <div class="layer" style="background: linear-gradient(135deg, #27ae60, #1e8449);">
+                        <strong>Output</strong>
+                        <small>27</small>
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-top: 30px;">
+                    <div class="card">
+                        <h3>Activation</h3>
+                        <p><strong>ReLU</strong> entre les couches cachées</p>
+                        <p><strong>Softmax</strong> en sortie</p>
+                    </div>
+                    <div class="card">
+                        <h3>Régularisation</h3>
+                        <p><strong>L2</strong> (alpha=0.001)</p>
+                        <p><strong>Early Stopping</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: MLP Config -->
+        <div class="slide">
+            <span class="section-badge model">Modèles</span>
+            <h2 class="slide-title">MLP : Configuration</h2>
+            <div class="content">
+                <div class="code-block">
+                    <code>model = <span class="function">MLPClassifier</span>(
+    hidden_layer_sizes=(<span class="number">512</span>, <span class="number">256</span>, <span class="number">128</span>),
+    activation=<span class="string">'relu'</span>,
+    solver=<span class="string">'adam'</span>,
+    alpha=<span class="number">0.001</span>,              <span class="comment"># Régularisation L2</span>
+    batch_size=<span class="number">256</span>,
+    learning_rate=<span class="string">'adaptive'</span>,
+    max_iter=<span class="number">100</span>,
+    early_stopping=<span class="keyword">True</span>,      <span class="comment"># Évite overfitting</span>
+    validation_fraction=<span class="number">0.1</span>,
+    n_iter_no_change=<span class="number">10</span>
+)</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Résultats comparatifs -->
+        <div class="slide">
+            <span class="section-badge results">Résultats</span>
+            <h2 class="slide-title">Comparaison des Modèles</h2>
+            <div class="content">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Modèle</th>
+                            <th>Train Acc</th>
+                            <th>Val Acc</th>
+                            <th>Val F1</th>
+                            <th>Temps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="best">
+                            <td><strong>MLP</strong> ★</td>
+                            <td>89.99%</td>
+                            <td><strong>60.36%</strong></td>
+                            <td><strong>0.6016</strong></td>
+                            <td>161s</td>
+                        </tr>
+                        <tr>
+                            <td>Random Forest</td>
+                            <td>99.47%</td>
+                            <td>56.35%</td>
+                            <td>0.5438</td>
+                            <td>109s</td>
+                        </tr>
+                        <tr>
+                            <td>Logistic Regression</td>
+                            <td>68.91%</td>
+                            <td>54.66%</td>
+                            <td>0.5545</td>
+                            <td>406s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Slide 13: Meilleur modèle -->
+        <div class="slide">
+            <span class="section-badge results">Résultats</span>
+            <h2 class="slide-title">Meilleur Modèle : MLP</h2>
+            <div class="content">
+                <div class="grid-3">
+                    <div class="stat-box best">
+                        <div class="number">60.36%</div>
+                        <div class="label">Validation Accuracy</div>
+                    </div>
+                    <div class="stat-box best">
+                        <div class="number">0.6016</div>
+                        <div class="label">F1-Score (weighted)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">161s</div>
+                        <div class="label">Temps d'entraînement</div>
+                    </div>
+                </div>
+                <div class="tip" style="margin-top: 30px;">
+                    <p><strong>Pourquoi MLP gagne ?</strong> Capture les relations non-linéaires entre les 1280 features, contrairement à la régression logistique.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Overfitting Analysis -->
+        <div class="slide">
+            <span class="section-badge analysis">Analyse</span>
+            <h2 class="slide-title">Analyse de l'Overfitting</h2>
+            <div class="content">
+                <div class="formula">
+                    Overfitting Gap = Train Accuracy - Val Accuracy
+                </div>
+                <div class="grid-3" style="margin-top: 20px;">
+                    <div class="card">
+                        <h3>Random Forest</h3>
+                        <p class="highlight-red" style="font-size: 2rem;">43.1%</p>
+                        <p>Sévère overfitting</p>
+                    </div>
+                    <div class="card">
+                        <h3>MLP</h3>
+                        <p class="highlight" style="font-size: 2rem;">29.6%</p>
+                        <p>Modéré</p>
+                    </div>
+                    <div class="card">
+                        <h3>Logistic Regression</h3>
+                        <p class="highlight-green" style="font-size: 2rem;">14.3%</p>
+                        <p>Faible (underfitting)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Meilleures classes -->
+        <div class="slide">
+            <span class="section-badge analysis">Analyse</span>
+            <h2 class="slide-title">Classes Bien Classifiées</h2>
+            <div class="content">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Classe</th>
+                            <th>Precision</th>
+                            <th>Recall</th>
+                            <th>F1-Score</th>
+                            <th>Support</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1160</strong></td>
+                            <td>87.1%</td>
+                            <td>90.5%</td>
+                            <td class="highlight-green"><strong>88.8%</strong></td>
+                            <td>791</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2583</strong></td>
+                            <td>84.4%</td>
+                            <td>82.3%</td>
+                            <td class="highlight-green"><strong>83.3%</strong></td>
+                            <td>2042</td>
+                        </tr>
+                        <tr>
+                            <td><strong>1920</strong></td>
+                            <td>78.2%</td>
+                            <td>80.7%</td>
+                            <td class="highlight-green"><strong>79.4%</strong></td>
+                            <td>861</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="tip" style="margin-top: 20px;">
+                    <p><strong>Point commun :</strong> Classes avec beaucoup d'échantillons ET visuellement distinctes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Pires classes -->
+        <div class="slide">
+            <span class="section-badge analysis">Analyse</span>
+            <h2 class="slide-title">Classes Difficiles</h2>
+            <div class="content">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Classe</th>
+                            <th>Precision</th>
+                            <th>Recall</th>
+                            <th>F1-Score</th>
+                            <th>Problème</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1281</strong></td>
+                            <td>23.8%</td>
+                            <td>32.9%</td>
+                            <td class="highlight-red"><strong>27.6%</strong></td>
+                            <td>Confusion avec 1280</td>
+                        </tr>
+                        <tr>
+                            <td><strong>1280</strong></td>
+                            <td>40.9%</td>
+                            <td>34.4%</td>
+                            <td class="highlight-red"><strong>37.4%</strong></td>
+                            <td>Grande variabilité</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2220</strong></td>
+                            <td>34.1%</td>
+                            <td>44.2%</td>
+                            <td class="highlight-red"><strong>38.5%</strong></td>
+                            <td>Sous-représentée</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="warning" style="margin-top: 20px;">
+                    <p><strong>Cause principale :</strong> Similarité visuelle entre catégories de produits.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Métriques -->
+        <div class="slide">
+            <span class="section-badge analysis">Analyse</span>
+            <h2 class="slide-title">Comprendre les Métriques</h2>
+            <div class="content">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Accuracy</h3>
+                        <div class="formula" style="font-size: 1.2rem;">
+                            Correct / Total
+                        </div>
+                        <p style="margin-top: 15px;">Simple mais biaisée si classes déséquilibrées.</p>
+                    </div>
+                    <div class="card">
+                        <h3>F1-Score (Weighted)</h3>
+                        <div class="formula" style="font-size: 1.2rem;">
+                            2 × (P × R) / (P + R)
+                        </div>
+                        <p style="margin-top: 15px;">Équilibre precision/recall, pondéré par support.</p>
+                    </div>
+                </div>
+                <div class="info" style="margin-top: 20px;">
+                    <p><strong>Recommandation :</strong> Utiliser <strong>F1-weighted</strong> comme métrique principale pour les datasets déséquilibrés.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Fichiers générés -->
+        <div class="slide">
+            <span class="section-badge results">Résultats</span>
+            <h2 class="slide-title">Fichiers Générés</h2>
+            <div class="content">
+                <div class="code-block">
+                    <code>implementation/
+├── models/
+│   ├── <span class="string">best_model_mlp.joblib</span>      <span class="comment"># 9.9 MB ★</span>
+│   ├── model_logistic_regression.joblib
+│   ├── model_random_forest.joblib   <span class="comment"># 1.3 GB</span>
+│   └── <span class="string">scaler.joblib</span>               <span class="comment"># StandardScaler</span>
+├── outputs/
+│   ├── classification_results.json
+│   └── <span class="string">test_predictions.csv</span>       <span class="comment"># 13,812 prédictions</span>
+└── docs/
+    └── BIBLE_CLASSIFICATION_IMAGES.md</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Utilisation du modèle -->
+        <div class="slide">
+            <span class="section-badge">Code</span>
+            <h2 class="slide-title">Utiliser le Modèle Sauvegardé</h2>
+            <div class="content">
+                <div class="code-block">
+                    <code><span class="keyword">import</span> joblib
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Charger le modèle et le scaler</span>
+model = joblib.<span class="function">load</span>(<span class="string">'models/best_model_mlp.joblib'</span>)
+scaler = joblib.<span class="function">load</span>(<span class="string">'models/scaler.joblib'</span>)
+
+<span class="comment"># Prédiction sur nouvelles features</span>
+features = np.<span class="function">load</span>(<span class="string">'new_features.npy'</span>)
+features_scaled = scaler.<span class="function">transform</span>(features)
+predictions = model.<span class="function">predict</span>(features_scaled)
+
+<span class="keyword">print</span>(f<span class="string">"Classe prédite: {predictions[0]}"</span>)</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Améliorations possibles -->
+        <div class="slide">
+            <span class="section-badge next">Amélioration</span>
+            <h2 class="slide-title">Pistes d'Amélioration</h2>
+            <div class="content">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Court terme</h3>
+                        <ul>
+                            <li>Ajouter XGBoost / LightGBM</li>
+                            <li>Hyperparameter tuning</li>
+                            <li>Ensemble (voting)</li>
+                        </ul>
+                        <p style="margin-top: 10px;" class="highlight-green">Gain estimé: +2-5%</p>
+                    </div>
+                    <div class="card">
+                        <h3>Moyen terme</h3>
+                        <ul>
+                            <li>Fine-tuning EfficientNet</li>
+                            <li>Data augmentation</li>
+                            <li>Focal Loss</li>
+                        </ul>
+                        <p style="margin-top: 10px;" class="highlight-green">Gain estimé: +5-10%</p>
+                    </div>
+                </div>
+                <div class="important" style="margin-top: 20px;">
+                    <p><strong>Impact majeur :</strong> Fusion multimodale (Image + Texte) → gain estimé +10-15%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 21: Prochaines étapes -->
+        <div class="slide">
+            <span class="section-badge next">Workflow</span>
+            <h2 class="slide-title">Prochaines Étapes</h2>
+            <div class="content">
+                <div class="flow-diagram" style="flex-wrap: wrap;">
+                    <div class="flow-step" style="background: rgba(39, 174, 96, 0.2); border-color: #27ae60;">
+                        <strong>✅ Étape 3</strong><br>
+                        <small>Classification</small>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step">
+                        <strong>Étape 4</strong><br>
+                        <small>Texte NLP</small>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step">
+                        <strong>Étape 5</strong><br>
+                        <small>Fusion</small>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step">
+                        <strong>Étape 6</strong><br>
+                        <small>Déploiement</small>
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-top: 30px;">
+                    <div class="card">
+                        <h3>Étape 4 : Preprocessing Texte</h3>
+                        <ul>
+                            <li>Nettoyage désignation + description</li>
+                            <li>TF-IDF ou BERT embeddings</li>
+                            <li>Classification texte seul</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Étape 5 : Fusion Multimodale</h3>
+                        <ul>
+                            <li>Combiner features image + texte</li>
+                            <li>Early / Late fusion</li>
+                            <li>Modèle final optimisé</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 22: Résumé -->
+        <div class="slide">
+            <span class="section-badge">Conclusion</span>
+            <h2 class="slide-title">Résumé</h2>
+            <div class="content">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Ce que nous avons fait</h3>
+                        <ul>
+                            <li>Split stratifié 80/20</li>
+                            <li>Normalisation StandardScaler</li>
+                            <li>3 modèles entraînés</li>
+                            <li>Évaluation comparative</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Résultats clés</h3>
+                        <ul>
+                            <li>Meilleur: <strong>MLP 60.36%</strong></li>
+                            <li>F1-weighted: <strong>0.6016</strong></li>
+                            <li>13,812 prédictions test</li>
+                            <li>Modèles sauvegardés</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tip" style="margin-top: 20px;">
+                    <p><strong>Prochaine étape :</strong> Ajouter les features texte pour améliorer significativement les performances !</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 23: Questions -->
+        <div class="slide title-slide">
+            <h1>Questions ?</h1>
+            <h2>Merci de votre attention</h2>
+            <div style="margin-top: 40px;">
+                <p style="color: #7f8c8d;">Projet Rakuten - Classification de Produits E-commerce</p>
+                <p style="color: #9b59b6; margin-top: 20px;">MLP : 60.36% Accuracy | 0.6016 F1</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Control Buttons -->
+    <button class="menu-btn" onclick="toggleMenu()" title="Menu (M)">☰</button>
+    <button class="print-btn" onclick="printPresentation()" title="Imprimer (P)">🖨</button>
+    <button class="help-btn" onclick="toggleHelp()" title="Aide (?)">?</button>
+
+    <!-- Navigation -->
+    <div class="nav-controls">
+        <button class="nav-btn" onclick="prevSlide()">← Précédent</button>
+        <button class="nav-btn" onclick="nextSlide()">Suivant →</button>
+    </div>
+
+    <div class="slide-counter" id="slideCounter"></div>
+
+    <!-- Slide Menu -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    <div class="slide-menu" id="slideMenu">
+        <div class="slide-menu-header">
+            <h3>Navigation</h3>
+            <button class="menu-close" onclick="toggleMenu()">×</button>
+        </div>
+        <div class="slide-menu-list" id="slideMenuList"></div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="help-modal" id="helpModal" onclick="toggleHelp()">
+        <div class="help-content" onclick="event.stopPropagation()">
+            <h3>Raccourcis Clavier</h3>
+            <table>
+                <tr><td>→ / Espace</td><td>Slide suivante</td></tr>
+                <tr><td>←</td><td>Slide précédente</td></tr>
+                <tr><td>Home</td><td>Première slide</td></tr>
+                <tr><td>End</td><td>Dernière slide</td></tr>
+                <tr><td>F</td><td>Mode plein écran</td></tr>
+                <tr><td>M</td><td>Ouvrir/fermer le menu</td></tr>
+                <tr><td>P</td><td>Imprimer / Export PDF</td></tr>
+                <tr><td>? / H</td><td>Afficher cette aide</td></tr>
+                <tr><td>Escape</td><td>Fermer les popups</td></tr>
+            </table>
+            <button class="help-close" onclick="toggleHelp()">Fermer</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        const slideTitles = [
+            "Classification d'Images",
+            "Rappel du Pipeline",
+            "Features d'Entrée",
+            "Split Train / Validation",
+            "Déséquilibre des Classes",
+            "Normalisation des Features",
+            "Modèles Entraînés",
+            "Logistic Regression",
+            "Random Forest",
+            "MLP : Architecture",
+            "MLP : Configuration",
+            "Comparaison des Modèles",
+            "Meilleur Modèle : MLP",
+            "Analyse de l'Overfitting",
+            "Classes Bien Classifiées",
+            "Classes Difficiles",
+            "Comprendre les Métriques",
+            "Fichiers Générés",
+            "Utiliser le Modèle",
+            "Pistes d'Amélioration",
+            "Prochaines Étapes",
+            "Résumé",
+            "Questions ?"
+        ];
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateProgress();
+            updateCounter();
+            updateMenuSelection();
+        }
+
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function prevSlide() { showSlide(currentSlide - 1); }
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function updateCounter() {
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+        }
+
+        function toggleMenu() {
+            document.getElementById('slideMenu').classList.toggle('active');
+            document.getElementById('menuOverlay').classList.toggle('active');
+        }
+
+        function updateMenuSelection() {
+            const items = document.querySelectorAll('.slide-menu-item');
+            items.forEach((item, index) => {
+                item.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function buildMenu() {
+            const menuList = document.getElementById('slideMenuList');
+            slideTitles.forEach((title, index) => {
+                const item = document.createElement('div');
+                item.className = 'slide-menu-item' + (index === 0 ? ' active' : '');
+                item.innerHTML = `<span class="slide-num">${index + 1}</span>${title}`;
+                item.onclick = () => { showSlide(index); toggleMenu(); };
+                menuList.appendChild(item);
+            });
+        }
+
+        function toggleHelp() {
+            document.getElementById('helpModal').classList.toggle('active');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function printPresentation() { window.print(); }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            switch(e.key) {
+                case 'ArrowRight': case ' ': e.preventDefault(); nextSlide(); break;
+                case 'ArrowLeft': prevSlide(); break;
+                case 'Home': showSlide(0); break;
+                case 'End': showSlide(totalSlides - 1); break;
+                case 'f': case 'F': toggleFullscreen(); break;
+                case 'm': case 'M': toggleMenu(); break;
+                case 'p': case 'P': printPresentation(); break;
+                case '?': case 'h': case 'H': toggleHelp(); break;
+                case 'Escape':
+                    document.getElementById('helpModal').classList.remove('active');
+                    document.getElementById('slideMenu').classList.remove('active');
+                    document.getElementById('menuOverlay').classList.remove('active');
+                    break;
+            }
+        });
+
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+        document.addEventListener('touchend', (e) => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+        });
+
+        buildMenu();
+        updateProgress();
+        updateCounter();
+    </script>
+</body>
+</html>

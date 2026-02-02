@@ -1,0 +1,1614 @@
+@ -1,1462 +0,0 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rakuten - Preprocessing & Feature Engineering</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Outfit:wght@300;500;700&family=Fira+Code:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-light: #ffffff;
+            --bg-gradient: #f8fafc;
+            --text-dark: #0f172a;
+            --text-secondary: #64748b;
+            --accent-blue: #2563eb;
+            --accent-purple: #7c3aed;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --rakuten-red: #BF0000;
+            --rakuten-dark: #8B0000;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(15, 23, 42, 0.08);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f8fafc 100%);
+            z-index: -2;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.12;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--rakuten-red);
+            top: -100px;
+            left: -100px;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent-purple);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -7s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-20px, 30px) scale(0.9);
+            }
+        }
+
+        header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .slide-counter {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 6px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rakuten-red), var(--accent-purple));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        main {
+            position: relative;
+            height: calc(100vh - 80px);
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 4rem;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .slide.prev {
+            transform: translateX(-100px);
+            opacity: 0;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--rakuten-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            text-align: center;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+        }
+
+        .slide-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .section-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            margin-right: 1rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px -10px rgba(191, 0, 0, 0.3);
+        }
+
+        .slide-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .content-full {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        .content-single {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        .code-block {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            backdrop-filter: blur(10px);
+            margin: 0.8rem 0;
+        }
+
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-red);
+            box-shadow: 16px 0 0 var(--accent-orange), 32px 0 0 var(--accent-green);
+        }
+
+        .code-block pre {
+            margin-top: 1.2rem;
+            line-height: 1.5;
+            color: var(--text-dark);
+        }
+
+        .code-filename {
+            position: absolute;
+            top: 10px;
+            left: 70px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .token.keyword {
+            color: #c678dd;
+            font-weight: 600;
+        }
+
+        .token.string {
+            color: #98c379;
+        }
+
+        .token.property {
+            color: #e06c75;
+        }
+
+        .token.number {
+            color: #d19a66;
+        }
+
+        .token.comment {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .token.function {
+            color: #61afef;
+        }
+
+        .token.punctuation {
+            color: #abb2bf;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            margin: 0.8rem 0;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: var(--rakuten-red);
+            box-shadow: 0 10px 40px rgba(191, 0, 0, 0.15);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--text-dark);
+        }
+
+        .card-text {
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li:before {
+            content: '✓';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-green);
+            color: white;
+            border-radius: 50%;
+            flex-shrink: 0;
+            font-weight: bold;
+            font-size: 0.75rem;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(251, 146, 60, 0.08));
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .warning-title {
+            font-weight: 600;
+            color: var(--accent-red);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .tip {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(6, 182, 212, 0.08));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .tip-title {
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .info {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(124, 58, 237, 0.08));
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .info-title {
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--rakuten-red), var(--rakuten-dark));
+            color: white;
+            padding: 0.8rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.7rem 0.8rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(191, 0, 0, 0.03);
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, rgba(191, 0, 0, 0.1), rgba(37, 99, 235, 0.1));
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--rakuten-red);
+        }
+
+        .architecture-box {
+            background: white;
+            border: 2px solid var(--rakuten-red);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            font-size: 0.95rem;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--rakuten-red);
+            margin: 0.3rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(191, 0, 0, 0.08);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: var(--rakuten-red);
+        }
+
+        strong {
+            color: var(--rakuten-red);
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .comparison-item {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 1.2rem;
+        }
+
+        .comparison-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .vs-badge {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            z-index: 10;
+        }
+
+        .stat-big {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        nav {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.8rem;
+            z-index: 200;
+        }
+
+        button {
+            font-family: 'Inter', sans-serif;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--rakuten-red), var(--rakuten-dark));
+            color: white;
+            box-shadow: 0 10px 30px -10px rgba(191, 0, 0, 0.5);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px -10px rgba(191, 0, 0, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text-dark);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--rakuten-red);
+            transform: translateY(-2px);
+        }
+
+        .pipeline-horizontal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+
+        .pipeline-step {
+            background: rgba(191, 0, 0, 0.1);
+            border: 2px solid var(--rakuten-red);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .pipeline-step-title {
+            font-size: 0.75rem;
+            color: var(--rakuten-red);
+            margin-bottom: 0.2rem;
+            font-weight: 600;
+        }
+
+        .pipeline-step-value {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .pipeline-arrow-h {
+            font-size: 1.2rem;
+            color: var(--rakuten-red);
+        }
+
+        .mb-1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mt-1 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-2 {
+            margin-top: 1rem;
+        }
+
+        .mt-3 {
+            margin-top: 1.5rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-small {
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <header>
+        <div class="logo">Rakuten • Preprocessing</div>
+        <div class="progress-container">
+            <span class="slide-counter"><span id="current">1</span> / <span id="total">20</span></span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+        </div>
+    </header>
+
+    <main id="slides-container">
+
+        <!-- ==================== SLIDE 0: INTRO ==================== -->
+        <div class="slide active">
+            <div class="content-full text-center">
+                <h1 class="hero-title">Classification de Produits<br />Rakuten</h1>
+                <p class="hero-subtitle">
+                    Étape 2 : Preprocessing & Feature Engineering<br />
+                    Transfer Learning avec EfficientNet-B0
+                </p>
+
+                <div class="grid-4 mt-3">
+                    <div class="card">
+                        <span class="card-icon">📊</span>
+                        <div class="card-title">84 916</div>
+                        <p class="card-text">Images train</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">🎯</span>
+                        <div class="card-title">27</div>
+                        <p class="card-text">Catégories</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">🧠</span>
+                        <div class="card-title">1 280</div>
+                        <p class="card-text">Features extraites</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">⚡</span>
+                        <div class="card-title">586×</div>
+                        <p class="card-text">Compression</p>
+                    </div>
+                </div>
+
+                <div class="info mt-3">
+                    <div class="info-title">🎯 Objectif de cette présentation</div>
+                    <p>Comprendre le preprocessing d'images et le Transfer Learning pour la classification de produits
+                        e-commerce.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: DATASET ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">CONTEXTE</span>
+                    <h2 class="slide-title">Le Dataset Rakuten</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <h3 class="mb-2">📊 Données disponibles</h3>
+                        <table>
+                            <tr>
+                                <th>Métrique</th>
+                                <th>Valeur</th>
+                            </tr>
+                            <tr>
+                                <td>Images train</td>
+                                <td><strong>84 916</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Images test</td>
+                                <td><strong>13 812</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Catégories</td>
+                                <td><strong>27</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Taille moyenne</td>
+                                <td>~500×500 px</td>
+                            </tr>
+                            <tr>
+                                <td>Format</td>
+                                <td>JPEG</td>
+                            </tr>
+                        </table>
+
+                        <div class="warning mt-2">
+                            <div class="warning-title">⚠️ Déséquilibre de classes</div>
+                            <p>Ratio max/min : <strong>13.4×</strong><br />
+                                Certaines catégories ont 13× plus d'images que d'autres.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="mb-2">🏷️ Types de produits</h3>
+                        <div class="card">
+                            <ul class="feature-list">
+                                <li>Livres, magazines, BD</li>
+                                <li>Jeux vidéo, jouets</li>
+                                <li>Meubles, décoration</li>
+                                <li>Vêtements, accessoires</li>
+                                <li>Électronique, high-tech</li>
+                                <li>Alimentaire, épicerie</li>
+                            </ul>
+                        </div>
+
+                        <div class="tip mt-2">
+                            <div class="tip-title">💡 Challenge</div>
+                            <p>Grande variabilité visuelle : un "livre" peut être une couverture, une pile, ou une image
+                                marketing.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: LE PROBLÈME ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">PROBLÉMATIQUE</span>
+                    <h2 class="slide-title">Pourquoi le Preprocessing est Crucial</h2>
+                </div>
+
+                <h3 class="mb-2">🚫 Les défis du traitement d'images brutes</h3>
+
+                <div class="grid-3">
+                    <div class="card">
+                        <span class="card-icon">📐</span>
+                        <div class="card-title">Dimensionnalité</div>
+                        <p class="card-text">500×500×3 = <strong>750 000</strong> valeurs par image. Impossible à
+                            traiter directement.</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">⏰</span>
+                        <div class="card-title">Temps de calcul</div>
+                        <p class="card-text">Entraîner un CNN from scratch : <strong>plusieurs jours</strong> sur GPU.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">📉</span>
+                        <div class="card-title">Overfitting</div>
+                        <p class="card-text">85K images insuffisantes pour des millions de paramètres CNN.</p>
+                    </div>
+                </div>
+
+                <div class="info mt-2">
+                    <div class="info-title">📊 Calcul rapide</div>
+                    <p>
+                        <strong>Entrée brute</strong> : 84 916 × 750 000 = <strong>63.7 milliards</strong> de
+                        valeurs<br />
+                        <strong>Après preprocessing</strong> : 84 916 × 1 280 = <strong>108.7 millions</strong> de
+                        valeurs<br />
+                        → Réduction de <strong>586×</strong>
+                    </p>
+                </div>
+
+                <div class="comparison mt-2">
+                    <div class="comparison-item">
+                        <div class="comparison-title">❌ Approche naïve</div>
+                        <ul class="feature-list">
+                            <li>Flatten image → vecteur 750K</li>
+                            <li>RAM insuffisante</li>
+                            <li>Pas de notion spatiale</li>
+                            <li>Performance catastrophique</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-title">✅ Notre approche</div>
+                        <ul class="feature-list">
+                            <li>Transfer Learning</li>
+                            <li>Feature extraction CNN</li>
+                            <li>Vecteur compact 1280</li>
+                            <li>Sémantique préservée</li>
+                        </ul>
+                    </div>
+                    <span class="vs-badge">VS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: TRANSFER LEARNING ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">THÉORIE</span>
+                    <h2 class="slide-title">Transfer Learning : Le Concept</h2>
+                </div>
+
+                <div class="info mb-2">
+                    <div class="info-title">📖 Définition</div>
+                    <p>Le <strong>Transfer Learning</strong> consiste à réutiliser un modèle pré-entraîné sur une tâche
+                        (ImageNet) pour une nouvelle tâche (notre classification).</p>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <h3 class="mb-1">🎓 ImageNet</h3>
+                        <div class="card">
+                            <div class="stat-big">1.2M</div>
+                            <div class="stat-label">images d'entraînement</div>
+                        </div>
+                        <div class="card">
+                            <div class="stat-big">1000</div>
+                            <div class="stat-label">catégories</div>
+                        </div>
+                        <p class="text-small mt-1">Des années de recherche et des millions de $ de calcul GPU.</p>
+                    </div>
+                    <div>
+                        <h3 class="mb-1">💡 Intuition</h3>
+                        <div class="card">
+                            <p class="card-text">Un CNN entraîné sur ImageNet a appris à reconnaître :</p>
+                            <ul class="feature-list mt-1">
+                                <li><strong>Couches basses</strong> : edges, textures, couleurs</li>
+                                <li><strong>Couches moyennes</strong> : formes, patterns</li>
+                                <li><strong>Couches hautes</strong> : objets, concepts</li>
+                            </ul>
+                        </div>
+                        <div class="tip mt-1">
+                            <div class="tip-title">💡 Clé</div>
+                            <p>Ces features sont <strong>génériques</strong> et transférables à d'autres tâches de
+                                vision.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: STRATÉGIES TL ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">THÉORIE</span>
+                    <h2 class="slide-title">3 Stratégies de Transfer Learning</h2>
+                </div>
+
+                <table>
+                    <tr>
+                        <th>Stratégie</th>
+                        <th>Description</th>
+                        <th>Quand l'utiliser</th>
+                        <th>Notre cas</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Feature Extraction</strong></td>
+                        <td>Modèle gelé, extraction features</td>
+                        <td>Dataset petit, similaire à ImageNet</td>
+                        <td>✅ Choisi</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fine-tuning partiel</strong></td>
+                        <td>Dégeler dernières couches</td>
+                        <td>Dataset moyen, légèrement différent</td>
+                        <td>⚠️ Possible étape 3</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fine-tuning complet</strong></td>
+                        <td>Réentraîner tout le modèle</td>
+                        <td>Grand dataset, très différent</td>
+                        <td>❌ Trop coûteux</td>
+                    </tr>
+                </table>
+
+                <div class="grid-2 mt-2">
+                    <div class="card">
+                        <div class="card-title">✅ Avantages Feature Extraction</div>
+                        <ul class="feature-list">
+                            <li>Rapide (pas de backprop)</li>
+                            <li>Fonctionne sur CPU</li>
+                            <li>Pas d'overfitting</li>
+                            <li>Reproductible à 100%</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">⚠️ Inconvénients</div>
+                        <ul class="feature-list">
+                            <li>Features non optimisées pour notre tâche</li>
+                            <li>Performance potentiellement limitée</li>
+                            <li>Pas d'adaptation au domaine</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tip mt-2">
+                    <div class="tip-title">💡 Notre choix</div>
+                    <p><strong>Feature Extraction</strong> : compromis optimal entre performance et ressources
+                        disponibles (CPU uniquement).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: COMPARAISON ARCHITECTURES ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">COMPARAISON</span>
+                    <h2 class="slide-title">Choix de l'Architecture CNN</h2>
+                </div>
+
+                <h3 class="mb-2">📊 Benchmark des architectures populaires</h3>
+
+                <table>
+                    <tr>
+                        <th>Modèle</th>
+                        <th>Params</th>
+                        <th>Features</th>
+                        <th>Top-1 ImageNet</th>
+                        <th>Vitesse</th>
+                    </tr>
+                    <tr>
+                        <td>VGG-16</td>
+                        <td>138M</td>
+                        <td>4 096</td>
+                        <td>71.3%</td>
+                        <td>🐢 Lent</td>
+                    </tr>
+                    <tr>
+                        <td>ResNet-50</td>
+                        <td>25M</td>
+                        <td>2 048</td>
+                        <td>76.1%</td>
+                        <td>⚡ Moyen</td>
+                    </tr>
+                    <tr>
+                        <td>ResNet-101</td>
+                        <td>44M</td>
+                        <td>2 048</td>
+                        <td>77.4%</td>
+                        <td>🐢 Lent</td>
+                    </tr>
+                    <tr style="background: rgba(191,0,0,0.08);">
+                        <td><strong>EfficientNet-B0</strong></td>
+                        <td><strong>5.3M</strong></td>
+                        <td><strong>1 280</strong></td>
+                        <td><strong>77.1%</strong></td>
+                        <td><strong>⚡⚡ Rapide</strong></td>
+                    </tr>
+                    <tr>
+                        <td>EfficientNet-B3</td>
+                        <td>12M</td>
+                        <td>1 536</td>
+                        <td>81.6%</td>
+                        <td>⚡ Moyen</td>
+                    </tr>
+                    <tr>
+                        <td>ViT-B/16</td>
+                        <td>86M</td>
+                        <td>768</td>
+                        <td>81.8%</td>
+                        <td>🐢 Lent</td>
+                    </tr>
+                </table>
+
+                <div class="tip mt-2">
+                    <div class="tip-title">💡 Pourquoi EfficientNet-B0 ?</div>
+                    <p>Meilleur ratio <strong>performance/complexité</strong> : 77% accuracy avec seulement 5.3M params.
+                        Idéal pour extraction CPU.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: EFFICIENTNET DEEP DIVE ==================== -->
+        <div class="slide">
+            <div class="content-grid">
+                <div>
+                    <div class="slide-header">
+                        <span class="section-badge">ARCHITECTURE</span>
+                        <h2 class="slide-title">EfficientNet-B0</h2>
+                    </div>
+
+                    <div class="info mb-2">
+                        <div class="info-title">📖 Origine</div>
+                        <p>Google Research, 2019. Utilise le <strong>compound scaling</strong> pour équilibrer
+                            profondeur, largeur et résolution.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">🏗️ Architecture</div>
+                        <ul class="feature-list">
+                            <li>MBConv blocks (Mobile Inverted Bottleneck)</li>
+                            <li>Squeeze-and-Excitation attention</li>
+                            <li>Swish activation (au lieu de ReLU)</li>
+                            <li>7 stages progressifs</li>
+                        </ul>
+                    </div>
+
+                    <div class="code-block mt-2">
+                        <span class="code-filename">Spécifications</span>
+                        <pre>Input:     224 × 224 × 3
+Stages:    7 MBConv blocks
+Features:  1 × 1 × 1280
+Params:    5.3M
+FLOPs:     0.39B</pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="mb-2">📊 Compound Scaling</h3>
+
+                    <div class="card">
+                        <p class="card-text">EfficientNet scale uniformément :</p>
+                        <div class="code-block mt-1">
+                            <pre>depth:      α^φ
+width:      β^φ
+resolution: γ^φ
+
+B0: φ = 0 (baseline)
+B1: φ = 1
+...
+B7: φ = 7</pre>
+                        </div>
+                    </div>
+
+                    <table class="mt-2">
+                        <tr>
+                            <th>Variante</th>
+                            <th>Input</th>
+                            <th>Params</th>
+                            <th>Top-1</th>
+                        </tr>
+                        <tr style="background: rgba(191,0,0,0.08);">
+                            <td><strong>B0</strong></td>
+                            <td>224</td>
+                            <td>5.3M</td>
+                            <td>77.1%</td>
+                        </tr>
+                        <tr>
+                            <td>B1</td>
+                            <td>240</td>
+                            <td>7.8M</td>
+                            <td>79.1%</td>
+                        </tr>
+                        <tr>
+                            <td>B2</td>
+                            <td>260</td>
+                            <td>9.2M</td>
+                            <td>80.1%</td>
+                        </tr>
+                        <tr>
+                            <td>B3</td>
+                            <td>300</td>
+                            <td>12M</td>
+                            <td>81.6%</td>
+                        </tr>
+                        <tr>
+                            <td>B4</td>
+                            <td>380</td>
+                            <td>19M</td>
+                            <td>82.9%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: PIPELINE ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">PIPELINE</span>
+                    <h2 class="slide-title">Pipeline de Preprocessing</h2>
+                </div>
+
+                <div class="pipeline-horizontal">
+                    <div class="pipeline-step">
+                        <div class="pipeline-step-title">Image brute</div>
+                        <div class="pipeline-step-value">500×500×3</div>
+                    </div>
+                    <span class="pipeline-arrow-h">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-step-title">Resize</div>
+                        <div class="pipeline-step-value">224×224×3</div>
+                    </div>
+                    <span class="pipeline-arrow-h">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-step-title">To Tensor</div>
+                        <div class="pipeline-step-value">[0, 1]</div>
+                    </div>
+                    <span class="pipeline-arrow-h">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-step-title">Normalize</div>
+                        <div class="pipeline-step-value">ImageNet</div>
+                    </div>
+                    <span class="pipeline-arrow-h">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-step-title">EfficientNet</div>
+                        <div class="pipeline-step-value">Forward</div>
+                    </div>
+                    <span class="pipeline-arrow-h">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-step-title">Features</div>
+                        <div class="pipeline-step-value">1×1280</div>
+                    </div>
+                </div>
+
+                <div class="grid-2 mt-2">
+                    <div class="card">
+                        <div class="card-title">📏 Resize : Pourquoi 224×224 ?</div>
+                        <ul class="feature-list">
+                            <li>Taille d'entrée d'EfficientNet-B0</li>
+                            <li>Standard ImageNet</li>
+                            <li>Compromis qualité/performance</li>
+                            <li>Interpolation bilinéaire</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🎨 Normalisation ImageNet</div>
+                        <div class="code-block">
+                            <pre>mean = [0.485, 0.456, 0.406]
+std  = [0.229, 0.224, 0.225]
+
+# Par canal RGB
+pixel_norm = (pixel - mean) / std</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning mt-2">
+                    <div class="warning-title">⚠️ Normalisation obligatoire</div>
+                    <p>Ces valeurs sont calculées sur ImageNet. Le modèle a été entraîné avec, on <strong>doit</strong>
+                        les respecter.</p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== SLIDE 12: RÉSULTATS ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">RÉSULTATS</span>
+                    <h2 class="slide-title">Fichiers Générés</h2>
+                </div>
+
+                <div class="grid-3">
+                    <div class="card text-center">
+                        <div class="stat-big">415 MB</div>
+                        <div class="stat-label">train_features.npy</div>
+                        <p class="text-small mt-1">84 916 × 1 280</p>
+                    </div>
+                    <div class="card text-center">
+                        <div class="stat-big">68 MB</div>
+                        <div class="stat-label">test_features.npy</div>
+                        <p class="text-small mt-1">13 812 × 1 280</p>
+                    </div>
+                    <div class="card text-center">
+                        <div class="stat-big">664 KB</div>
+                        <div class="stat-label">train_labels.npy</div>
+                        <p class="text-small mt-1">84 916 entiers</p>
+                    </div>
+                </div>
+
+                <h3 class="mt-2 mb-1">📊 Statistiques des features</h3>
+
+                <table>
+                    <tr>
+                        <th>Métrique</th>
+                        <th>Train</th>
+                        <th>Test</th>
+                        <th>Cohérence</th>
+                    </tr>
+                    <tr>
+                        <td>Shape</td>
+                        <td>(84916, 1280)</td>
+                        <td>(13812, 1280)</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td>Mean</td>
+                        <td>0.347</td>
+                        <td>0.351</td>
+                        <td>✅ ~1%</td>
+                    </tr>
+                    <tr>
+                        <td>Std</td>
+                        <td>0.652</td>
+                        <td>0.648</td>
+                        <td>✅ ~0.6%</td>
+                    </tr>
+                    <tr>
+                        <td>Min</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td>Max</td>
+                        <td>18.7</td>
+                        <td>16.2</td>
+                        <td>✅</td>
+                    </tr>
+                </table>
+
+                <div class="tip mt-2">
+                    <div class="tip-title">💡 Distribution cohérente</div>
+                    <p>Les stats train/test sont très proches → pas de data leakage, extraction correcte.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 13: COMPRESSION ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">ANALYSE</span>
+                    <h2 class="slide-title">Compression des Données</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card text-center">
+                        <div class="stat-big">750 000</div>
+                        <div class="stat-label">valeurs/image AVANT</div>
+                        <p class="text-small mt-1">500 × 500 × 3 pixels RGB</p>
+                    </div>
+                    <div class="card text-center">
+                        <div class="stat-big">1 280</div>
+                        <div class="stat-label">valeurs/image APRÈS</div>
+                        <p class="text-small mt-1">Vecteur de features</p>
+                    </div>
+                </div>
+
+                <div class="architecture-box mt-2" style="font-size: 1.5rem;">
+                    Facteur de compression : <strong>586×</strong>
+                </div>
+
+                <div class="grid-2 mt-2">
+                    <div class="info">
+                        <div class="info-title">📊 Calcul mémoire</div>
+                        <p>
+                            <strong>Avant</strong> : 84916 × 750000 × 4 bytes = <strong>254 GB</strong><br />
+                            <strong>Après</strong> : 84916 × 1280 × 4 bytes = <strong>415 MB</strong>
+                        </p>
+                    </div>
+                    <div class="tip">
+                        <div class="tip-title">💡 Information préservée</div>
+                        <p>Le CNN a appris à compresser l'information visuelle pertinente. Les features encodent les
+                            caractéristiques sémantiques (forme, texture, objet).</p>
+                    </div>
+                </div>
+
+                <div class="warning mt-2">
+                    <div class="warning-title">⚠️ Ce qui est perdu</div>
+                    <p>Position spatiale précise, détails fins, couleurs exactes. Suffisant pour classification,
+                        insuffisant pour segmentation/détection.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 14: PERFORMANCE ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">PERFORMANCE</span>
+                    <h2 class="slide-title">Temps d'Exécution</h2>
+                </div>
+
+                <table>
+                    <tr>
+                        <th>Étape</th>
+                        <th>Durée</th>
+                        <th>Vitesse</th>
+                    </tr>
+                    <tr>
+                        <td>Extraction Train (84916 images)</td>
+                        <td>~1h30</td>
+                        <td>~15.7 img/s</td>
+                    </tr>
+                    <tr>
+                        <td>Extraction Test (13812 images)</td>
+                        <td>~15 min</td>
+                        <td>~15.4 img/s</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td><strong>~1h45</strong></td>
+                        <td>-</td>
+                    </tr>
+                </table>
+
+                <div class="grid-2 mt-2">
+                    <div class="card">
+                        <div class="card-title">💻 Configuration testée</div>
+                        <ul class="feature-list">
+                            <li>CPU : Intel i7</li>
+                            <li>RAM : 16 GB</li>
+                            <li>GPU : Non utilisé</li>
+                            <li>Batch size : 1 (séquentiel)</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">⚡ Optimisations possibles</div>
+                        <ul class="feature-list">
+                            <li>GPU : ~10× plus rapide</li>
+                            <li>Batch processing : ~3× plus rapide</li>
+                            <li>Multi-threading : ~2× plus rapide</li>
+                            <li>TensorRT : ~2× plus rapide</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tip mt-2">
+                    <div class="tip-title">💡 One-time cost</div>
+                    <p>L'extraction est faite <strong>une seule fois</strong>. Les features sauvegardées sont
+                        réutilisables pour tous les modèles de l'étape 3.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 15: DÉMO ==================== -->
+        <div class="slide">
+            <div class="content-full text-center">
+                <h1 class="hero-title" style="font-size: 4rem;">🎬 Démo</h1>
+                <p class="hero-subtitle">
+                    Notebook Jupyter<br />
+                    <code>notebooks/02_preprocessing_images.ipynb</code>
+                </p>
+
+                <div class="grid-3 mt-3">
+                    <div class="card">
+                        <span class="card-icon">📁</span>
+                        <div class="card-title">Chargement</div>
+                        <p class="card-text">CSV + fusion datasets</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">🖼️</span>
+                        <div class="card-title">Visualisation</div>
+                        <p class="card-text">Sample d'images</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">⚙️</span>
+                        <div class="card-title">Extraction</div>
+                        <p class="card-text">EfficientNet features</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 16: ÉTAPE 3 ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">NEXT</span>
+                    <h2 class="slide-title">Étape 3 : Modélisation</h2>
+                </div>
+
+                <h3 class="mb-2">🎯 Modèles à tester sur les features</h3>
+
+                <div class="grid-3">
+                    <div class="card">
+                        <span class="card-icon">📈</span>
+                        <div class="card-title">Logistic Regression</div>
+                        <p class="card-text">Baseline linéaire. Simple, interprétable.</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">🌲</span>
+                        <div class="card-title">Random Forest</div>
+                        <p class="card-text">Ensemble d'arbres. Robuste, peu d'hyperparams.</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">🧠</span>
+                        <div class="card-title">MLP</div>
+                        <p class="card-text">Réseau dense. Non-linéarité, puissant.</p>
+                    </div>
+                </div>
+
+                <div class="info mt-2">
+                    <div class="info-title">📊 Métriques d'évaluation</div>
+                    <ul class="feature-list">
+                        <li><strong>Accuracy</strong> : % de bonnes prédictions</li>
+                        <li><strong>F1-Score (weighted)</strong> : Harmonic mean precision/recall, pondéré par classe
+                        </li>
+                        <li><strong>Confusion Matrix</strong> : Analyse des erreurs par catégorie</li>
+                    </ul>
+                </div>
+
+                <div class="tip mt-2">
+                    <div class="tip-title">💡 Avantage des features extraites</div>
+                    <p>Entraîner un MLP sur 1280 features prend <strong>quelques minutes</strong>, contre des heures
+                        pour un CNN complet. Itération rapide !</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 17: RÉCAPITULATIF ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">SYNTHÈSE</span>
+                    <h2 class="slide-title">Récapitulatif</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <h3 class="mb-1">✅ Ce qu'on a fait</h3>
+                        <div class="card">
+                            <ul class="feature-list">
+                                <li>Analysé 98 728 images</li>
+                                <li>Choisi EfficientNet-B0 (benchmark)</li>
+                                <li>Extrait 1280 features/image</li>
+                                <li>Compressé 586× les données</li>
+                                <li>Préparé les class weights</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="mb-1">📊 Résultats</h3>
+                        <div class="card">
+                            <ul class="feature-list">
+                                <li>train_features.npy : 415 MB</li>
+                                <li>test_features.npy : 68 MB</li>
+                                <li>Distribution cohérente train/test</li>
+                                <li>Prêt pour modélisation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info mt-2">
+                    <div class="info-title">🔑 Points clés à retenir</div>
+                    <ul class="feature-list">
+                        <li><strong>Transfer Learning</strong> = réutiliser les connaissances d'ImageNet</li>
+                        <li><strong>Feature Extraction</strong> = modèle gelé, extraction rapide</li>
+                        <li><strong>Normalisation ImageNet</strong> = obligatoire pour cohérence</li>
+                        <li><strong>EfficientNet-B0</strong> = meilleur ratio performance/coût</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 18: QUESTIONS ==================== -->
+        <div class="slide">
+            <div class="content-full text-center">
+                <h1 class="hero-title">Questions ?</h1>
+                <p class="hero-subtitle" style="margin-top: 40px;">Merci de votre attention !</p>
+
+                <div class="grid-3 mt-3">
+                    <div class="card">
+                        <span class="card-icon">📁</span>
+                        <div class="card-title">Code</div>
+                        <p class="card-text">notebooks/02_preprocessing_images.ipynb</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">📊</span>
+                        <div class="card-title">Outputs</div>
+                        <p class="card-text">outputs/*.npy</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">📖</span>
+                        <div class="card-title">Ressources</div>
+                        <p class="card-text">EfficientNet paper, PyTorch docs</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <nav>
+        <button class="btn-secondary" onclick="prevSlide()">← Précédent</button>
+        <button class="btn-primary" onclick="nextSlide()">Suivant →</button>
+    </nav>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const total = slides.length;
+
+        document.getElementById('total').textContent = total;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].classList.add('prev');
+
+            currentSlide = (n + total) % total;
+
+            slides.forEach(s => s.classList.remove('prev'));
+            slides[currentSlide].classList.add('active');
+
+            document.getElementById('current').textContent = currentSlide + 1;
+            document.getElementById('progress').style.width = `${((currentSlide + 1) / total) * 100}%`;
+        }
+
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function prevSlide() { showSlide(currentSlide - 1); }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+        });
+
+        showSlide(0);
+    </script>
+</body>
+
+</html>

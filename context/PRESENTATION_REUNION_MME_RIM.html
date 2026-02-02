@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>État des Lieux Microgrids 2024-2026 | PhD Sup'Com</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Outfit:wght@300;500;700;800&family=Fira+Code:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* Palette "Scientific Pro" - Sobre, Profonde, Contrastée */
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --text-main: #1e293b;
+            /* Blue-Grey Dark */
+            --text-muted: #64748b;
+
+            /* Accents Académiques */
+            --phd-primary: #0f172a;
+            /* Slate 900 - Très sombre/pro */
+            --phd-secondary: #334155;
+            /* Slate 700 */
+            --phd-accent: #2563eb;
+            /* Royal Blue - Action/Highlight */
+
+            /* Status Colors (Muted/Professional) */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+
+            /* UI Elements */
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --border-light: #e2e8f0;
+            --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --card-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-light);
+            background-image:
+                linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            /* Grille millimétrée subtile */
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* Suppressed Orbs - Clean Background */
+        .bg-gradient {
+            display: none;
+        }
+
+        .orb {
+            display: none;
+        }
+
+        header {
+            padding: 1rem 3rem;
+            min-height: 120px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.98);
+            border-bottom: 2px solid rgba(30, 58, 95, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            z-index: 100;
+            position: relative;
+        }
+
+        .header-left {
+            justify-self: start;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-center {
+            justify-self: center;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-right {
+            justify-self: end;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .supervisor-badge {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(30, 58, 95, 0.1);
+            border-radius: 12px;
+        }
+
+        .supervisor-info {
+            line-height: 1.3;
+            text-align: right;
+        }
+
+        .supervisor-label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .supervisor-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--phd-primary);
+        }
+
+        .supervisor-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--phd-primary);
+            opacity: 0.9;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--phd-primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .logo-sub {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: block;
+        }
+
+        .institution-logo {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.05));
+        }
+
+        .slide-counter {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--phd-primary);
+            font-weight: 700;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 200;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--phd-primary), var(--accent-purple));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        main {
+            position: relative;
+            height: calc(100vh - 120px);
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: translateX(80px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 1.5rem 3rem;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .slide.prev {
+            transform: translateX(-80px);
+            opacity: 0;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--phd-primary);
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            text-align: center;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto 2rem;
+            line-height: 1.5;
+        }
+
+        .slide-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--glass-border);
+        }
+
+        .section-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.7rem;
+            background: linear-gradient(135deg, var(--phd-primary), var(--accent-purple));
+            color: white;
+            padding: 0.35rem 0.7rem;
+            border-radius: 6px;
+            margin-right: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .section-badge.tools {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+        }
+
+        .section-badge.gaps {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+        }
+
+        .section-badge.discuss {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+        }
+
+        .slide-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .content-full {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .content-single {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            /* Rayon plus petit = plus pro */
+            padding: 1.25rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.2s ease;
+            margin: 0.4rem 0;
+            height: 100%;
+            /* Uniform height */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-hover);
+            border-color: var(--phd-accent);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: var(--phd-accent);
+        }
+
+        /* New Strategic Cards Classes */
+        .strat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .strat-card-title {
+            font-weight: 700;
+            color: var(--phd-primary);
+            font-size: 1.1rem;
+        }
+
+        .strat-card-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: var(--bg-light);
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .strat-list {
+            list-style: none;
+        }
+
+        .strat-list li {
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+            padding-left: 1.2rem;
+            position: relative;
+            color: var(--text-main);
+        }
+
+        .strat-list li::before {
+            content: "•";
+            color: var(--phd-accent);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .card-text {
+            color: var(--text-secondary);
+            line-height: 1.4;
+            font-size: 0.85rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.8rem 0;
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            font-size: 0.82rem;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--phd-primary), var(--phd-secondary));
+            color: white;
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        td {
+            padding: 0.5rem 0.8rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(30, 58, 95, 0.03);
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.4rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.88rem;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: '\2192';
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--glass-border);
+        }
+
+        .metric-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+            line-height: 1.3;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(124, 58, 237, 0.08));
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(6, 182, 212, 0.08));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+        }
+
+        .success-box-title {
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(239, 68, 68, 0.08));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+        }
+
+        .warning-box-title {
+            font-weight: 600;
+            color: var(--accent-orange);
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .toc-item {
+            padding: 0.6rem 0.8rem;
+            margin: 0.3rem 0;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--phd-secondary);
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toc-item:hover {
+            transform: translateX(5px);
+            border-left-color: var(--accent-purple);
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, rgba(30, 58, 95, 0.1), rgba(37, 99, 235, 0.1));
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--phd-primary);
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(30, 58, 95, 0.08);
+            padding: 0.15rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: var(--phd-primary);
+        }
+
+        .dataflow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin: 1.2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .dataflow-box {
+            padding: 0.6rem 0.8rem;
+            background: white;
+            border: 2px solid var(--phd-primary);
+            border-radius: 8px;
+            text-align: center;
+            min-width: 90px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .dataflow-box.highlight-box {
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+        }
+
+        .dataflow-arrow {
+            font-size: 1.2rem;
+            color: var(--accent-orange);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin: 0.1rem;
+        }
+
+        .tag-blue {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--accent-blue);
+        }
+
+        .tag-green {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+        }
+
+        .tag-orange {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--accent-orange);
+        }
+
+        .tag-red {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        .tag-purple {
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--accent-purple);
+        }
+
+        nav {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            z-index: 200;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--phd-primary);
+            transition: all 0.2s ease;
+            font-size: 1.2rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(30, 58, 95, 0.08);
+            transform: scale(1.1);
+        }
+
+        .nav-separator {
+            width: 1px;
+            height: 20px;
+            background: rgba(30, 58, 95, 0.15);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide.active .card {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .slide.active .card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .slide.active .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .slide.active .card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .slide.active .card:nth-child(4) {
+            animation-delay: 0.35s;
+        }
+
+        .slide.active .card:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+
+        .slide.active .card:nth-child(6) {
+            animation-delay: 0.45s;
+        }
+
+        .slide.active table {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            animation-delay: 0.15s;
+        }
+
+        .slide.active .info-box,
+        .slide.active .success-box,
+        .slide.active .warning-box {
+            animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            animation-delay: 0.3s;
+        }
+
+        .slide.active .slide-header {
+            animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .slide.active .metric-card {
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+
+        .mt-1 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-2 {
+            margin-top: 1rem;
+        }
+
+        @media print {
+            .slide {
+                page-break-after: always;
+                min-height: auto;
+                padding: 1rem;
+            }
+
+            nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background cleaned - No Orbs -->
+
+    <header>
+        <div class="header-left">
+            <img src="https://www.supcom.tn/storage/app/public/coordonnees/April2025/aa8HeWk95QdtPlGED1ZY.png"
+                alt="Sup'Com" class="institution-logo">
+        </div>
+        <div class="header-center">
+            <div class="logo">
+                Microgrids 2026
+                <span class="logo-sub">État des Lieux de la Recherche</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="supervisor-badge">
+                <div class="supervisor-info">
+                    <div class="supervisor-label">Directrice de Thèse</div>
+                    <div class="supervisor-name">Prof. Rim BARRAK</div>
+                    <div class="supervisor-title">GRESCOM</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="slides-container">
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 0: TITRE -->
+        <!-- ============================================================ -->
+        <div class="slide active">
+            <div class="content-full text-center">
+                <h1 class="hero-title">Recherche Microgrids<br /><span style="font-size: 0.5em; font-weight: 500;">État
+                        des Lieux 2024-2026 &mdash; Sujets, Méthodes, Outils, Gaps</span></h1>
+                <p class="hero-subtitle">
+                    Revue du paysage de la recherche sur les microgrids :<br />
+                    <span style="color: var(--phd-primary); font-weight: 500;">de quoi parle-t-on, avec quels outils, et
+                        qu'est-ce qui manque ?</span>
+                </p>
+
+                <div class="grid-4 mt-2">
+                    <div class="metric-card">
+                        <div class="metric-value">10</div>
+                        <div class="metric-label">Sujets majeurs identifiés</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">10</div>
+                        <div class="metric-label">Publications SOTA DT 2024-2026</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">$4B</div>
+                        <div class="metric-label">Marché DT Microgrids 2035</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">6</div>
+                        <div class="metric-label">Gaps critiques identifiés</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; color: var(--text-secondary); font-size: 0.95rem;">
+                    <strong>Oussama AKIR</strong> &mdash; Doctorant, Sup'Com<br />28 Janvier 2026
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 1: SOMMAIRE -->
+        <!-- ============================================================ -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">NAVIGATION</span>
+                    <h2 class="slide-title">Sommaire</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="toc-item" onclick="goToSlide(2)"><span><strong>1.</strong> Top 10 sujets de
+                                recherche microgrid</span><span style="color:var(--text-secondary)">3</span></div>
+                        <div class="toc-item" onclick="goToSlide(3)"><span><strong>2.</strong> Sujets dominants
+                                (détail)</span><span style="color:var(--text-secondary)">4</span></div>
+                        <div class="toc-item" onclick="goToSlide(4)"><span><strong>3.</strong> Méthodes et approches
+                                utilisées</span><span style="color:var(--text-secondary)">5</span></div>
+                        <div class="toc-item" onclick="goToSlide(5)"><span><strong>4.</strong> Digital Twins : quel rôle
+                                ?</span><span style="color:var(--text-secondary)">6</span></div>
+                        <div class="toc-item" onclick="goToSlide(6)"><span><strong>5.</strong> Publications SOTA Digital
+                                Twin 2024-2026</span><span style="color:var(--text-secondary)">7</span></div>
+                    </div>
+                    <div>
+                        <div class="toc-item" onclick="goToSlide(7)"><span><strong>6.</strong> Plateformes HIL :
+                                comparaison</span><span style="color:var(--text-secondary)">8</span></div>
+                        <div class="toc-item" onclick="goToSlide(8)"><span><strong>7.</strong> Speedgoat &mdash; que
+                                peut-on faire ?</span><span style="color:var(--text-secondary)">9</span></div>
+                        <div class="toc-item" onclick="goToSlide(9)"><span><strong>8.</strong> Gaps réels
+                                identifiés</span><span style="color:var(--text-secondary)">10</span></div>
+                        <div class="toc-item" onclick="goToSlide(10)"><span><strong>9.</strong> Questions
+                                ouvertes</span><span style="color:var(--text-secondary)">11</span></div>
+                    </div>
+                </div>
+
+                <div class="info-box mt-2">
+                    <div class="info-box-title">Approche</div>
+                    <p>Revue <strong>sans biais méthodologique</strong> : on regarde le terrain tel qu'il est, pas à
+                        travers le prisme d'une solution.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 2: TOP 10 SUJETS -->
+        <!-- ============================================================ -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">SOTA</span>
+                    <h2 class="slide-title">Top 10 Sujets de Recherche Microgrid (2024-2026)</h2>
+                </div>
+
+                <div class="grid-2">
+                    <!-- Column 1: Dominant & Core -->
+                    <div class="card">
+                        <div class="strat-card-header">
+                            <span class="strat-card-title">Core & Dominant</span>
+                            <span class="strat-card-badge"
+                                style="color:var(--danger); background:rgba(239,68,68,0.1)">Critique</span>
+                        </div>
+                        <ul class="strat-list">
+                            <li><strong>1. EMS (Energy Management)</strong> : Optimisation multi-obj. (Coût/CO2)</li>
+                            <li><strong>2. Intégration RE (PV/Wind)</strong> : Gestion intermittence & MPPT</li>
+                            <li><strong>3. Stockage (BESS)</strong> : Sizing & Second-life batteries</li>
+                            <li><strong>4. Stabilité V/f</strong> : Grid-forming & Low inertia</li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 2: Growth & Emerging -->
+                    <div class="card">
+                        <div class="strat-card-header">
+                            <span class="strat-card-title">Croissance & Émergent</span>
+                            <span class="strat-card-badge"
+                                style="color:var(--info); background:rgba(37,99,235,0.1)">Futur</span>
+                        </div>
+                        <ul class="strat-list">
+                            <li><strong>5. Résilience</strong> : Black start & Islanding (IEEE 1547)</li>
+                            <li><strong>7. AI / ML</strong> : Forecasting & Anomaly Detection (SOTA)</li>
+                            <li><strong>8. Véhicules (V2G)</strong> : Bidirectionnel & Smart Charging</li>
+                            <li><strong>6. Networked Microgrids</strong> : Peer-to-peer trading</li>
+                            <li><strong>10. Cyber-sécurité</strong> : FDI Attacks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">Constat</div>
+                    <p>L'<strong>EMS</strong> domine la recherche. L'<strong>IA/ML</strong> est en forte croissance mais
+                        principalement pour le forecasting et le scheduling, pas encore pour le contrôle temps-réel
+                        sécurisé.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 3: SUJETS DOMINANTS -->
+        <!-- ============================================================ -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">SOTA</span>
+                    <h2 class="slide-title">Sujets Dominants &mdash; Ce dont on parle concrètement</h2>
+                </div>
+
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="card-title">Energy Management</div>
+                        <p class="card-text">Sujet #1. Optimiser le dispatch des DER (PV, batteries, grid) pour
+                            minimiser coût, émissions, et maximiser fiabilité. Multi-objectif est la norme.</p>
+                        <div class="mt-1">
+                            <span class="tag tag-blue">MILP</span>
+                            <span class="tag tag-green">DRL</span>
+                            <span class="tag tag-orange">MPC</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Stabilité V/f</div>
+                        <p class="card-text">Maintenir tension et fréquence dans les normes (230V ±6%, 50Hz ±1%).
+                            Critique en mode isolé avec faible inertie.</p>
+                        <div class="mt-1">
+                            <span class="tag tag-blue">Droop</span>
+                            <span class="tag tag-orange">MPC</span>
+                            <span class="tag tag-purple">Virtual Inertia</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">IA pour Microgrids</div>
+                        <p class="card-text">Principalement : prédiction PV/charge (LSTM, Transformer), scheduling
+                            (DRL), détection anomalies. Contrôle temps-réel par IA reste un défi.</p>
+                        <div class="mt-1">
+                            <span class="tag tag-green">DRL</span>
+                            <span class="tag tag-blue">LSTM</span>
+                            <span class="tag tag-purple">GNN</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2 mt-1">
+                    <div class="card">
+                        <div class="card-title">Résilience et Islanding</div>
+                        <p class="card-text">Transition grid-connecté vers isolé sans interruption. IEEE 1547 impose des
+                            normes strictes. Black start (redémarrage après blackout) en croissance.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Batteries et Stockage</div>
+                        <p class="card-text">Optimisation SoC, gestion de la dégradation, sizing techno-économique.
+                            Batteries second-life (ex-VE) = sujet émergent très actif.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 4: MÉTHODES -->
+        <!-- ============================================================ -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">MÉTHODES</span>
+                    <h2 class="slide-title">Méthodes et Approches Utilisées</h2>
+                </div>
+
+                <div class="grid-3">
+                    <!-- Method 1: MPC -->
+                    <div class="card">
+                        <div class="strat-card-header">
+                            <span class="strat-card-title">MPC</span>
+                            <span class="tag tag-orange">Standard</span>
+                        </div>
+                        <div style="font-size:0.85rem; margin-bottom:0.5rem; color:var(--text-muted)">Model Predictive
+                            Control</div>
+                        <ul class="strat-list">
+                            <li style="color:var(--success)">+ Contraintes explicites</li>
+                            <li style="color:var(--danger)">- Coût calcul élevé</li>
+                            <li style="color:var(--danger)">- Modèle requis</li>
+                        </ul>
+                    </div>
+
+                    <!-- Method 2: Deep RL -->
+                    <div class="card">
+                        <div class="strat-card-header">
+                            <span class="strat-card-title">Deep RL</span>
+                            <span class="tag tag-green">SOTA #1</span>
+                        </div>
+                        <div style="font-size:0.85rem; margin-bottom:0.5rem; color:var(--text-muted)">Reinforcement
+                            Learning</div>
+                        <ul class="strat-list">
+                            <li style="color:var(--success)">+ Model-free & Adaptatif</li>
+                            <li style="color:var(--danger)">- Pas de garanties (Safety)</li>
+                            <li style="color:var(--danger)">- "Black Box"</li>
+                        </ul>
+                    </div>
+
+                    <!-- Method 3: MILP -->
+                    <div class="card">
+                        <div class="strat-card-header">
+                            <span class="strat-card-title">MILP</span>
+                            <span class="tag tag-blue">Robuste</span>
+                        </div>
+                        <div style="font-size:0.85rem; margin-bottom:0.5rem; color:var(--text-muted)">Linear Programming
+                        </div>
+                        <ul class="strat-list">
+                            <li style="color:var(--success)">+ Optimalité garantie</li>
+                            <li style="color:var(--success)">+ Solveurs matures</li>
+                            <li style="color:var(--danger)">- Scalabilité limitée</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <div class="warning-box-title">Observation clé</div>
+                    <p>Le <strong>Deep RL</strong> est la tendance académique la plus forte, mais son adoption
+                        industrielle est freinée par l'absence de garanties de sécurité formelles. C'est le gap le plus
+                        cité dans les surveys 2024-2026.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 5: DIGITAL TWINS -->
+        <!-- ============================================================ -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">DIGITAL TWINS</span>
+                    <h2 class="slide-title">Digital Twins pour Microgrids &mdash; Quel rôle ?</h2>
+                </div>
+
+                <p class="mb-2" style="color: var(--text-secondary); font-size: 0.95rem;">Réplique virtuelle temps-réel
+                    du microgrid physique, synchronisée par données capteurs. C'est un <strong>cadre
+                        unificateur</strong>, pas une méthode.</p>
+
+                <div class="grid-4">
+                    <div class="card text-center">
+                        <div class="card-title">Monitoring</div>
+                        <p class="card-text">Surveillance temps-réel V, f, P, SoC</p>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-title">Détection fautes</div>
+                        <p class="card-text">Anomalies identifiées avant dégradation</p>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-title">Scheduling</div>
+                        <p class="card-text">Optimisation dispatch DER via simulation</p>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-title">Maintenance</div>
+                        <p class="card-text">Prédiction usure batteries, onduleurs</p>
+                    </div>
+                </div>
+
+                <div class="grid-4 mt-1">
+                    <div class="card text-center">
+                        <div class="card-title">What-if</div>
+                        <p class="card-text">Scénarios (islanding, surcharge) sans risque</p>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-title">Training IA</div>
+                        <p class="card-text">Environnement sûr pour entraîner contrôleurs</p>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-title">Cybersécurité</div>
+                        <p class="card-text">Détection intrusion par comparaison DT/réel</p>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-title">Intégration VE</div>
+                        <p class="card-text">Simulation V2G et impact sur le réseau</p>
+                    </div>
+                </div>
+
+                <div class="grid-3 mt-1">
+                    <div class="metric-card">
+                        <div class="metric-value">$1.3B</div>
+                        <div class="metric-label">Marché 2024</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">$4B</div>
+                        <div class="metric-label">Projection 2035</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">67%</div>
+                        <div class="metric-label">Adoption IoT/AI (2024)</div>
+                    </div>
+                </div>
+
+                <div class="success-box mt-1">
+                    <div class="success-box-title">Positionnement DT</div>
+                    <p>Le Digital Twin n'est pas une méthode de contrôle : c'est la <strong>plateforme</strong> qui
+                        permet de développer, tester et valider toute méthode. Marché en forte croissance : $1.3B (2024)
+                        → $4B (2035). 67% des implémentations 2024 intègrent IoT/AI.</p>
+                </div>
+
+                <div class="warning-box">
+                    <div class="warning-box-title">Gap Critique Identifié</div>
+                    <p><strong>Aucune publication ne combine</strong> Digital Twin + Optimal Control + Constraint
+                        Satisfaction + Uncertainty Quantification calibrée. Les implémentations actuelles utilisent
+                        OPAL-RT, RL (DDPG), prédiction, cyber-security, mais <strong>manquent de garanties
+                            formelles</strong> de contraintes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 5B: SOTA DIGITAL TWIN PUBLICATIONS -->
+        <!-- ============================================================ -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">PUBLICATIONS</span>
+                    <h2 class="slide-title">SOTA Digital Twin Microgrids &mdash; Publications 2024-2026</h2>
+                </div>
+
+                <table>
+                    <tr>
+                        <th style="width: 35%">Publication</th>
+                        <th style="width: 25%">Venue</th>
+                        <th style="width: 40%">Gap Identifié</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Digital Twin Technology for Renewable Energy, Smart
+                                Grids...</strong><br /><small>Al-Shetwi et al.</small></td>
+                        <td><span class="tag tag-blue">IET Smart Grid 2025</span></td>
+                        <td>Pas d'intégration avec control barrier functions</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Digital Twins for IoT-Driven Energy Systems: A
+                                Survey</strong><br /><small>Chakraborty et al.</small></td>
+                        <td><span class="tag tag-green">IEEE Access Nov 2024</span></td>
+                        <td>Focus IoT, manque contrôle optimal temps réel</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Digital Twin Based Distributed Cooperative Frequency
+                                Control...</strong><br /><small>IEEE Authors</small></td>
+                        <td><span class="tag tag-orange">IEEE Conf 2024</span></td>
+                        <td>DDPG sans garanties formelles de contraintes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>A Digital Twin for an Inverter-Based System</strong><br /><small>USF Power
+                                Group</small></td>
+                        <td><span class="tag tag-purple">IEEE Electrification 2025</span></td>
+                        <td>Pas de gestion incertitude calibrée</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Digital Twin-Based Cyber-Attack Detection...</strong><br /><small>IEEE
+                                Authors</small></td>
+                        <td><span class="tag tag-blue">IEEE J&M 2024</span></td>
+                        <td>Cyber-security focus, pas de control guarantees</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Microgrid Digital Twin for Future Virtual Power Plants</strong><br /><small>IEEE
+                                Authors</small></td>
+                        <td><span class="tag tag-green">IEEE Conf 2023</span></td>
+                        <td>VPP optimization sans constraint satisfaction</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Digital Twin of Microgrid for Predictive Power Control</strong><br /><small>MDPI
+                                Authors</small></td>
+                        <td><span class="tag tag-orange">Sustainability Jan 2024</span></td>
+                        <td>Prédiction sans contrôle optimal stochastique</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Digital Twin Based Forecasting for DC Microgrids</strong><br /><small>Nature
+                                Authors</small></td>
+                        <td><span class="tag tag-purple">Sci Reports Jan 2025</span></td>
+                        <td>Forecasting sans intégration MPC/CBF</td>
+                    </tr>
+                </table>
+
+                <div class="success-box">
+                    <div class="success-box-title">Constat SOTA</div>
+                    <p><strong>Avancées récentes</strong> : Intégration IoT/AI (67%), réduction coûts 19%, ROI 22%,
+                        focus maintenance prédictive et cyber-attaques. IEEE PES Grid Edge 2025 : panel "Digital Twin
+                        for Grid-Forming Inverters and Microgrids".</p>
+                    <p class="mt-1"><strong>Ce qui manque</strong> : Combinaison DT + MPC + CBF + Uncertainty
+                        Quantification = <span class="highlight">position unique pour la thèse</span>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 6: PLATEFORMES HIL -->
+        <!-- ============================================================ -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge tools">OUTILS</span>
+                    <h2 class="slide-title">Plateformes HIL &mdash; Comparaison</h2>
+                </div>
+
+                <div class="grid-3">
+                    <!-- Speedgoat -->
+                    <div class="card" style="border-top: 4px solid var(--phd-accent);">
+                        <div class="strat-card-header">
+                            <span class="strat-card-title">Speedgoat</span>
+                            <span class="tag tag-green">Dispo Labo</span>
+                        </div>
+                        <div class="text-center mb-1">
+                            <div style="font-weight:700; font-size:1.5rem; color:var(--text-main)">~150k$</div>
+                            <div style="font-size:0.8rem; color:var(--text-muted)">Prototyping Focus</div>
+                        </div>
+                        <ul class="strat-list">
+                            <li><strong>Natif MATLAB</strong> (Gros atout)</li>
+                            <li>Workflow Coder fluide</li>
+                            <li>RCP & HIL</li>
+                        </ul>
+                    </div>
+
+                    <!-- OPAL-RT -->
+                    <div class="card" style="border-top: 4px solid var(--text-muted);">
+                        <div class="strat-card-header">
+                            <span class="strat-card-title">OPAL-RT</span>
+                            <span class="tag tag-orange">Industry Std</span>
+                        </div>
+                        <div class="text-center mb-1">
+                            <div style="font-weight:700; font-size:1.5rem; color:var(--text-main)">~300k$</div>
+                            <div style="font-size:0.8rem; color:var(--text-muted)">Power Systems Focus</div>
+                        </div>
+                        <ul class="strat-list">
+                            <li>Très large échelle (30k nodes)</li>
+                            <li>Support FPGA avancé</li>
+                            <li>Complexe à prendre en main</li>
+                        </ul>
+                    </div>
+
+                    <!-- Typhoon -->
+                    <div class="card" style="border-top: 4px solid var(--text-muted);">
+                        <div class="strat-card-header">
+                            <span class="strat-card-title">Typhoon</span>
+                            <span class="tag tag-blue">Power Elec</span>
+                        </div>
+                        <div class="text-center mb-1">
+                            <div style="font-weight:700; font-size:1.5rem; color:var(--text-main)">~100k$</div>
+                            <div style="font-size:0.8rem; color:var(--text-muted)">C-HIL Focus</div>
+                        </div>
+                        <ul class="strat-list">
+                            <li>UI très intuitive</li>
+                            <li>Spécialisé onduleurs/convertisseurs</li>
+                            <li>Moins "General Purpose"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">Sup'Com</div>
+                    <p><strong>Speedgoat (~150K$)</strong> disponible au laboratoire. Avantage principal : intégration
+                        native MATLAB/Simulink, idéal pour le prototypage rapide de contrôleurs développés en Simulink.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 7: SPEEDGOAT -->
+        <!-- ============================================================ -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge tools">SPEEDGOAT</span>
+                    <h2 class="slide-title">Speedgoat &mdash; Que peut-on en faire ?</h2>
+                </div>
+
+                <h3 style="font-size: 1rem; margin-bottom: 0.8rem; color: var(--phd-primary);">Workflow de développement
+                </h3>
+
+                <div class="dataflow-container">
+                    <div class="dataflow-box"><strong>Modèle Simulink</strong><br /><small>Microgrid</small></div>
+                    <span class="dataflow-arrow">&rarr;</span>
+                    <div class="dataflow-box"><strong>Simulink Coder</strong><br /><small>Code generation</small></div>
+                    <span class="dataflow-arrow">&rarr;</span>
+                    <div class="dataflow-box"><strong>Code C</strong><br /><small>Embarqué</small></div>
+                    <span class="dataflow-arrow">&rarr;</span>
+                    <div class="dataflow-box highlight-box"><strong>Speedgoat</strong><br /><small>Exécution RT</small>
+                    </div>
+                    <span class="dataflow-arrow">&rarr;</span>
+                    <div class="dataflow-box"><strong>Résultats</strong><br /><small>Validation HIL</small></div>
+                </div>
+
+                <h3 style="font-size: 1rem; margin-bottom: 0.6rem; margin-top: 1rem; color: var(--phd-primary);">Cas
+                    d'usage validés dans la littérature</h3>
+
+                <div class="grid-2">
+                    <div>
+                        <ul class="feature-list">
+                            <li>HIL Test de Microgrid EMS (réf. officielle Speedgoat)</li>
+                            <li>Test contrôleurs PV/BESS en temps-réel</li>
+                            <li>Validation stratégies islanding (IEEE 1547)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <ul class="feature-list">
+                            <li>Benchmarking MPC vs Rule-Based sur hardware</li>
+                            <li>Test de protection (overcurrent, undervoltage)</li>
+                            <li>Rapid Control Prototyping (RCP)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="warning-box mt-1">
+                    <div class="warning-box-title">Statut Sup'Com</div>
+                    <p>Email envoyé pour : accès physique, modèle exact (Performance / Mobile / Baseline), licence
+                        Simulink Real-Time, modules I/O disponibles. <strong>En attente de réponse.</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 8: GAPS -->
+        <!-- ============================================================ -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge gaps">GAPS</span>
+                    <h2 class="slide-title">Gaps Réels Identifiés (2024-2026)</h2>
+                </div>
+
+                <p class="mb-1" style="font-size: 0.9rem; color: var(--text-secondary);">Gaps observés dans le paysage,
+                    <strong>sans biais méthodologique</strong> :
+                </p>
+
+                <table>
+                    <tr>
+                        <th>#</th>
+                        <th>Gap</th>
+                        <th>Constat</th>
+                    </tr>
+                    <tr>
+                        <td><strong>1</strong></td>
+                        <td><strong>Sécurité formelle pour contrôleurs IA</strong></td>
+                        <td>Le DRL est la tendance #1, mais aucune méthode ne garantit le respect des contraintes
+                            V/f/SoC en temps-réel</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2</strong></td>
+                        <td><strong>Validation HIL de contrôleurs IA</strong></td>
+                        <td>La majorité des travaux DRL restent en simulation pure. Très peu de validation hardware</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3</strong></td>
+                        <td><strong>Digital Twin + contrôle actif</strong></td>
+                        <td>Les DT servent surtout au monitoring/forecasting, rarement au contrôle en boucle fermée</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4</strong></td>
+                        <td><strong>Quantification d'incertitude pour contrôle</strong></td>
+                        <td>Les prédictions ont des erreurs. Très peu de travaux propagent cette incertitude dans le
+                            contrôleur</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5</strong></td>
+                        <td><strong>Benchmark standardisé microgrids</strong></td>
+                        <td>Pas d'équivalent ImageNet. Chaque papier utilise son propre setup, comparaison impossible
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>6</strong></td>
+                        <td><strong>Intégration multi-horizon temporelle</strong></td>
+                        <td>EMS = 15min-1h, contrôle = ms-s. Peu de travaux font le pont entre les échelles</td>
+                    </tr>
+                </table>
+
+                <div class="success-box">
+                    <div class="success-box-title">Observation</div>
+                    <p>Ces gaps émergent naturellement de la revue de la littérature. Ils ne sont pas orientés vers une
+                        solution spécifique &mdash; plusieurs approches pourraient les adresser.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 9: QUESTIONS -->
+        <!-- ============================================================ -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge discuss">DISCUSSION</span>
+                    <h2 class="slide-title">Questions Ouvertes</h2>
+                </div>
+
+                <p class="mb-2" style="font-size: 0.95rem; color: var(--text-secondary);">Points à discuter ensemble
+                    pour orienter la suite de la thèse.</p>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-title">1. Quel gap prioritaire ?</div>
+                        <p class="card-text">Parmi les 6 gaps identifiés, lequel offre le meilleur rapport impact /
+                            faisabilité pour la thèse ?</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">2. Rôle du Speedgoat ?</div>
+                        <p class="card-text">Validation d'un contrôleur existant ? Plateforme de benchmarking ? Outil
+                            central de la thèse ?</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">3. Place du Digital Twin ?</div>
+                        <p class="card-text">Cadre général de la thèse (titre) ? Outil de validation ? Simple
+                            environnement de simulation ?</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">4. EMS vs. Contrôle temps-réel ?</div>
+                        <p class="card-text">Se concentrer sur l'EMS (sujet dominant, plus de publications) ou sur le
+                            contrôle sécurisé (gap identifié, plus original) ?</p>
+                    </div>
+                </div>
+
+                <div class="grid-2 mt-1">
+                    <div class="card">
+                        <div class="card-title">5. Collaboration étudiants ?</div>
+                        <p class="card-text">Quel périmètre déléguer ? Sujets dérivés ou briques complémentaires de la
+                            thèse principale ?</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">6. Axes de publication ?</div>
+                        <p class="card-text">Quels 2 axes prioriser pour maximiser la probabilité d'acceptation ? Quels
+                            journaux cibler ?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SLIDE 10: SYNTHÈSE -->
+        <!-- ============================================================ -->
+        <div class="slide">
+            <div class="content-full text-center">
+                <h1 class="hero-title" style="font-size: 2.5rem;">Synthèse</h1>
+
+                <div class="grid-3 mt-2">
+                    <div class="metric-card">
+                        <div class="metric-value">EMS</div>
+                        <div class="metric-label">Sujet dominant<br />Optimisation multi-objectif</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">DRL</div>
+                        <div class="metric-label">Croissance la plus forte<br />Mais pas de garanties sécurité</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">DT</div>
+                        <div class="metric-label">Cadre unificateur<br />Plateforme, pas méthode</div>
+                    </div>
+                </div>
+
+                <div class="success-box mt-2" style="max-width: 800px; margin-left: auto; margin-right: auto;">
+                    <div class="success-box-title">Ce qu'on a</div>
+                    <p>
+                        <strong>Speedgoat</strong> pour validation HIL &mdash;
+                        <strong>Travail technique</strong> existant (framework de sécurité, 32 modules MATLAB) &mdash;
+                        <strong>Gaps identifiés</strong> dans la littérature
+                    </p>
+                </div>
+
+                <div class="info-box mt-1" style="max-width: 800px; margin-left: auto; margin-right: auto;">
+                    <div class="info-box-title">Prochaine étape</div>
+                    <p>Orienter la thèse en fonction de vos retours sur les gaps et le positionnement.</p>
+                </div>
+
+                <p style="margin-top: 2rem; color: var(--text-secondary);">
+                    <strong>Oussama AKIR</strong> &mdash; oussama.akir@supcom.tn
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <button class="nav-btn" onclick="prevSlide()" title="Précédent">&#8592;</button>
+        <div class="nav-separator"></div>
+        <span class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">12</span></span>
+        <div class="nav-separator"></div>
+        <button class="nav-btn" onclick="nextSlide()" title="Suivant">&#8594;</button>
+    </nav>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let currentSlide = 0;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index === currentSlide) slide.classList.add('active');
+                else if (index < currentSlide) slide.classList.add('prev');
+            });
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            document.getElementById('progress-fill').style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+        }
+
+        function nextSlide() { if (currentSlide < totalSlides - 1) { currentSlide++; updateSlide(); } }
+        function prevSlide() { if (currentSlide > 0) { currentSlide--; updateSlide(); } }
+        function goToSlide(index) { if (index >= 0 && index < totalSlides) { currentSlide = index; updateSlide(); } }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            else if (e.key === 'Home') { e.preventDefault(); goToSlide(0); }
+            else if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
+        });
+
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+        document.addEventListener('touchend', (e) => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+        });
+
+        updateSlide();
+    </script>
+</body>
+
+</html>

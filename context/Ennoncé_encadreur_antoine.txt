@@ -1,0 +1,146 @@
+Bonjour @canal,
+
+
+Je m’appelle Antoine je serai votre mentor de projet durant ces mois de formation. Je suis très heureux de faire votre connaissance :grin:
+
+
+
+Ce message a pour but de vous présenter les différentes attentes relatives au projet et ses deadlines.
+Comment se passe un projet fil rouge dans le cadre d’une formation Data Scientist avec DataScientest ? Il suffit de suivre ces quelques étapes.
+
+
+
+Le projet qui vous a été attribué est le suivant : RAKUTEN.
+
+
+
+-------------------------------------------------
+
+
+Étape 0/ Cadrage (Notre première réunion)
+
+
+
+Étape 1/ Exploration des données + DataViz’ : Deadline Mardi 09 décembre
+Votre première tâche consistera à définir le contexte et le périmètre du projet : j’attends que vous preniez vraiment le temps de bien comprendre le projet et de vous renseigner au mieux sur les notions que celui-ci va introduire.
+Il faudra ensuite prendre en main et découvrir votre jeu de données et faire une analyse presque exhaustive de celui-ci afin de mettre en lumière la structure, les difficultés et éventuels biais du dataset.
+Vous pourrez utiliser ce template : Template - Rapport exploration des données
+
+
+
+Etape 2/ Pre-processing et feature engineering : Deadline Jeudi 18 décembre
+Suite aux constats établis lors de l'étape précédente, vous devrez nettoyer votre jeu de données et effectuer les étapes de pre-processing.
+Si besoin, il faudra transformer et/ou ajouter des features et enrichir votre jeu de données.
+L’objectif à la fin de cette étape est d’avoir un dataset prêt pour effectuer des analyses approfondies et/ou une modélisation à l’aide de Machine (et Deep) Learning.
+
+
+
+Rendu 1 : rapport d’exploration, de data visualisation et de pre-processing des données.
+
+
+
+
+Étape 3/ Modélisation : Deadline Jeudi 29 janvier
+Step 1 : 
+
+Élaboration des premières itérations de modélisation avec des modèles baseline.
+Analysez vos premiers résultats, votre approche est-elle pertinente ? Et votre modèle ?
+Step 2 : 
+
+Utilisez les métriques de Machine Learning et de statistiques afin d’exploiter et comprendre au mieux les résultats de votre modèle.
+Optimisation : Essayer d’améliorer votre modèle à l’aide d’outils d’optimisation, vous pouvez essayer d’autres modèles plus complexes et comparer les résultats.
+Step 3 :
+Modélisation avancée : Utilisation de techniques de bagging/boosting et de Deep Learning.
+Interprétation : Utilisez les outils d’interprétabilité pour mieux comprendre les résultats de vos modèles.
+Conclusions scientifiques et métiers en fonction du succès ou de l’échec de la modélisation.
+
+
+
+
+
+Rendu 2 : rapport de modélisation.
+
+
+
+
+
+
+
+Étape 4/ Rapport final + codes sur GitHub : Deadline Mercredi 11 février
+Vous rendrez le rapport final : constitué des deux premiers rendus, il concrétise votre vision et votre travail face à votre projet en intégrant une conclusion et une ouverture.
+Vous rendez également votre code propre et commenté sur GitHub, si le temps le permet vous pourrez peaufiner votre modèle et votre pipeline de modélisation durant cette étape.
+Le document Projets_méthodologie_rapports vous aiguillera dans la rédaction des différents rendus.
+
+
+
+
+
+Étape 5/ Streamlit + Soutenances: Semaine du 16 février
+Le document Soutenance_Méthodologie résume l’organisation de la soutenance.
+La soutenance se déroule de la manière suivante :
+20 minutes de présentation
+10 minutes de questions de la part des membres du jury
+Vous avez la possibilité de réaliser soit :
+une présentation Powerpoint + Démo Streamlit
+toute la présentation avec votre application Streamlit
+Il faudra que votre application soit :
+esthétique, en particulier qu’elle contienne plusieurs onglets.
+codée avec soin, sans ré-entrainer votre modèle.
+fonctionne sans bugs.
+
+
+
+-------------------------------------------------
+
+
+
+:arrow_right: Pour information, ces étapes sont pensées pour que votre projet se passe au mieux, c’est-à-dire sans problème de dernière minute et avec un rendu final à la hauteur de vos capacités.
+
+
+
+
+
+------------Notes personnelles------------
+
+
+
+:warning: Une attention particulière sera donnée à la forme des rapports intermédiaires et du rapport final, ils devront contenir des illustrations, une mise en page, ne pas avoir de fautes d’orthographe etc…
+Si les rendus ne sont pas à la hauteur et délivrés à temps, votre projet ne pourra pas être validé.   
+
+:warning:Vous l’aurez compris, le projet demande une implication conséquente et constitue pour cette raison un pilier de votre formation. Un bon projet sera le meilleur moyen pour vous de montrer que cette formation a été concluante et que vous êtes opérationnels !
+
+:warning: Pensez à planifier des points de suivi réguliers (hebdomadaires ? bi-hebdomadaires ?...) entre vous.
+
+Les réunions avec moi auront lieu à chaque date de deadline (+ ou -) et seront enregistrées si nécessaire.
+Envoyez-moi vos identifiants (ou emails) pour que je puisse vous ajouter au dépôt Github à disposition :+1:.
+Vous êtes libres de choisir les données, modèles et outils qui vous intéressent. L'objectif à la fin du projet sera d'avoir au moins un modèle qui fonctionne via une interface Streamlit, et surtout, les conclusions business et scientifiques de ce que vous avez fait. Vous choisissez le niveau de complexité technique que vous voulez donner au projet. Le plus important est de comprendre ce que vous allez construire.
+Votre évaluation finale sera basée sur votre présentation (via Zoom) et votre rapport final écrit (à rendre le jour de la soutenance sur Slack).
+Vous pouvez utiliser ce canal slack pour la communication d'équipe et planifier vos appels de groupe.
+
+
+
+:arrow_right: Je vous propose de faire un premier Meeting sur Zoom dans la semaine pour que l'on puisse valider ensemble l'étape de cadrage. Que dites vous du :arrow_right: Mercredi 26/11 à 17h00 (15 min environ)  :arrow_left:
+
+
+
+:arrow_right:Je vous invite à regarder les différentes étapes ainsi que la fiche projet puis noter vos questions, on en discutera au moment du call. Vous pouvez également déjà commencer la Phase 1 (objectifs, explorations des données, ...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+Merci de réagir avec un :+1: pour confirmer que vous avez bien lu ce message.
+
+
+
+Bonne journée et à bientôt,
+
+Antoine.

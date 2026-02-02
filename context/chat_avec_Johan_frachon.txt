@@ -1,0 +1,271 @@
+johan frachon
+  12 h 07
+coucou oussama , regarde sur git ce que jai merge dans ma branche 2.0-feature-extraction-resnet-augmented.ipynb  et tu a aussi tout le traitement associé pour que tu aient les fichiers : DOWNLOAD_LINKS.txt  , cest dans un drive
+12 h 07
+normalement ça devrait te plaire
+12 h 07
+si je peux t'aider en quoi que ce soit aprés ça , tu me dis
+12 h 07
+@oussama akir
+12 h 10
+en résumé : j'ai pushé l'update du preprocessing image sur ma branche (jf).
+gros changements pour régler le déséquilibre :
+passage sur resnet50 (vecteurs de taille 2048).
+oversampling + data augmentation : toutes les classes sont maintenant équilibrées à 15k images chacune (405k images total).
+les fichiers .npy font +3go, donc impossible de les mettre sur git. -> j'ai mis le lien gdrive dans le fichier notebooks/DOWNLOAD_LINKS.txt sur le repo.
+pour ta partie (notebook 3.0) :
+dl les fichiers et mets-les dans implementation/outputs/.
+charge train_features_resnet50_augmented.npy (au lieu d'efficientnet).
+important : retire le paramètre class_weight='balanced' de tes modèles (random forest, etc.), y en a plus besoin vu que le dataset est parfaitement équilibré.
+dis-moi quand t'as tout récupéré !
+oussama akir
+  12 h 43
+Hello Johan
+12 h 43
+super, je regarde tout ca tout de suite, merci et BRAVO
+johan frachon
+  12 h 56
+Après j’ai fais ça en mode 15000 par cartegorie si tu veux que je refasse en 10 000 ou autre tu me dis :)  (modifié) 
+johan frachon
+  12 h 09
+si tu a besoin de moi pour quoi que ce soit ,avant le rdv de demain fais moi signe , je suis dispo au besoin
+oussama akir
+  14 h 42
+Hello Johan
+14 h 42
+BRAVO pour la présentation et le travail ENORME
+johan frachon
+  14 h 42
+Haha tu m’a inspiré en même temps ,
+Je me suis éclaté en vrai
+14 h 43
+Là je fais des affinage pour voir
+14 h 43
+Mais on est bien du côté image
+oussama akir
+  14 h 43
+c'est top, idéalement quand on branche avec le frontend ( la webapp ) je peux switcher entre 3 modèles et a chaque fois on montre le résultat ( je peux mme ajouter un comparatur en parallèle on montre les trois ) c'est ce que les juré cherche
+14 h 44
+si tu peux ajouter un "classique" comme EfficientNET etc.. et deux autres :visage_légèrement_souriant:
+johan frachon
+  14 h 44
+Oui bien sûr
+14 h 44
+Je m'occupe de ça tranquill entre aujourd'hui et lundi
+oussama akir
+  14 h 44
+super, je vais travailler sur la présentation deja , au moins un draft, afin de minimiser le stress du derniers jour
+johan frachon
+  11 h 02
+coucou oussama si tu es dispo cette aprem , je te dis ou j'en suis si tu veux , histoire de pas faire le tunnel
+oussama akir
+  11 h 47
+helllo Chef
+11 h 47
+ça va mieux ?
+11 h 48
+demain matin call d'équipe si tu veux rapide ?
+johan frachon
+  12 h 01
+oui si tu veux pas de soucis , mdr , c'est plus toi le chef que moi; ;  je suis le savan fou qui fais des test de partout
+johan frachon
+  14 h 52
+pour la fin de la journée tu aura tous , je fais vraiment ce que je peux , j'ai la tëte comme une marmite a force
+14 h 52
+je te laisserai installer le systeme de voting pasque je commence a être cuit
+oussama akir
+  14 h 53
+hhhhhhhhhh ok Patron, tu m'envoi avec max d'informations, je vais me debrouille cette nuit pour le finir d'ici demain avant le call avec Antoine, pour une démo proche de notre soutenance
+johan frachon
+  19 h 08
+Salut Oussama,
+Voici le point final sur l'avancement de la partie Image pour la démo de demain.
+1. Ce qui est livré et VALIDÉ (Prêt pour la démo) :
+Sur le GitHub (branche Main) : J'ai poussé toute l'architecture propre (src/image_models) et les 5 Notebooks finaux (M1 à M5).
+Sur le Drive : Tous les fichiers lourds (poids des modèles .pth, .json) pour M1, M2, M3 et M4 sont uploadés.
+Le Voting (M5) : Il est opérationnel. Pour l'instant, je l'ai configuré en mode "Sécurité" avec mes deux modèles les plus stables (DINO + EfficientNet). Ça nous assure un score solide d'environ 76% sans risque de bug pendant la présentation.
+2. Ce qui tourne cette nuit (Le Bonus) :
+Mon modèle "Champion" (le M2 XGBoost) avait un léger souci de synchronisation avec les autres.qui était a 85% non synchronisable avec les autres donc ça ma rendu fou , je suis dessu mais ça prend du temps
+Je suis en train de le ré-entraîner cette nuit pour régler ça.
+Si ça fonctionne : Demain matin, je mets à jour le script de Voting pour inclure ce 3ème modèle. On pourrait alors viser les +80%.
+Si ça ne passe pas : On reste sur la version actuelle (76%) qui est 100% fonctionnelle.
+Je te tiens au courant demain matin dès que le calcul est fini.
+Bonne soirée,
+johan frachon
+  19 h 23
+pour info ,lis bien les M  ,y'en a un cest le overfitter a 91 , je l'ai mis pour présenter si besoin pasque montrer notre travail cest aussi montrer nos echecs
+oussama akir
+  20 h 25
+Hello JoHaN
+20 h 25
+merci pour ce feedback détaillé, et BRAVO
+oussama akir
+  10 h 34
+Hello Johan
+10 h 34
+ça va ?
+10 h 35
+stp peux tu utiliser la branche MergeModels en local , en mettant tes modèles sous le dossier models, et lance le streamlit ( streamlit run app.py ) et essayer d'aller dans l'onglet démo et voir si ca marche pour toi
+10 h 35
+mon pc rame, je préfère que tu partage si ca bug pendant la démo
+johan frachon
+  10 h 41
+attent je connais pas du tout cette partie donc je vais voir ce que je peux faire
+10 h 43
+par contre je fais encore tourner des truc je suis pas certain que ça va marcher ça m'embeterai de stopper mon travail qui tourne depuis hier
+oussama akir
+  10 h 45
+pas de soucis, no stress, essaye, si ca marche pas, pas grave :sourire:
+10 h 48
+c'est quand le call ?
+johan frachon
+  10 h 48
+11h normalement
+oussama akir
+  10 h 48
+ok super
+johan frachon
+  10 h 50
+si j'avais su avant , j'aurai chercher , la je suis un peu devant le fait accompli , je suis un peu embété je fais ce que je peux mais cest du 24/24 , aprés je redonnerai la main, pasque la vraiment ça ma fatigué cette partie
+oussama akir
+  10 h 50
+super boulot en tout cas :fusée:
+johan frachon
+  10 h 52
+c'est loin d'etre parfait mais je fais ce que je peux
+johan frachon
+  19 h 46
+si jamais tu es dispo demain je te montre ou j'en suis
+19 h 47
+la jai plus que les rapport a actualisé" mais le reste fonctionne enfin comme je veux
+johan frachon
+  21 h
+Salut Oussama,
+J'ai fini d'intégrer toute la partie Image sur la branche main. J'ai fait en sorte que tout soit fusionné proprement avec ton travail sur le Texte. Voici ce qu'il faut savoir :
+:fusée: Évolution des Modèles (Performance : 92%)
+On ne travaille plus sur un seul modèle, mais sur un Voting System qui combine trois IA pour corriger les erreurs de chacune :
+DINOv3 (ViT-Large) : Score solo à 79.1%. Il apporte une vision globale très fine.
+XGBoost (Champion) : Entraîné sur des features ResNet, il atteint 80.1% à lui seul.
+EfficientNet B0 : En soutien pour les détails textures.
+La Fusion : Le score final monte à 92% en pondérant les résultats (poids lourd pour le XGBoost et DINO).
+:écran_ordinateur: Nouveau Streamlit (Version Hybride)
+L'application a été mise à jour pour être totalement multimodale :
+Onglet Texte : Utilise ton classifieur SVM/TF-IDF original (inchangé).
+Onglet Image : Utilise le nouveau moteur de Voting 92%.
+Onglet Multimodal : Fusionne les deux prédictions en temps réel.
+Page Modèles : Mise à jour avec les nouveaux benchmarks et explications techniques.
+:dossier_ouvert: Où sont les fichiers ?
+• Notebooks finaux : Ils sont tous rangés dans implementation/notebooks/ (de M1 à M5). La racine est nettoyée de tous mes brouillons.
+• Code Source : * Moteur de prédiction : src/models/predict_model.py
+Configuration : src/streamlit/config.py
+Logique UI : src/streamlit/utils/real_classifier.py
+:danger: Action requise pour faire tourner l'app
+Les modèles sont trop lourds pour GitHub. Tu dois les récupérer sur le Drive et les placer dans ton dossier local /models :
+Lien Drive : G:\Mon Drive\datascientest_projet\pour oussama\les modèles
+Fichiers à copier :
+M1_IMAGE_DeepLearning_DINOv3.pth
+M2_IMAGE_Classic_XGBoost.json
+M2_IMAGE_XGBoost_Encoder.pkl
+M3_IMAGE_Classic_EfficientNetB0.pth
+Une fois les fichiers copiés, tu n'as qu'à lancer : streamlit run src/streamlit/app.py
+Tiens-moi au jus si tu as un souci au lancement !
+johan frachon
+  21 h 17
+je me bat avec le streamlit en local, vérifie si toi ça marche oupas
+johan frachon
+  21 h 49
+"Salut Oussama, j'ai mis à jour le main. Pour que ça tourne chez toi :
+Fais un git pull.
+Vérifie que tu as bien mes modèles (M1_...pth, M2_...json, etc.) dans ton dossier local /models.
+N'oublie pas d'ajouter tes fichiers .joblib (texte) dans ton dossier /models car je ne les ai pas envoyés sur GitHub (trop lourds).
+Lance avec : streamlit run src/streamlit/app.py"
+johan frachon
+  22 h 03
+taper git pull origin main pour recuperer mon travail.
+copier ses fichiers texte (.joblib) et tes fichiers image (.pth, .json) dans son dossier /models local
+lancer streamlit run src/streamlit/app.py.
+22 h 03
+voila jen peux plus donc je dors
+22 h 03
+on parle demain
+johan frachon
+  11 h 31
+Si jamais tu a re besoin des pages normales visuellement versionn non remixé j'ai un fichier bloc note ou j'ai tout la config .py d'avant
+oussama akir
+  13 h 48
+Helloooooooooooo Johan
+13 h 48
+désolé pour ma réponse tardive
+13 h 49
+et merci pour ton feedback détaillé, super boulot :clin_d'œil:
+13 h 49
+:fusée:
+13 h 50
+si t'a n'importe quel docuements qui nous aide pour la présentation et le rapport tu peux partager stp, je vais essayer de faire un DRAFT des deux ( prez + rapport a compléter )
+13 h 51
+des images aussi, screenshot, resultats..
+johan frachon
+  13 h 51
+ok si ça te plais c'est cool , jai pas eu le temps de vérif sur tout le streamlit mais il serait intéressant de faire tourner les modeles image indépendamment notamment l'overfit si jamais pour la démo,   je m'occupe fin d'aprem de faire tout ça , dans les notebooks, tu a tous de visible exprés de toute façon , jai fait tellement de testing pour arriver a mon compte que bon ...
+13 h 52
+la je fais les exams obligatoires
+13 h 52
+histoire de pas prendre de retard
+oussama akir
+  13 h 56
+ca peut ne pas tourner sur ma machine, si tu peux prendre des screesnshot quand tu sera dispo a partir de streamlit avec un petit commentaire ca sera top mon ami
+johan frachon
+  13 h 57
+ok , on a encore du temps avant vendredi mais je m'en occupe
+johan frachon
+  16 h 50
+j'ai fais un notebook entier de testing, avec plein de courbe etc, je met tout dans le rapport demain google tu sera content ,et pour streamlit je rajoute les image demain
+oussama akir
+  20 h 48
+Excellent
+20 h 49
+:tada:
+johan frachon
+  13 h 12
+dans ton dossier drive que je t'ai fait tu a plusieurs dossier , dont un  avec toutes les photos récupéré de mes benchmarks  , un autre dossier avec le streamlit en fonctionnement;  étant donné que suis le seul a pouvoir le faire fonctionner si ya des fichier que je dois récup, des modif a faire, faut que tu me donnes les infos
+13 h 12
+maintenant je vais attaquer l'écriture
+johan frachon
+  14 h 12
+tient dis moi ce que tu en pense https://docs.google.com/document/d/1K4Oj7IGvbamhf9qTii22DUBUnqLT8Fpd4LXMqyAyp6c/edit?usp=sharing
+Google Docs
+
+Google Docs Logo
+RAPPORT D'ANALYSE EXPLORATOIRE (EDA) &amp; STRATÉGIE DE PRÉ-TRAITEMENT
+Document in Google Docs
+Ouvrir dans Google Docs
+28 janv.
+RAPPORT Modèle image
+
+
+
+14 h 17
+Pour ce qu'on va présenter au jury , genre la prez 16/9 esque tu peux gérer ou ta besoin de mon aide ? tu me dis, vu que j'ai eu des petites nuits a cause de tout ce code, je suis franchement preneur :rire_à_se_rouler_par_terre: (modifié) 
+oussama akir
+  10 h 02
+biensur, je suis deja entrain de bosser sur la prez (on moins le draft) en attendant vos retour et les retours de Antoine
+johan frachon
+  10 h 56
+dis moi ce que tu pense de mes image ça devrait te plaire normalmeent
+oussama akir
+  18 h 20
+WOW :fléchette:
+18 h 20
+on peut l'envoyer deja comme rapport :sourire:
+johan frachon
+  18 h 21
+le rapport dont il parlais liviu genre je sais plus quoi , je pense que je lai déja fais ducoup
+18 h 21
+et jai changer un peu le streamlit je te montrerai demain jai rajouter un peu
+18 h 21
+c'est la partie texte qui es en retard, nous on es peinard
+18 h 21
+c'est pour ça que 'j'ai bosser comme un fou tu me direa
+oussama akir
+  18 h 58
+:rire_à_se_rouler_par_terre:
