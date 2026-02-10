@@ -149,7 +149,7 @@ with tabs[2]:
     st.info("Ajustez le curseur pour voir comment le Texte et l'Image s'influencent mutuellement.")
     
     # slider interactif poids
-    fusion_weight = st.slider("⚖️ Équilibre de la Décision", 0.0, 1.0, 0.7, 
+    fusion_weight = st.slider("⚖️ Équilibre de la Décision", 0.0, 1.0, 0.6,
                               format="Image: %d%%")
     
     # mise a jour dynamique des poids du classifieur

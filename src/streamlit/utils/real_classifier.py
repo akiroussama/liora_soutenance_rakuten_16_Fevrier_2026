@@ -19,8 +19,8 @@ class MultimodalClassifier:
         # MISE A JOUR STRATEGIQUE :
         # Puisque nous avons fiabilisé l'image (DINOv3 + Sharpening),
         # nous augmentons sa part dans la décision finale.
-        self.w_text = 0.3  # Baisse légère (était 0.4)
-        self.w_image = 0.7 # Hausse (était 0.6)
+        self.w_text = 0.4
+        self.w_image = 0.6
         
         # 1. Chargement du Mapping
         try:

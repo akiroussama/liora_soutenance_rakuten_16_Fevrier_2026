@@ -34,7 +34,7 @@ col1, col2, col3, col4 = st.columns(4)
 col1.metric("Produits", "84 916")
 col2.metric("Catégories", "27")
 col3.metric("Modalités", "Texte + Image")
-col4.metric("Précision", "85%+")
+col4.metric("Précision", "~94%")
 
 st.divider()
 

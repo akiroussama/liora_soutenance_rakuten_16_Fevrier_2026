@@ -26,7 +26,7 @@ st.divider()
 st.header("Résultats")
 
 col1, col2, col3 = st.columns(3)
-col1.metric("Accuracy", "85%", "Objectif atteint")
+col1.metric("Accuracy", "~94%", "Fusion Texte+Image")
 col2.metric("Catégories", "27", "Toutes couvertes")
 col3.metric("Meilleur modèle", "LinearSVC (Texte)")
 
@@ -110,7 +110,7 @@ Solution scalable, maintenable et prête pour la production.
 with st.sidebar:
     st.markdown("### Conclusions")
     st.divider()
-    st.success("Accuracy: 85%")
+    st.success("Accuracy: ~94%")
     st.success("27 catégories")
     st.success("6 modèles comparés")
     st.divider()
