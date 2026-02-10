@@ -1,12 +1,27 @@
+"""
+Page Architecture & Modèles.
+"""
 import streamlit as st
 import pandas as pd
 import graphviz
 import os
+import sys
+from pathlib import Path
 
-# config page wide pour ecran 16/9
-st.set_page_config(page_title="Architecture", layout="wide")
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-st.title("🧠 Architecture & Performance")
+from config import APP_CONFIG, ASSETS_DIR
+from utils.ui_utils import load_css
+
+st.set_page_config(
+    page_title=f"Modèles - {APP_CONFIG['title']}",
+    page_icon="🧠",
+    layout=APP_CONFIG["layout"],
+)
+
+load_css(ASSETS_DIR / "style.css")
+
+st.title("Architecture & Modèles")
 st.markdown("---")
 
 tabs = st.tabs(["🖼️ Vision (Image)", "📝 Sémantique (Texte)"])
@@ -55,7 +70,7 @@ with tabs[0]:
     # COLONNE 1 : LE RADAR
     with c1:
         st.markdown("##### 🎯 Synthèse (Radar)")
-        img_radar = "comparaison profil modele.png"
+        img_radar = str(ASSETS_DIR / "comparaison profil modele.png")
         if os.path.exists(img_radar):
             st.image(img_radar, use_container_width=True)
             st.caption("✅ **Analyse :** Le Voting (Rouge) enveloppe les autres modèles, cumulant robustesse et précision.")
@@ -65,7 +80,7 @@ with tabs[0]:
     # COLONNE 2 : LA CALIBRATION
     with c2:
         st.markdown("##### 📐 Calibration (XGBoost)")
-        img_calib = "calibré.png"
+        img_calib = str(ASSETS_DIR / "calibré.png")
         if os.path.exists(img_calib):
             st.image(img_calib, use_container_width=True)
             st.caption("✅ **Correction :** Le 'Sharpening' (Vert) force XGBoost à trancher pour ne pas diluer le vote.")
@@ -75,7 +90,7 @@ with tabs[0]:
     # COLONNE 3 : LA MATRICE
     with c3:
         st.markdown("##### 🤝 Diversité (Matrice)")
-        img_matrice = "matrice.png"
+        img_matrice = str(ASSETS_DIR / "matrice.png")
         if os.path.exists(img_matrice):
             st.image(img_matrice, use_container_width=True)
             st.caption("✅ **Stratégie :** XGBoost (Ligne blanche) est indépendant des réseaux de neurones. C'est la sécurité.")
@@ -105,7 +120,7 @@ with tabs[1]:
         
         df_text = pd.DataFrame({
             "Modèle": ["LinearSVC", "Random Forest", "LogReg", "CamemBERT"],
-            "F1-Score": ["84.1%", "72.0%", "69.5%", "81.0%"],
+            "F1-Score": ["83.0%", "72.0%", "69.5%", "81.0%"],
             "Vitesse": ["Fast", "Medium", "Fast", "Slow"]
         })
         

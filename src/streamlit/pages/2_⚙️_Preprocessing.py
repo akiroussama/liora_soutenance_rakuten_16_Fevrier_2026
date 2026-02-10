@@ -25,8 +25,8 @@ st.title("Pipeline de Preprocessing")
 # Métriques
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Produits", "84 916")
-col2.metric("Vocabulaire TF-IDF", "~15K")
-col3.metric("Features Image", "2 048")
+col2.metric("Vocabulaire TF-IDF", "~280K")
+col3.metric("Features Image", "1 024")
 col4.metric("Langues", "5")
 
 # Pipeline Texte
@@ -53,8 +53,8 @@ with col2:
 with col3:
     st.subheader("3. Vectorisation")
     st.markdown("""
-    - TF-IDF
-    - ~15K dimensions
+    - TF-IDF (word 1-2 + char 3-5)
+    - ~280K dimensions
     - designation + description
     """)
 
@@ -67,7 +67,7 @@ with col1:
     st.subheader("1. Resize")
     st.markdown("""
     - 224 × 224 pixels
-    - Format attendu ResNet
+    - Format attendu DINOv3
     """)
 
 with col2:
@@ -80,8 +80,8 @@ with col2:
 with col3:
     st.subheader("3. Extraction")
     st.markdown("""
-    - ResNet50 pré-entraîné
-    - 2048 features (avg_pool)
+    - DINOv3 pré-entraîné
+    - 1024 features
     """)
 
 # Choix techniques
@@ -103,8 +103,8 @@ with tab_image:
     st.markdown("""
     | Choix | Justification |
     |-------|---------------|
-    | ResNet50 (pas VGG16) | Meilleur compromis taille/performance |
-    | avg_pool (pas flatten) | Moins de dimensions, moins d'overfitting |
+    | DINOv3 (pas ResNet50) | Self-supervised, meilleures features |
+    | Voting (3 modèles) | Robustesse par diversité des classifieurs |
     | Pas d'augmentation | Dataset assez grand (85K) |
     """)
 
@@ -138,5 +138,5 @@ with st.sidebar:
     st.markdown("""
     **Texte**: Nettoyage → Langue → TF-IDF
 
-    **Image**: Resize → Norm → ResNet50
+    **Image**: Resize → Norm → DINOv3
     """)

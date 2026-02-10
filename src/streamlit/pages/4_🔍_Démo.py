@@ -1,16 +1,27 @@
+"""
+Page de démonstration interactive.
+"""
 import streamlit as st
 import time
 import sys
 import pandas as pd
 from pathlib import Path
 
-# hack pour trouver les modules du projet
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from config import APP_CONFIG, ASSETS_DIR
+from utils.ui_utils import load_css
 from utils.real_classifier import MultimodalClassifier
 
-st.set_page_config(page_title="Démo Rakuten", page_icon="🔍", layout="wide")
+st.set_page_config(
+    page_title=f"Démo - {APP_CONFIG['title']}",
+    page_icon="🔍",
+    layout=APP_CONFIG["layout"],
+)
 
-st.title("🔍 Démonstration Interactive & Explicabilité")
+load_css(ASSETS_DIR / "style.css")
+
+st.title("Démonstration Interactive")
 st.markdown("---")
 
 # chargement unique du cerveau

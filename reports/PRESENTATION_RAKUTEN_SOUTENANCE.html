@@ -1070,7 +1070,7 @@
                         <div class="toc-entry" onclick="goToSlide(10)">
                             <div class="toc-num">09</div>
                             <div class="toc-content">
-                                <span class="toc-title">Distribution Visuelle</span>
+                                <span class="toc-title">Explicabilité</span>
                                 <span class="toc-page">11</span>
                             </div>
                         </div>
@@ -1287,9 +1287,9 @@
 
                         <p style="font-size: 0.85rem; color: var(--text-muted);">Extraction de features via :</p>
                         <div class="mt-1">
-                            <span class="tag tag-red">ResNet50 (2048)</span>
+                            <span class="tag tag-red">DINOv3 (1024)</span>
                             <span class="tag tag-green">EfficientNet-B0</span>
-                            <span class="tag tag-orange">ImageNet weights</span>
+                            <span class="tag tag-orange">Pre-trained weights</span>
                         </div>
                     </div>
                 </div>
@@ -1393,7 +1393,7 @@
                         <td><span class="tag tag-orange">Plafond ML</span></td>
                     </tr>
                     <tr style="background: rgba(16, 185, 129, 0.1);">
-                        <td class="highlight">MLP (Adam + GELU)</td>
+                        <td class="highlight">DINOv3 + MLP</td>
                         <td class="highlight">0.914</td>
                         <td>58 sec</td>
                         <td>GPU</td>
@@ -1408,7 +1408,7 @@
                     </div>
                     <div class="success-box">
                         <div class="success-box-title">🚀 Rupture Deep Learning</div>
-                        <p>MLP atteint <strong>91.4%</strong> en 58 secondes sur GPU RTX 4070.</p>
+                        <p>DINOv3 + MLP atteint <strong>91.4%</strong> en 58 secondes sur GPU RTX 4070.</p>
                     </div>
                 </div>
             </div>
@@ -1427,23 +1427,23 @@
                 <div class="voting-container">
                     <div class="model-card">
                         <div class="model-icon">🦖</div>
-                        <div class="model-name">DINOv3</div>
-                        <div class="model-score">79.1%</div>
-                        <div class="model-weight">Poids: 0.40</div>
+                        <div class="model-name">DINOv3 + MLP</div>
+                        <div class="model-score">91.4%</div>
+                        <div class="model-weight">Poids: 4/7</div>
                     </div>
                     <span class="voting-arrow">→</span>
                     <div class="model-card">
                         <div class="model-icon">🌲</div>
                         <div class="model-name">XGBoost</div>
-                        <div class="model-score">80.1%</div>
-                        <div class="model-weight">Poids: 0.35</div>
+                        <div class="model-score">76.5%</div>
+                        <div class="model-weight">Poids: 1/7</div>
                     </div>
                     <span class="voting-arrow">→</span>
                     <div class="model-card">
                         <div class="model-icon">⚡</div>
                         <div class="model-name">EfficientNet</div>
                         <div class="model-score">~75%</div>
-                        <div class="model-weight">Poids: 0.25</div>
+                        <div class="model-weight">Poids: 2/7</div>
                     </div>
                     <span class="voting-arrow" style="font-size: 2rem;">⇒</span>
                     <div class="model-card final-card">
@@ -1553,7 +1553,7 @@
                         <!-- Image Pipeline -->
                         <rect x="160" y="210" width="120" height="70" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
                         <text x="220" y="240" text-anchor="middle" font-family="Outfit" font-size="13" font-weight="600" fill="#d97706">Transfer Learning</text>
-                        <text x="220" y="260" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#64748b">ResNet/EfficientNet</text>
+                        <text x="220" y="260" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#64748b">DINOv3/EfficientNet</text>
 
                         <!-- Arrows to models -->
                         <path d="M 285 75 L 325 75" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
@@ -1629,95 +1629,85 @@
             </div>
         </div>
 
-        <!-- ===================== SLIDE 10: DISTRIBUTION VISUELLE ===================== -->
+        <!-- ===================== SLIDE 10: EXPLICABILITÉ ===================== -->
         <div class="slide">
             <div class="content-single">
                 <div class="slide-header">
-                    <span class="section-badge data">Visualisation</span>
-                    <h2 class="slide-title">Distribution des 27 Catégories</h2>
+                    <span class="section-badge results">Transparence</span>
+                    <h2 class="slide-title">Explicabilité des Modèles</h2>
                 </div>
 
-                <div style="text-align: center; margin: 0.5rem 0;">
-                    <svg viewBox="0 0 850 280" style="max-width: 100%; height: auto;">
-                        <!-- Bars representing the distribution - approximated -->
-                        <rect x="20" y="30" width="28" height="180" rx="3" fill="url(#barGradient1)"/>
-                        <rect x="52" y="80" width="28" height="130" rx="3" fill="url(#barGradient2)"/>
-                        <rect x="84" y="85" width="28" height="125" rx="3" fill="url(#barGradient2)"/>
-                        <rect x="116" y="95" width="28" height="115" rx="3" fill="url(#barGradient2)"/>
-                        <rect x="148" y="100" width="28" height="110" rx="3" fill="url(#barGradient2)"/>
-                        <rect x="180" y="105" width="28" height="105" rx="3" fill="url(#barGradient3)"/>
-                        <rect x="212" y="110" width="28" height="100" rx="3" fill="url(#barGradient3)"/>
-                        <rect x="244" y="115" width="28" height="95" rx="3" fill="url(#barGradient3)"/>
-                        <rect x="276" y="120" width="28" height="90" rx="3" fill="url(#barGradient3)"/>
-                        <rect x="308" y="125" width="28" height="85" rx="3" fill="url(#barGradient3)"/>
-                        <rect x="340" y="130" width="28" height="80" rx="3" fill="url(#barGradient3)"/>
-                        <rect x="372" y="135" width="28" height="75" rx="3" fill="url(#barGradient3)"/>
-                        <rect x="404" y="140" width="28" height="70" rx="3" fill="url(#barGradient3)"/>
-                        <rect x="436" y="145" width="28" height="65" rx="3" fill="url(#barGradient4)"/>
-                        <rect x="468" y="150" width="28" height="60" rx="3" fill="url(#barGradient4)"/>
-                        <rect x="500" y="155" width="28" height="55" rx="3" fill="url(#barGradient4)"/>
-                        <rect x="532" y="160" width="28" height="50" rx="3" fill="url(#barGradient4)"/>
-                        <rect x="564" y="165" width="28" height="45" rx="3" fill="url(#barGradient4)"/>
-                        <rect x="596" y="170" width="28" height="40" rx="3" fill="url(#barGradient4)"/>
-                        <rect x="628" y="175" width="28" height="35" rx="3" fill="url(#barGradient4)"/>
-                        <rect x="660" y="180" width="28" height="30" rx="3" fill="url(#barGradient5)"/>
-                        <rect x="692" y="183" width="28" height="27" rx="3" fill="url(#barGradient5)"/>
-                        <rect x="724" y="186" width="28" height="24" rx="3" fill="url(#barGradient5)"/>
-                        <rect x="756" y="189" width="28" height="21" rx="3" fill="url(#barGradient5)"/>
-                        <rect x="788" y="192" width="28" height="18" rx="3" fill="url(#barGradient5)"/>
-                        <rect x="820" y="195" width="28" height="15" rx="3" fill="url(#barGradient5)"/>
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">Comprendre <strong>pourquoi</strong> le modèle prédit une catégorie, pas seulement <strong>laquelle</strong>.</p>
 
-                        <!-- Axis line -->
-                        <line x1="15" y1="210" x2="855" y2="210" stroke="#e2e8f0" stroke-width="2"/>
+                <div class="grid-2">
+                    <div>
+                        <div class="card">
+                            <div class="card-title">SHAP — Texte</div>
+                            <div class="card-text">
+                                <p style="margin-bottom: 0.5rem; font-size: 0.95rem;">Exemple : <em>"iPhone 15 Pro Max 256GB"</em></p>
+                                <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="width: 140px; height: 18px; background: linear-gradient(90deg, #bf0000 90%, transparent); border-radius: 3px;"></div>
+                                        <span style="font-family: 'Fira Code'; font-size: 0.85rem;">iphone (0.42)</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="width: 95px; height: 18px; background: linear-gradient(90deg, #dc2626 90%, transparent); border-radius: 3px;"></div>
+                                        <span style="font-family: 'Fira Code'; font-size: 0.85rem;">smartphone (0.28)</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="width: 60px; height: 18px; background: linear-gradient(90deg, #ef4444 90%, transparent); border-radius: 3px;"></div>
+                                        <span style="font-family: 'Fira Code'; font-size: 0.85rem;">apple (0.18)</span>
+                                    </div>
+                                </div>
+                                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Prédiction : <strong style="color: var(--accent-green);">Téléphones (94.2%)</strong></p>
+                            </div>
+                        </div>
+                    </div>
 
-                        <!-- Labels -->
-                        <text x="34" y="225" text-anchor="middle" font-family="Fira Code" font-size="7" fill="#64748b">Piscines</text>
-                        <text x="34" y="25" text-anchor="middle" font-family="Fira Code" font-size="9" font-weight="700" fill="#bf0000">10K</text>
-                        <text x="834" y="225" text-anchor="middle" font-family="Fira Code" font-size="7" fill="#64748b">Consoles</text>
-                        <text x="834" y="192" text-anchor="middle" font-family="Fira Code" font-size="9" font-weight="700" fill="#7c3aed">761</text>
-
-                        <!-- Arrow showing imbalance -->
-                        <path d="M 50 250 Q 430 280 810 250" stroke="#bf0000" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
-                        <text x="430" y="270" text-anchor="middle" font-family="Outfit" font-size="12" font-weight="700" fill="#bf0000">Ratio 13:1</text>
-
-                        <defs>
-                            <linearGradient id="barGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#bf0000"/>
-                                <stop offset="100%" style="stop-color:#dc2626"/>
-                            </linearGradient>
-                            <linearGradient id="barGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#f59e0b"/>
-                                <stop offset="100%" style="stop-color:#fbbf24"/>
-                            </linearGradient>
-                            <linearGradient id="barGradient3" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#10b981"/>
-                                <stop offset="100%" style="stop-color:#34d399"/>
-                            </linearGradient>
-                            <linearGradient id="barGradient4" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#3b82f6"/>
-                                <stop offset="100%" style="stop-color:#60a5fa"/>
-                            </linearGradient>
-                            <linearGradient id="barGradient5" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#8b5cf6"/>
-                                <stop offset="100%" style="stop-color:#a78bfa"/>
-                            </linearGradient>
-                        </defs>
-                    </svg>
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Grad-CAM — Image</div>
+                            <div class="card-text">
+                                <p style="margin-bottom: 0.5rem; font-size: 0.95rem;">Visualise les zones de l'image activées par le CNN :</p>
+                                <div style="display: flex; gap: 1rem; align-items: center; justify-content: center; margin: 0.8rem 0;">
+                                    <div style="width: 90px; height: 90px; background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; position: relative;">
+                                        📱
+                                        <div style="position: absolute; bottom: -5px; right: -5px; font-size: 0.7rem; background: var(--accent-green); color: white; padding: 0.15rem 0.4rem; border-radius: 4px;">Original</div>
+                                    </div>
+                                    <span style="font-size: 1.5rem; color: var(--text-muted);">→</span>
+                                    <div style="width: 90px; height: 90px; background: linear-gradient(135deg, rgba(191,0,0,0.3), rgba(255,200,0,0.3), rgba(0,200,0,0.1)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; position: relative;">
+                                        📱
+                                        <div style="position: absolute; bottom: -5px; right: -5px; font-size: 0.7rem; background: var(--rakuten-red); color: white; padding: 0.15rem 0.4rem; border-radius: 4px;">Heatmap</div>
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.9rem;">Les zones <strong style="color: var(--rakuten-red);">rouges</strong> = zones décisives pour la prédiction.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="grid-2" style="margin-top: 1rem;">
-                    <div class="warning-box">
-                        <div class="warning-box-title">⚠️ Défi Majeur</div>
-                        <p>La classe majoritaire (Piscines) contient <strong>13× plus</strong> d'exemples que la minoritaire (Consoles). Sans traitement, le modèle ignorerait les classes rares.</p>
+                <div class="grid-4 mt-1">
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 1.8rem;">SHAP</div>
+                        <div class="metric-label">Texte Global</div>
                     </div>
-                    <div class="success-box">
-                        <div class="success-box-title">✅ Stratégies Adoptées</div>
-                        <p>
-                            <span class="tag tag-green">class_weight='balanced'</span><br>
-                            <span class="tag tag-blue">F1-Score weighted</span><br>
-                            <span class="tag tag-purple">Oversampling ciblé</span>
-                        </p>
+                    <div class="metric-card success">
+                        <div class="metric-value" style="font-size: 1.8rem;">LIME</div>
+                        <div class="metric-label">Texte Local</div>
                     </div>
+                    <div class="metric-card warning">
+                        <div class="metric-value" style="font-size: 1.6rem;">Grad-CAM</div>
+                        <div class="metric-label">Image CNN</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 1.6rem;">Attention</div>
+                        <div class="metric-label">Transformer</div>
+                    </div>
+                </div>
+
+                <div class="info-box mt-1">
+                    <div class="info-box-title">🏛️ Conformité AI Act</div>
+                    <p>L'explicabilité répond aux exigences de <strong>transparence algorithmique</strong> du règlement européen sur l'IA : chaque prédiction peut être justifiée et auditée.</p>
                 </div>
             </div>
         </div>

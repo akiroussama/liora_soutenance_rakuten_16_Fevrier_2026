@@ -2158,6 +2158,19 @@
                 exploitables par les algorithmes de classification.
             </p>
 
+            <p>
+                Les données textuelles du dataset Rakuten présentent plusieurs défis spécifiques. D'abord,
+                35% des descriptions sont manquantes (champs NaN) &mdash; les vendeurs renseignent le titre
+                mais pas la description détaillée. Ensuite, les textes sont multilingues : français,
+                anglais, allemand, avec parfois des mélanges dans un même champ. Enfin, les titres
+                contiennent fréquemment des codes produits, des abréviations et des erreurs de saisie
+                ("playstation" vs "playstations" vs "PS4"). Notre choix de prétraitement est volontairement
+                léger : pas de stemming, pas de lemmatisation, pas de stopwords removal. Cette décision,
+                contre-intuitive au premier abord, repose sur un constat empirique : les tests avec
+                stemming dégradaient les performances de 1.5 points car les suffixes portent de
+                l'information catégorielle (par exemple, "-eur" signale souvent du matériel professionnel).
+            </p>
+
             <h2><span class="section-number">2.1.1</span> Étapes de Nettoyage</h2>
             <div class="pipeline">
                 <div class="pipeline-step">
@@ -2189,7 +2202,13 @@
             <h2><span class="section-number">2.1.2</span> Vectorisation TF-IDF</h2>
             <p>
                 Nous avons opté pour une approche <strong>FeatureUnion</strong> combinant deux vectoriseurs
-                complémentaires :
+                complémentaires. Le vecteur final atteint 280 000 dimensions (120K word + 160K char),
+                ce qui peut sembler excessif, mais le LinearSVC gère nativement les espaces creux
+                de haute dimension sans réduction préalable. Le paramètre <code>sublinear_tf=True</code>
+                applique un log-scaling (1 + log(tf)) qui atténue l'impact des mots très fréquents
+                sans les supprimer complètement. Les seuils <code>min_df=2</code> et <code>max_df=0.9</code>
+                éliminent les termes trop rares (hapax, fautes uniques) et trop communs (mots présents
+                dans 90%+ des documents).
             </p>
 
             <div class="two-columns">
@@ -2263,6 +2282,15 @@
             <p class="lead">
                 Le preprocessing image utilise le <strong>Transfer Learning</strong> avec EfficientNet-B0 pour extraire
                 des features visuelles compactes et sémantiquement riches.
+            </p>
+
+            <p>
+                Les images du catalogue Rakuten présentent une forte hétérogénéité : photos de produits sur
+                fond blanc, captures d'écran de jeux vidéo, couvertures de livres, photos de mobilier en situation.
+                Entraîner un CNN from scratch sur 84K images serait insuffisant pour capturer cette diversité,
+                d'autant que certaines classes ne comptent que 150 à 200 exemples. Le Transfer Learning nous
+                permet d'exploiter les représentations visuelles apprises sur ImageNet (1.2M images) et de
+                les adapter à notre domaine avec un coût de calcul raisonnable.
             </p>
 
             <h2><span class="section-number">2.2.1</span> Pipeline de Transformation</h2>
@@ -2365,6 +2393,16 @@
                 </tbody>
             </table>
 
+            <p>
+                Le choix d'EfficientNet-B0 résulte d'un compromis entre trois contraintes. Premièrement, le nombre
+                de paramètres : avec 5.3M de paramètres contre 25M pour ResNet-50 ou 86M pour ViT-B/16,
+                EfficientNet-B0 réduit le risque d'overfitting sur un dataset de taille modeste. Deuxièmement,
+                la performance sur ImageNet (77.1% Top-1) valide sa capacité à extraire des features
+                discriminantes, malgré sa légèreté. Troisièmement, la dimension du vecteur de features (1280)
+                offre un bon équilibre : suffisamment riche pour distinguer 27 catégories, suffisamment compact
+                pour être exploitable par un classifieur ML classique sans réduction de dimension.
+            </p>
+
             <div class="key-result">
                 <span class="metric">586×</span>
                 <span class="label">Facteur de Compression (750K → 1280 valeurs/image)</span>
@@ -2396,6 +2434,17 @@
                 multi-niveaux pour garantir des performances équilibrées.
             </p>
 
+            <p>
+                Le dataset Rakuten présente un déséquilibre modéré mais structurel : la classe majoritaire
+                (2583, Piscines) compte 6 046 exemples, tandis que la classe minoritaire (1180, Figurines)
+                n'en contient que 463. Sans traitement, un modèle naïf prédirait systématiquement les classes
+                fréquentes et atteindrait une accuracy trompeuse de 71%, tout en échouant sur les classes
+                rares. Nous avons adopté une approche combinée plutôt qu'une seule technique, car chaque
+                stratégie compense les faiblesses des autres : le split stratifié garantit une évaluation
+                fiable, les class weights ajustent le gradient pendant l'entraînement, et l'augmentation
+                enrichit effectivement la représentation visuelle des classes sous-représentées.
+            </p>
+
             <h2><span class="section-number">2.3.1</span> Stratégies Implémentées</h2>
             <div class="three-columns">
                 <div class="callout callout-info">
@@ -2422,6 +2471,15 @@
             </div>
 
             <h2><span class="section-number">2.3.2</span> Data Augmentation Image</h2>
+            <p>
+                La cible de 15 000 images par classe a été déterminée empiriquement : en dessous de 10 000,
+                les modèles restaient biaisés vers les classes fréquentes ; au-delà de 20 000, le gain
+                devenait marginal pour un coût de stockage quadruplé. Les transformations choisies
+                reflètent les conditions réelles du catalogue e-commerce : rotation et flip simulent
+                les orientations variables des photos vendeurs, le color jitter compense les différences
+                d'éclairage entre un studio professionnel et un smartphone, et le random crop force
+                le modèle à identifier le produit même partiellement cadré.
+            </p>
             <table>
                 <thead>
                     <tr>
@@ -2497,9 +2555,26 @@
             <h1><span class="section-number">3.1</span> Benchmark des Classifieurs</h1>
 
             <p class="lead">
-                Nous avons évalué plusieurs algorithmes de classification sur les features TF-IDF extraites
-                pour identifier le meilleur compromis performance/temps d'entraînement.
+                L'approche adoptée repose sur une démarche itérative de sélection de modèle. Plusieurs algorithmes
+                de classification adaptés aux données textuelles de grande dimension ont été évalués, notamment des
+                modèles linéaires, reconnus pour leur efficacité et leur stabilité sur ce type de problème.
             </p>
+
+            <h2><span class="section-number">3.1.1</span> Représentation Textuelle</h2>
+            <p>
+                La représentation textuelle s'appuie sur une <strong>vectorisation TF-IDF enrichie</strong>, combinant :
+            </p>
+            <ul>
+                <li><strong>Word n-grams (1-2)</strong> : pour capturer le sens global des expressions produit</li>
+                <li><strong>Character n-grams (3-5)</strong> : pour mieux gérer les variations orthographiques,
+                    les références produits et les fautes de frappe</li>
+            </ul>
+            <p>
+                Cette combinaison word + char permet une couverture sémantique large tout en étant robuste
+                aux erreurs de saisie fréquentes dans les données e-commerce.
+            </p>
+
+            <h2><span class="section-number">3.1.2</span> Comparaison des Classifieurs</h2>
 
             <table>
                 <thead>
@@ -2519,7 +2594,15 @@
                         <td><strong>0.83</strong></td>
                         <td><strong>0.82</strong></td>
                         <td>~2 min</td>
-                        <td><span class="badge badge-success">🏆 Champion</span></td>
+                        <td><span class="badge badge-success">Champion</span></td>
+                    </tr>
+                    <tr>
+                        <td>SGDClassifier (log_loss)</td>
+                        <td>0.80</td>
+                        <td>0.81</td>
+                        <td>0.80</td>
+                        <td>~3 min</td>
+                        <td><span class="badge badge-info">Alternative</span></td>
                     </tr>
                     <tr>
                         <td>LogisticRegression</td>
@@ -2548,12 +2631,31 @@
                 </tbody>
             </table>
 
+            <div style="text-align: center; margin: 1.5rem 0;">
+                <img src="figures/hery/comparaison_performances.png"
+                    alt="Comparaison des performances globales des modèles texte"
+                    style="max-width: 85%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;">
+                    <em>Figure 3.1 &mdash; Comparaison des performances globales : LinearSVC (V3) vs SGDClassifier vs variantes</em>
+                </p>
+            </div>
+
+            <div class="callout callout-warning" style="margin-bottom: 1rem;">
+                <div class="callout-title">Texte traduit (V1B) : pas de gain</div>
+                <p>
+                    L'utilisation exclusive de textes traduits en français (Model V1B) n'apporte pas de gain
+                    et dégrade légèrement les performances. Les descriptions originales multilingues
+                    contiennent suffisamment de signal discriminant.
+                </p>
+            </div>
+
             <div class="callout callout-success">
-                <div class="callout-title">🏆 Verdict : LinearSVC</div>
+                <div class="callout-title">Verdict : LinearSVC</div>
                 <p>
                     Le <strong>LinearSVC</strong> (Support Vector Classifier linéaire) domine le benchmark avec 83%
-                    d'accuracy
-                    et un F1-score de 0.83. Sa capacité à gérer les espaces de haute dimension (280K features TF-IDF)
+                    d'accuracy et un F1-score de 0.83. Le <strong>SGDClassifier</strong> obtient des résultats
+                    très proches en validation croisée, mais reste légèrement en retrait sur le jeu de validation final.
+                    La capacité du LinearSVC à gérer les espaces de haute dimension (280K features TF-IDF)
                     et son efficacité computationnelle en font le choix optimal.
                 </p>
             </div>
@@ -2564,8 +2666,10 @@
 
             <h2><span class="section-number">3.2.1</span> Grid Search sur l'Hyperparamètre C</h2>
             <p>
-                Le paramètre <code>C</code> contrôle le compromis entre la marge de séparation et les erreurs de
-                classification.
+                Une recherche d'hyperparamètres, couplée à une <strong>validation croisée</strong>, a été menée
+                afin d'identifier la configuration optimale. Le paramètre <code>C</code> contrôle le compromis
+                entre la marge de séparation et les erreurs de classification : une valeur trop faible
+                sous-exploite les données, tandis qu'une valeur trop élevée conduit à l'overfitting.
             </p>
 
             <table>
@@ -2642,7 +2746,18 @@
 
             <p class="lead">
                 Analyse granulaire des performances du modèle LinearSVC sur chacune des 27 catégories.
+                L'analyse par classe met en évidence une forte disparité des performances.
             </p>
+
+            <div style="text-align: center; margin: 1.5rem 0;">
+                <img src="figures/hery/f1_par_classe.png"
+                    alt="F1-score par classe du modèle final"
+                    style="max-width: 90%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;">
+                    <em>Figure 3.2 &mdash; F1-score par classe (modèle final), trié par ordre croissant. La ligne pointillée
+                    indique le seuil de 0.70.</em>
+                </p>
+            </div>
 
             <table>
                 <thead>
@@ -2785,7 +2900,43 @@
                     </div>
                 </div>
 
-                <h2><span class="section-number">3.3.1</span> Rapport de Classification Détaillé</h2>
+                <h2><span class="section-number">3.3.1</span> Analyse des Confusions Inter-Classes</h2>
+
+                <p>
+                    La matrice de confusion met clairement en évidence une <strong>confusion bidirectionnelle</strong>
+                    entre les classes 1280 et 1281 (Magazines vs Jeux de société). Une proportion significative
+                    d'exemples de la classe 1280 est prédite comme 1281, et inversement.
+                </p>
+
+                <div style="text-align: center; margin: 1.5rem 0;">
+                    <img src="figures/hery/confusion_1280_1281.png"
+                        alt="Matrice de confusion zoom classes 1280 / 1281"
+                        style="max-width: 60%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                    <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;">
+                        <em>Figure 3.3 &mdash; Matrice de confusion (zoom) : 38% des produits 1280 sont confondus avec 1281,
+                        et 45% des produits 1281 sont confondus avec 1280.</em>
+                    </p>
+                </div>
+
+                <div class="callout callout-danger" style="margin-bottom: 1rem;">
+                    <div class="callout-title">Frontière sémantique trop fine</div>
+                    <p>
+                        Cette confusion confirme que la limite actuelle du modèle ne provient pas d'un manque de données
+                        ou d'un mauvais choix d'algorithme, mais d'une <strong>frontière sémantique trop fine</strong>
+                        pour être correctement séparée par un classifieur global unique.
+                    </p>
+                </div>
+
+                <h2><span class="section-number">3.3.2</span> Pistes d'Amélioration Texte</h2>
+                <p>Pour améliorer les performances sur les classes difficiles, plusieurs pistes sont identifiées :</p>
+                <ul>
+                    <li><strong>Enrichissement des features</strong> : ajout de champs structurés comme la marque ou le type produit</li>
+                    <li><strong>Classifieur en deux étages</strong> : un modèle global + un modèle binaire spécialisé pour les paires
+                        de classes fortement confondues (1280/1281, 10/2705)</li>
+                    <li><strong>Ajustement fin</strong> des hyperparamètres par sous-groupes de catégories</li>
+                </ul>
+
+                <h2><span class="section-number">3.3.3</span> Rapport de Classification Détaillé</h2>
                 <div class="two-columns">
                     <div style="text-align: center;">
                         <img src="figures/hery/page1.png" alt="Verdict Final LinearSVC"
@@ -2815,6 +2966,21 @@
             <p class="lead">
                 Face à la taille modeste du dataset (84K images) et aux contraintes de calcul, nous avons opté pour
                 le <strong>Transfer Learning</strong> plutôt qu'un entraînement from scratch.
+            </p>
+
+            <p>
+                Notre démarche a suivi une progression en deux phases. La première phase (Feature Extraction)
+                consiste à geler les poids du réseau pré-entraîné et à n'utiliser que les représentations
+                de la dernière couche comme entrée d'un classifieur externe. Cette approche présente un
+                avantage décisif pour l'exploration : les features ne sont calculées qu'une seule fois
+                et stockées sur disque (fichiers .npy), ce qui permet de tester des dizaines de
+                configurations de classifieurs en quelques minutes sans repasser les images dans le réseau.
+                La seconde phase (Fine-tuning partiel) dégèle les dernières couches du réseau pour
+                les adapter spécifiquement aux images e-commerce. Ce fine-tuning est plus risqué
+                &mdash; il peut conduire à l'overfitting comme nous l'avons constaté avec le modèle
+                M4 &mdash; mais permet au réseau d'apprendre des représentations spécifiques
+                à notre domaine (textures d'emballage, polices de couvertures de livres, formes
+                de composants électroniques).
             </p>
 
             <h2><span class="section-number">4.1.1</span> Trois Stratégies Possibles</h2>
@@ -2877,6 +3043,20 @@
             <p class="lead">
                 Dans un premier temps, nous avons traité les vecteurs de features (2048 dimensions ResNet)
                 comme des données tabulaires classiques.
+            </p>
+
+            <p>
+                L'extraction de features via ResNet-50 produit des vecteurs de 2048 dimensions par image.
+                Nous avons traité ces vecteurs comme un problème de classification tabulaire standard,
+                en testant les algorithmes classiques du Machine Learning. Le constat est net :
+                quel que soit l'algorithme utilisé, les performances convergent dans une bande étroite
+                de 0.71 à 0.76 en F1-score. Le XGBoost "Heavy" (300 estimateurs, profondeur 10, 128 Go de RAM,
+                6 heures de calcul) ne gagne que 4 points par rapport à un Random Forest de base.
+                Ce plafond indique que le goulot d'étranglement ne se situe plus au niveau du classifieur
+                mais dans la qualité des features elles-mêmes : les représentations figées de ResNet,
+                conçues pour ImageNet, ne capturent pas les distinctions fines entre catégories e-commerce.
+                C'est cette observation qui nous a conduits vers le Deep Learning et, in fine, vers
+                l'architecture DINOv3 dont les features self-supervised se sont révélées mieux adaptées.
             </p>
 
             <table>
@@ -2945,6 +3125,19 @@
             <p class="lead">
                 Le passage aux réseaux de neurones denses (MLP) via PyTorch a provoqué une <strong>rupture</strong>
                 dans les performances.
+            </p>
+
+            <p>
+                L'hypothèse derrière le MLP est simple : là où XGBoost découpe l'espace de features par
+                des seuils successifs sur des dimensions individuelles, un réseau dense apprend des combinaisons
+                non-linéaires entre toutes les dimensions simultanément. Sur des vecteurs de 2048 dimensions
+                où l'information pertinente est distribuée, cette capacité de combinaison fait la différence.
+                Nous avons testé 40 configurations en faisant varier l'optimiseur (Adam, SGD, RMSProp),
+                la fonction d'activation (ReLU, GELU) et le taux de dropout. La configuration optimale
+                &mdash; Adam + GELU + Dropout 0.2 &mdash; atteint 91.4% en F1-score, un bond de 15 points
+                par rapport au meilleur modèle ML. L'activation GELU, plus douce que ReLU aux valeurs
+                proches de zéro, s'est montrée systématiquement supérieure sur nos données, probablement
+                parce qu'elle préserve mieux les signaux faibles dans les features d'images peu contrastées.
             </p>
 
             <h2><span class="section-number">4.3.1</span> Architecture MLP</h2>
@@ -3030,6 +3223,20 @@
                 Pour maximiser la performance et la robustesse, nous avons exploré trois architectures complémentaires.
             </p>
 
+            <p>
+                Le choix de ces trois modèles n'est pas arbitraire : il repose sur un principe de
+                <strong>diversité architecturale</strong>. DINOv3, un Vision Transformer entraîné en
+                self-supervised learning, excelle sur la structure globale de l'image &mdash; il "voit"
+                la composition d'ensemble et identifie qu'un objet est un livre même sous un angle inhabituel.
+                XGBoost, alimenté par des features ResNet-50, raisonne de manière tabulaire sur les textures
+                et motifs locaux &mdash; il repère les pixels caractéristiques d'un circuit imprimé ou
+                d'un tissu tricoté. EfficientNet-B0, fine-tuné sur nos données, capture les détails fins
+                propres au domaine e-commerce &mdash; typographies d'emballage, logos de marques, finitions
+                de matériaux. En pratique, nous avons vérifié que ces trois modèles font des erreurs
+                sur des images différentes : leur corrélation d'erreur est inférieure à 0.45,
+                ce qui confirme leur complémentarité et justifie l'approche d'ensemble.
+            </p>
+
             <div class="three-columns">
                 <div class="callout callout-rakuten">
                     <div class="callout-title">🦖 DINOv3 (ViT-Large)</div>
@@ -3084,6 +3291,16 @@
                 exploitant la complémentarité des architectures.
             </p>
 
+            <p>
+                Le principe du soft voting consiste à agréger les distributions de probabilité de chaque
+                modèle plutôt que leurs prédictions binaires. Concrètement, pour chaque image, les trois
+                modèles produisent chacun un vecteur de 27 probabilités (une par classe). Ces vecteurs
+                sont combinés par moyenne pondérée, et la classe avec la probabilité résultante la plus
+                élevée est retenue. Cette approche a deux avantages par rapport au hard voting (vote
+                majoritaire) : elle exploite le degré de confiance de chaque modèle, et elle permet
+                de résoudre les cas de désaccord en faveur du modèle le plus sûr de sa prédiction.
+            </p>
+
             <h2><span class="section-number">4.5.1</span> Principe de l'Ensemble</h2>
             <div class="callout callout-info">
                 <div class="callout-title">💡 Orthogonalité des Erreurs</div>
@@ -3133,10 +3350,21 @@
 
             <h2><span class="section-number">4.5.3</span> Calibration de Confiance</h2>
             <p>
-                Un défi technique majeur fut la <strong>"dilution de confiance"</strong> : XGBoost, trop prudent
-                (confiance 20-40%),
-                tirait la moyenne vers le bas. Solution : <strong>Sharpening</strong> (élévation au cube des
-                probabilités).
+                Un défi technique majeur est apparu lors de l'intégration du voting : la
+                <strong>dilution de confiance</strong>. XGBoost, en tant que classifieur à arbres, produit
+                des distributions de probabilité "prudentes" &mdash; typiquement 25-35% de confiance
+                pour sa classe favorite, répartissant le reste entre les 26 autres classes.
+                DINOv3, en revanche, produit des distributions "tranchées" : 80-95% sur sa classe
+                favorite. Lors du vote pondéré, la prudence de XGBoost diluait les probabilités
+                de l'ensemble, faisant chuter la confiance globale sous le seuil de 80% nécessaire
+                à l'automatisation.
+            </p>
+            <p>
+                La solution retenue est le <strong>sharpening</strong> : élever les probabilités de XGBoost
+                au cube avant renormalisation. Cette opération amplifie les écarts entre classes &mdash; une
+                probabilité de 35% passe à 4.3% relative, tandis qu'une probabilité de 10% tombe à 0.1%.
+                L'effet est que XGBoost "prend position" de manière plus marquée, sans changer l'ordre
+                de ses prédictions.
             </p>
 
             <div class="formula-box">
@@ -3178,6 +3406,16 @@
             <p class="lead">
                 Pour valider la fiabilité industrielle du modèle, nous avons mené des <strong>"crash-tests"</strong>
                 simulant des conditions dégradées.
+            </p>
+
+            <p>
+                Un modèle performant en conditions de laboratoire ne garantit pas sa fiabilité en production.
+                Sur une marketplace comme Rakuten, les vendeurs soumettent des photos de qualité très variable :
+                images floues prises au smartphone, rotations arbitraires, arrière-plans encombrés, surexposition
+                ou sous-exposition. Nous avons conçu trois tests systématiques pour évaluer la robustesse
+                du modèle face à ces conditions réelles. L'objectif n'est pas de maintenir 92% d'accuracy
+                en conditions dégradées, mais de vérifier que la dégradation reste progressive et prévisible,
+                sans effondrement brutal de la prédiction.
             </p>
 
             <h2><span class="section-number">4.6.1</span> Test de Rotation 360°</h2>
@@ -3264,6 +3502,16 @@
                 la complémentarité des deux sources d'information.
             </p>
 
+            <p>
+                L'idée fondamentale de la fusion multimodale est que texte et image portent des informations
+                complémentaires, parfois redondantes, parfois exclusives. Le titre "Lot de 3 figurines Dragon Ball Z"
+                indique clairement la catégorie (figurines manga), mais l'image associée &mdash; une boîte
+                rectangulaire multicolore &mdash; pourrait être confondue avec un jeu de société ou un puzzle.
+                Inversement, une photo montrant un circuit imprimé vert identifie immédiatement un composant
+                électronique, tandis que le titre "Kit DIY" reste ambigu. La fusion vise à exploiter
+                systématiquement ces complémentarités.
+            </p>
+
             <h2><span class="section-number">5.1.1</span> Types de Fusion</h2>
             <table>
                 <thead>
@@ -3296,6 +3544,18 @@
                 </tbody>
             </table>
 
+            <p>
+                Nous avons retenu la <strong>Late Fusion</strong> (fusion tardive) pour trois raisons pratiques.
+                D'abord, la modularité : chaque modèle est développé, entraîné et évalué indépendamment, ce qui
+                facilite le debugging et permet de remplacer un composant sans tout reconstruire. Ensuite,
+                l'interprétabilité : en cas d'erreur, nous pouvons identifier immédiatement si c'est le modèle
+                texte ou image qui induit la fusion en erreur, et ajuster les poids en conséquence. Enfin,
+                la robustesse aux données manquantes : si un produit n'a pas de description (35% du dataset),
+                le poids bascule automatiquement sur l'image. L'Early Fusion (concaténation de features)
+                aurait imposé un couplage fort entre les deux pipelines et aurait nécessité un volume
+                de données plus important pour apprendre les interactions cross-modales.
+            </p>
+
             <div class="formula-box">
                 <div class="formula-title">Late Fusion - Formule</div>
                 P_final(classe) = α × P_image(classe) + (1-α) × P_texte(classe)
@@ -3316,6 +3576,17 @@
 
         <section id="section-5-2">
             <h1><span class="section-number">5.2</span> Optimisation des Poids</h1>
+
+            <p>
+                La détermination des poids de fusion n'a pas été laissée à l'intuition. Nous avons testé
+                systématiquement les ratios image/texte de 50/50 à 90/10 par incréments de 10%.
+                Le ratio 60/40 maximise l'accuracy globale tout en préservant la capacité de correction
+                du texte sur les cas ambigus. Un ratio plus élevé en faveur de l'image (70/30 ou 80/20)
+                améliore la performance sur les catégories visuellement distinctives (piscines, mobilier),
+                mais dégrade les catégories où le texte est crucial (livres neufs vs occasion, jeux vidéo
+                vs jeux de société). Le ratio 60/40 représente le point d'équilibre où le gain marginal
+                de l'image ne compense plus la perte de signal textuel.
+            </p>
 
             <div class="metrics-grid">
                 <div class="metric-card">
@@ -3352,6 +3623,18 @@
 
         <section id="section-5-3">
             <h1><span class="section-number">5.3</span> Résultats Combinés</h1>
+
+            <p>
+                Le gain absolu de la fusion (+2 points vs image seule) peut sembler modeste, mais il
+                se concentre sur les cas les plus difficiles. L'analyse montre que la fusion corrige
+                principalement les erreurs sur trois types de produits : (1) les produits avec emballage
+                générique où seul le texte permet la distinction (boîtiers de DVD, de jeux, de logiciels),
+                (2) les produits dont l'image est ambiguë mais le titre contient un mot-clé décisif
+                ("vintage" pour les livres anciens, "PS5" pour les jeux console), et (3) les classes
+                à faible recall en image où le texte sert de filet de sécurité. Sur les 27 catégories,
+                la fusion améliore le F1-score de 19 classes, maintient 6 classes au même niveau,
+                et ne dégrade que 2 classes marginalement (&lt;0.5 point).
+            </p>
 
             <table>
                 <thead>
@@ -3524,6 +3807,26 @@
         <section id="section-7-1" class="page-break">
             <h1><span class="section-number">7.1</span> Bilan du Projet</h1>
 
+            <p>
+                Ce projet nous a conduits à concevoir, de bout en bout, un système de classification
+                multimodale capable de catégoriser automatiquement les produits d'une marketplace
+                e-commerce parmi 27 catégories. Le pipeline final traite conjointement les descriptions
+                textuelles (via TF-IDF + LinearSVC, 83% d'accuracy) et les images produit (via un
+                Voting System DINOv3 + XGBoost + EfficientNet, 92% d'accuracy), pour atteindre
+                environ 94% en fusion multimodale. Le système est opérationnel via une application
+                Streamlit qui permet la classification en temps réel, la visualisation des décisions
+                de chaque modèle, et l'inspection des cas d'erreur par Grad-CAM.
+            </p>
+            <p>
+                Au-delà des métriques, ce projet a été l'occasion de confronter les approches théoriques
+                à la réalité des données e-commerce : descriptions multilingues incomplètes, images de
+                qualité très variable, catégories sémantiquement proches. Chaque étape a nécessité des
+                choix pragmatiques &mdash; préférer EfficientNet-B0 à un modèle plus lourd, adopter
+                le sharpening plutôt qu'une recalibration complète, retenir la Late Fusion plutôt
+                que des architectures cross-modales plus complexes &mdash; en gardant à l'esprit
+                la contrainte de déploiement sur un hardware accessible.
+            </p>
+
             <div class="exec-metrics">
                 <div class="exec-metric">
                     <span class="exec-metric-value">✓</span>
@@ -3581,6 +3884,24 @@
         <section id="section-7-2">
             <h1><span class="section-number">7.2</span> Limites et Difficultés</h1>
 
+            <p>
+                La principale limite du système réside dans le traitement des classes sémantiquement
+                proches. La confusion bidirectionnelle entre les classes 1280 et 1281 (38% et 45%
+                de confusion respectivement), documentée en section 3.3.1, ne peut pas être résolue
+                par un classifieur global unique : les descriptions textuelles partagent le même
+                vocabulaire, et les images (boîtes de dimensions similaires) sont visuellement
+                indiscernables. Ce type de limite est structurel et appelle des solutions spécifiques
+                comme un classifieur en cascade.
+            </p>
+            <p>
+                Sur le plan opérationnel, le principal obstacle rencontré a été la synchronisation
+                des espaces de labels entre modèles. DINOv3 (fine-tuné) utilise des indices 0 à 26,
+                XGBoost encode les labels via un LabelEncoder, et le modèle texte conserve les codes
+                Rakuten originaux. L'alignement de ces trois référentiels a nécessité un travail de
+                mapping rigoureux, source de bugs difficiles à diagnostiquer lorsque les prédictions
+                semblaient incohérentes sans erreur visible dans le code.
+            </p>
+
             <div class="two-columns">
                 <div class="callout callout-danger">
                     <div class="callout-title">⚠️ Limites Techniques</div>
@@ -3605,6 +3926,20 @@
 
         <section id="section-7-3">
             <h1><span class="section-number">7.3</span> Perspectives d'Amélioration</h1>
+
+            <p>
+                Les axes d'amélioration identifiés sont classés par impact estimé et faisabilité.
+                L'OCR constitue la piste la plus prometteuse à court terme : de nombreuses images
+                du catalogue contiennent du texte lisible (titre de livre, nom de marque sur l'emballage,
+                mention "PS5" sur une jaquette) qui n'est actuellement pas exploité. Extraire ce texte
+                via PaddleOCR ou Tesseract créerait une troisième source d'information, particulièrement
+                utile pour les classes confondues visuellement. Le remplacement de TF-IDF par CamemBERT
+                offrirait un gain plus substantiel sur le texte, mais au prix d'une complexité
+                d'infrastructure nettement supérieure (GPU obligatoire, temps d'inférence multiplié par 10).
+                Le classifieur en deux étages, spécifiquement conçu pour les paires de classes confondues,
+                représente un compromis intéressant : faible coût d'implémentation pour un gain ciblé
+                sur les classes problématiques.
+            </p>
 
             <table>
                 <thead>

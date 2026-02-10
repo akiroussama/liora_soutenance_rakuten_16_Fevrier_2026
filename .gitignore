@@ -1,10 +1,44 @@
+# Data
 data/
+datas/
 *.csv
 *.zip
+*.npy
+
+# Python
 __pycache__/
+*.pyc
+*.pyo
 .ipynb_checkpoints/
-images/
-*.pem
-implementation/outputs/
+
+# Models (weights)
 *.pth
-*.csv
+*.pkl
+*.joblib
+*.h5
+
+# Secrets
+*.pem
+*.env
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Images (raw data)
+images/
+
+# Outputs
+implementation/outputs/
+
+# Temp files
+temp_*.jpg
+temp_*.png
+*.tmp

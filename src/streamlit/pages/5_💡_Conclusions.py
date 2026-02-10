@@ -28,7 +28,7 @@ st.header("Résultats")
 col1, col2, col3 = st.columns(3)
 col1.metric("Accuracy", "85%", "Objectif atteint")
 col2.metric("Catégories", "27", "Toutes couvertes")
-col3.metric("Meilleur modèle", "CamemBERT")
+col3.metric("Meilleur modèle", "LinearSVC (Texte)")
 
 st.success("Classification automatique de 84 916 produits avec 6 modèles comparés.")
 
@@ -50,7 +50,7 @@ with col2:
     st.subheader("Après (IA)")
     st.markdown("""
     - Temps: <1 sec/produit
-    - Erreur: ~15%
+    - Erreur: ~6% (fusion)
     - Scalabilité: 100K+/jour
     """)
 
@@ -62,7 +62,7 @@ st.markdown("""
 | Limite | Impact |
 |--------|--------|
 | Classes minoritaires | F1 plus faible (~60%) |
-| Image seule | ~72% accuracy max |
+| Image seule | ~92% accuracy (voting) |
 | Qualité texte | Dépendance aux descriptions |
 | Drift temporel | Réentraînement nécessaire |
 """)
@@ -102,7 +102,7 @@ st.divider()
 st.header("Conclusion")
 
 st.info("""
-**Mission accomplie**: Classification automatique de produits e-commerce avec 85% d'accuracy.
+**Mission accomplie**: Classification multimodale de produits e-commerce avec ~94% d'accuracy (fusion texte+image).
 Solution scalable, maintenable et prête pour la production.
 """)
 

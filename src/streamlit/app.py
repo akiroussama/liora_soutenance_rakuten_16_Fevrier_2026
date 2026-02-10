@@ -56,7 +56,7 @@ with col1:
 
 with col2:
     st.subheader("Image")
-    st.markdown("Features ResNet50 pré-entraîné")
+    st.markdown("Features DINOv3 pré-entraîné")
 
 with col3:
     st.subheader("Fusion")
