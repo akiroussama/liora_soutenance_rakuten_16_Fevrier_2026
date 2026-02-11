@@ -1208,7 +1208,7 @@
             /* Page margins: top/bottom via @page, left/right via container padding */
             @page {
                 size: A4;
-                margin: 25mm 0 18mm 0;
+                margin: 30mm 0 18mm 0;
             }
 
             @page :first {
@@ -1242,7 +1242,7 @@
                 box-shadow: none;
                 max-width: 100% !important;
                 width: 100% !important;
-                overflow: hidden !important;
+                overflow: visible !important;
             }
 
             .document-container::before {
@@ -1336,9 +1336,13 @@
                 margin: 0 -20mm;
                 padding-left: calc(20mm + 2rem);
                 padding-right: calc(20mm + 2rem);
+                max-width: none !important;
+                width: calc(100% + 40mm) !important;
+                box-sizing: border-box !important;
                 background: linear-gradient(135deg, #f8f9fa 0%, #f0eef5 50%, #faf8f8 100%) !important;
-                border-top: 5px solid var(--primary);
-                border-bottom: 5px solid var(--primary);
+                border: none !important;
+                border-top: 5px solid var(--primary) !important;
+                border-bottom: 5px solid var(--primary) !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 color-adjust: exact !important;
