@@ -440,12 +440,12 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 220px;
+            min-height: 600px;
             margin: 2rem 0;
             text-align: center;
             background: linear-gradient(135deg, var(--gray-50) 0%, rgba(196, 30, 58, 0.03) 100%);
-            border: 1px solid var(--gray-200);
-            padding: 2.5rem;
+            border: 2px solid var(--gray-200);
+            padding: 4rem 2.5rem;
             position: relative;
             overflow: hidden;
         }
@@ -472,26 +472,26 @@
 
         .part-number {
             font-family: var(--font-display);
-            font-size: 64pt;
+            font-size: 120pt;
             font-weight: 700;
             color: var(--primary);
-            opacity: 0.15;
-            margin-bottom: 0.25rem;
+            opacity: 0.12;
+            margin-bottom: 0.5rem;
             line-height: 1;
         }
 
         .part-title {
             font-family: var(--font-display);
-            font-size: 22pt;
+            font-size: 36pt;
             font-weight: 600;
             color: var(--gray-900);
-            letter-spacing: 1px;
+            letter-spacing: 2px;
         }
 
         .part-subtitle {
-            font-size: 11pt;
+            font-size: 16pt;
             color: var(--gray-500);
-            margin-top: 0.75rem;
+            margin-top: 1.5rem;
             font-style: italic;
         }
 
@@ -1208,11 +1208,11 @@
             /* Page margins: top/bottom via @page, left/right via container padding */
             @page {
                 size: A4;
-                margin: 15mm 0 15mm 0;
+                margin: 25mm 0 18mm 0;
             }
 
             @page :first {
-                margin-top: 10mm;
+                margin-top: 15mm;
             }
 
             /* Hide print button */
@@ -1325,8 +1325,14 @@
             /* Part dividers */
             .part-divider {
                 page-break-before: always;
-                page-break-after: avoid;
-                min-height: 150px;
+                page-break-after: always;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 4rem 2rem;
+                border: 3px solid var(--gray-200);
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -1337,11 +1343,19 @@
             }
 
             .part-number {
-                font-size: 48pt;
+                font-size: 120pt;
+                opacity: 0.12;
+                margin-bottom: 1rem;
             }
 
             .part-title {
-                font-size: 18pt;
+                font-size: 36pt;
+                letter-spacing: 2px;
+            }
+
+            .part-subtitle {
+                font-size: 16pt;
+                margin-top: 1.5rem;
             }
 
             /* Page breaks */
