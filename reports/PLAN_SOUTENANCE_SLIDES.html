@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Soutenance | Rakuten BMLE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Outfit:wght@300;500;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --rakuten-red: #bf0000;
+            --rakuten-dark: #8b0000;
+            --accent-blue: #2563eb;
+            --accent-purple: #7c3aed;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f59e0b;
+            --accent-green: #10b981;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --border-light: #e2e8f0;
+            --glass-border: rgba(30, 58, 95, 0.1);
+            --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --card-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-light);
+            background-image:
+                linear-gradient(rgba(191, 0, 0, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(191, 0, 0, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            line-height: 1.5;
+        }
+
+        header {
+            padding: 0.8rem 3rem;
+            min-height: 80px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.98);
+            border-bottom: 2px solid rgba(191, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            z-index: 100;
+            position: relative;
+        }
+
+        .header-left { justify-self: start; display: flex; align-items: center; }
+        .header-center { justify-self: center; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .header-right { justify-self: end; display: flex; align-items: center; gap: 2rem; }
+
+        .logo-icon {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--rakuten-dark));
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.5rem; color: white;
+            box-shadow: 0 4px 15px rgba(191, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            line-height: 1; margin-bottom: 0.2rem;
+        }
+        .logo-sub { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); display: block; }
+
+        .slide-counter {
+            font-family: 'Fira Code', monospace; font-size: 0.9rem;
+            color: var(--rakuten-red); font-weight: 700; min-width: 60px; text-align: center;
+        }
+
+        .progress-bar { position: fixed; bottom: 0; left: 0; width: 100%; height: 4px; background: rgba(0,0,0,0.1); z-index: 200; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--rakuten-red), var(--accent-purple)); width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        main { position: relative; height: calc(100vh - 80px); overflow: hidden; }
+
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; transform: translateX(80px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none; display: flex; flex-direction: column;
+            justify-content: flex-start; padding: 1.5rem 3rem 1rem; padding-top: 3%;
+            overflow-y: auto;
+        }
+        .slide.active { opacity: 1; transform: translateX(0); pointer-events: all; }
+        .slide.prev { transform: translateX(-80px); opacity: 0; }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; letter-spacing: -0.02em; }
+
+        .hero-title {
+            font-size: 3.8rem; font-weight: 800; color: var(--text-main);
+            margin-bottom: 0.8rem; line-height: 1.1; text-align: center; letter-spacing: -0.03em;
+        }
+        .hero-title .accent {
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-subtitle { font-size: 1.5rem; color: var(--text-muted); text-align: center; max-width: 1000px; margin: 0 auto 1.5rem; line-height: 1.5; }
+
+        .slide-header { display: flex; align-items: center; margin-bottom: 1.2rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--glass-border); }
+        .section-badge {
+            font-family: 'Fira Code', monospace; font-size: 0.9rem;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            color: white; padding: 0.4rem 0.9rem; border-radius: 8px; margin-right: 1rem;
+            font-weight: 600; text-transform: uppercase;
+        }
+        .section-badge.strategy { background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); }
+        .section-badge.speaker { background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan)); }
+        .section-badge.speaker-img { background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue)); }
+        .section-badge.speaker-nlp { background: linear-gradient(135deg, var(--accent-orange), var(--rakuten-red)); }
+        .section-badge.qa { background: linear-gradient(135deg, var(--accent-orange), var(--warning)); }
+        .section-badge.check { background: linear-gradient(135deg, var(--accent-green), var(--success)); }
+
+        .slide-title { font-size: 2.2rem; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+
+        .content-full { max-width: 1400px; margin: 0 auto; width: 100%; }
+        .content-single { max-width: 1250px; margin: 0 auto; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; margin: 0.8rem 0; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 0.8rem 0; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin: 0.8rem 0; }
+        .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.8rem; margin: 0.8rem 0; }
+
+        .card {
+            background: var(--bg-white); border: 1px solid var(--border-light); border-radius: 10px;
+            padding: 1.2rem; box-shadow: var(--card-shadow); transition: all 0.2s ease;
+            height: 100%; display: flex; flex-direction: column;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: var(--card-hover); border-color: var(--rakuten-red); }
+
+        .card-icon { font-size: 2rem; margin-bottom: 0.4rem; display: block; color: var(--rakuten-red); }
+        .card-title { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-main); }
+        .card-text { color: var(--text-muted); line-height: 1.5; font-size: 1.05rem; }
+
+        .metric-card {
+            background: white; padding: 1rem; border-radius: 14px; text-align: center;
+            box-shadow: var(--shadow-lg); border: 1px solid var(--glass-border);
+        }
+        .metric-value {
+            font-family: 'Outfit', sans-serif; font-size: 2.6rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .metric-card.success .metric-value { background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .metric-card.warning .metric-value { background: linear-gradient(135deg, var(--accent-orange), var(--warning)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .metric-label { font-size: 0.95rem; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.3; }
+
+        table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; background: var(--bg-white); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-md); font-size: 1.05rem; }
+        th { background: linear-gradient(135deg, var(--rakuten-red), var(--rakuten-dark)); color: white; padding: 0.7rem 1rem; text-align: left; font-weight: 600; font-size: 1rem; }
+        td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--glass-border); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(191, 0, 0, 0.03); }
+        .highlight { color: var(--rakuten-red); font-weight: 600; }
+
+        .info-box { background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(124,58,237,0.08)); border: 1px solid rgba(37,99,235,0.2); border-radius: 12px; padding: 1rem 1.2rem; margin: 0.8rem 0; font-size: 1.1rem; }
+        .info-box-title { font-weight: 600; color: var(--accent-blue); margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; }
+
+        .success-box { background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.08)); border: 1px solid rgba(16,185,129,0.2); border-radius: 12px; padding: 1rem 1.2rem; margin: 0.8rem 0; font-size: 1.1rem; }
+        .success-box-title { font-weight: 600; color: var(--accent-green); margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; }
+
+        .warning-box { background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.08)); border: 1px solid rgba(245,158,11,0.2); border-radius: 12px; padding: 1rem 1.2rem; margin: 0.8rem 0; font-size: 1.1rem; }
+        .warning-box-title { font-weight: 600; color: var(--accent-orange); margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; }
+
+        .danger-box { background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(191,0,0,0.08)); border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; padding: 1rem 1.2rem; margin: 0.8rem 0; font-size: 1.1rem; }
+        .danger-box-title { font-weight: 600; color: var(--danger); margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; }
+
+        .tag { display: inline-block; padding: 0.25rem 0.7rem; border-radius: 14px; font-size: 0.95rem; font-weight: 600; margin: 0.15rem; }
+        .tag-blue { background: rgba(37,99,235,0.1); color: var(--accent-blue); }
+        .tag-green { background: rgba(16,185,129,0.1); color: var(--accent-green); }
+        .tag-orange { background: rgba(245,158,11,0.1); color: var(--accent-orange); }
+        .tag-red { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .tag-purple { background: rgba(124,58,237,0.1); color: var(--accent-purple); }
+
+        .feature-list { list-style: none; padding: 0; }
+        .feature-list li { padding: 0.45rem 0; border-bottom: 1px solid var(--glass-border); display: flex; align-items: flex-start; gap: 0.8rem; font-size: 1.1rem; }
+        .feature-list li:last-child { border-bottom: none; }
+        .feature-list li::before { content: '\2192'; color: var(--accent-green); font-weight: bold; font-size: 1.2rem; flex-shrink: 0; }
+
+        /* Timeline */
+        .timeline { display: flex; align-items: stretch; gap: 0; margin: 1rem 0; }
+        .timeline-block {
+            flex: 1; padding: 1rem; text-align: center; position: relative;
+            border: 2px solid var(--border-light); border-radius: 12px; margin: 0 0.3rem;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .timeline-block .time { font-family: 'Fira Code', monospace; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+        .timeline-block .name { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.3rem; margin-bottom: 0.2rem; }
+        .timeline-block .content-label { font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
+        .timeline-block.t1 { border-color: var(--rakuten-red); background: rgba(191,0,0,0.04); }
+        .timeline-block.t1 .name { color: var(--rakuten-red); }
+        .timeline-block.t2 { border-color: var(--accent-blue); background: rgba(37,99,235,0.04); }
+        .timeline-block.t2 .name { color: var(--accent-blue); }
+        .timeline-block.t3 { border-color: var(--accent-purple); background: rgba(124,58,237,0.04); }
+        .timeline-block.t3 .name { color: var(--accent-purple); }
+        .timeline-block.t4 { border-color: var(--accent-orange); background: rgba(245,158,11,0.04); }
+        .timeline-block.t4 .name { color: var(--accent-orange); }
+        .timeline-arrow { display: flex; align-items: center; font-size: 1.5rem; color: var(--text-muted); margin: 0 -0.1rem; }
+
+        /* Speaker card large */
+        .speaker-header {
+            display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1rem;
+            padding: 1rem 1.5rem; border-radius: 14px;
+            background: linear-gradient(135deg, rgba(191,0,0,0.05), rgba(124,58,237,0.05));
+            border: 1px solid rgba(191,0,0,0.1);
+        }
+        .speaker-avatar {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.5rem; color: white;
+            flex-shrink: 0;
+        }
+        .speaker-avatar.blue { background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); }
+        .speaker-avatar.purple { background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue)); }
+        .speaker-avatar.orange { background: linear-gradient(135deg, var(--accent-orange), var(--rakuten-red)); }
+        .speaker-info { flex: 1; }
+        .speaker-name { font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 700; }
+        .speaker-role { font-size: 1rem; color: var(--text-muted); }
+        .speaker-time {
+            font-family: 'Fira Code', monospace; font-size: 1.4rem; font-weight: 700;
+            color: var(--rakuten-red); text-align: right;
+        }
+
+        /* Blockquote for scripts */
+        .script-box {
+            background: var(--bg-light); border-left: 4px solid var(--accent-purple);
+            border-radius: 0 10px 10px 0; padding: 0.8rem 1.2rem; margin: 0.8rem 0;
+            font-style: italic; font-size: 1rem; color: var(--text-muted); line-height: 1.6;
+        }
+
+        /* Flow diagram */
+        .flow-container { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap; }
+        .flow-box {
+            padding: 0.8rem 1.2rem; border-radius: 10px; text-align: center;
+            font-weight: 600; font-size: 1.1rem; min-width: 140px;
+        }
+        .flow-arrow { font-size: 1.5rem; color: var(--text-muted); }
+
+        nav {
+            position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 1.2rem; z-index: 200;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+            padding: 0.5rem 1.3rem; border-radius: 50px;
+            border: 1px solid var(--glass-border); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.15);
+        }
+        .nav-btn {
+            background: transparent; border: none; cursor: pointer;
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--rakuten-red); transition: all 0.2s ease; font-size: 1.2rem;
+        }
+        .nav-btn:hover { background: rgba(191,0,0,0.08); transform: scale(1.1); }
+        .nav-separator { width: 1px; height: 20px; background: rgba(191,0,0,0.15); }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        .slide.active .card { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+        .slide.active .card:nth-child(1) { animation-delay: 0.1s; }
+        .slide.active .card:nth-child(2) { animation-delay: 0.2s; }
+        .slide.active .card:nth-child(3) { animation-delay: 0.3s; }
+        .slide.active .card:nth-child(4) { animation-delay: 0.35s; }
+        .slide.active .card:nth-child(5) { animation-delay: 0.4s; }
+        .slide.active table { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; animation-delay: 0.15s; }
+        .slide.active .info-box, .slide.active .success-box, .slide.active .warning-box, .slide.active .danger-box { animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards; animation-delay: 0.3s; }
+        .slide.active .slide-header { animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+        .slide.active .metric-card { animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-left"><div class="logo-icon">R</div></div>
+        <div class="header-center">
+            <div class="logo">Plan de Soutenance<span class="logo-sub">Strategie de Presentation — Equipe Rakuten</span></div>
+        </div>
+        <div class="header-right">
+            <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides"></span></div>
+        </div>
+    </header>
+
+    <main id="slides-container">
+
+        <!-- ===================== SLIDE 0: COVER ===================== -->
+        <div class="slide active">
+            <div class="content-full text-center">
+                <h1 class="hero-title">Plan de <span class="accent">Soutenance</span><br>
+                    <span style="font-size: 0.45em; font-weight: 500;">Classification Multimodale Rakuten — 16 Fevrier 2026</span>
+                </h1>
+                <p class="hero-subtitle">
+                    20 minutes de presentation + 10 minutes de Q&A<br>
+                    <strong>4 speakers, 5 minutes chacun, zero improvisation</strong>
+                </p>
+
+                <div class="timeline mt-2">
+                    <div class="timeline-block t1">
+                        <div class="time">0:00 - 5:00</div>
+                        <div class="name">Oussama</div>
+                        <div class="content-label">Demo Live</div>
+                    </div>
+                    <div class="timeline-arrow">&rarr;</div>
+                    <div class="timeline-block t2">
+                        <div class="time">5:00 - 10:00</div>
+                        <div class="name">Michael</div>
+                        <div class="content-label">Donnees</div>
+                    </div>
+                    <div class="timeline-arrow">&rarr;</div>
+                    <div class="timeline-block t3">
+                        <div class="time">10:00 - 15:00</div>
+                        <div class="name">Johan</div>
+                        <div class="content-label">Image + Voting</div>
+                    </div>
+                    <div class="timeline-arrow">&rarr;</div>
+                    <div class="timeline-block t4">
+                        <div class="time">15:00 - 20:00</div>
+                        <div class="name">Liviu</div>
+                        <div class="content-label">Texte + Fusion + Fin</div>
+                    </div>
+                </div>
+
+                <div class="grid-3 mt-2" style="max-width: 700px; margin-left: auto; margin-right: auto;">
+                    <div class="metric-card success">
+                        <div class="metric-value">92%</div>
+                        <div class="metric-label">Image (Voting)</div>
+                    </div>
+                    <div class="metric-card warning">
+                        <div class="metric-value">83%</div>
+                        <div class="metric-label">Texte (SVC)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">~94%</div>
+                        <div class="metric-label">Fusion</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 1: NARRATIVE LOGIC ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge strategy">STRATEGIE</span>
+                    <h2 class="slide-title">Logique Narrative</h2>
+                </div>
+
+                <div class="danger-box">
+                    <div class="danger-box-title">Le probleme de l'ancien plan</div>
+                    <p>Liviu presentait la <strong>Fusion (Image 92% + Texte 83% = 94%)</strong> en 3eme position, AVANT que Johan n'explique l'architecture image. Le jury ne pouvait pas comprendre d'ou venait le score de 92%.</p>
+                </div>
+
+                <div class="success-box">
+                    <div class="success-box-title">Le nouveau plan : logique narrative respectee</div>
+                    <p>Chaque brique est expliquee AVANT d'etre utilisee. La Fusion arrive apres les deux composants.</p>
+                </div>
+
+                <div class="flow-container mt-2">
+                    <div class="flow-box" style="background: rgba(191,0,0,0.1); border: 2px solid var(--rakuten-red); color: var(--rakuten-red);">
+                        Demo Live<br><small style="font-weight: 400;">Le WOW</small>
+                    </div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-box" style="background: rgba(37,99,235,0.1); border: 2px solid var(--accent-blue); color: var(--accent-blue);">
+                        Donnees<br><small style="font-weight: 400;">La matiere premiere</small>
+                    </div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-box" style="background: rgba(124,58,237,0.1); border: 2px solid var(--accent-purple); color: var(--accent-purple);">
+                        Image = 92%<br><small style="font-weight: 400;">Le gros morceau</small>
+                    </div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-box" style="background: rgba(245,158,11,0.1); border: 2px solid var(--accent-orange); color: var(--accent-orange);">
+                        Texte = 83%<br><small style="font-weight: 400;">Le complement</small>
+                    </div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="flow-box" style="background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan)); color: white; border: none;">
+                        Fusion = 94%<br><small style="font-weight: 400;">L'assemblage final</small>
+                    </div>
+                </div>
+
+                <div class="info-box mt-1">
+                    <div class="info-box-title">Conclusion & Perspectives en DERNIER</div>
+                    <p>Plus de conclusion a la minute 4. Liviu ferme la boucle a la minute 19 : bilan, impact metier, perspectives. C'est la derniere chose que le jury entend.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 2: WHY DEMO FIRST ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge strategy">STRATEGIE</span>
+                    <h2 class="slide-title">Pourquoi la Demo en Premier ?</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="card" style="border-left: 4px solid var(--rakuten-red);">
+                            <div class="card-title">1. Courbe d'attention</div>
+                            <div class="card-text">L'attention du jury est <strong>maximale les 3-5 premieres minutes</strong>. La demo live est la chose la plus engageante qu'on puisse montrer. A la minute 15, les cerveaux sont fatigues.</div>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--accent-purple);">
+                            <div class="card-title">2. Ancrage psychologique</div>
+                            <div class="card-text">Quand le jury <strong>VOIT 94% fonctionner en live</strong>, chaque explication technique qui suit est percue comme "la preuve que ca marche". Sans demo d'abord, les slides restent abstraites.</div>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--accent-orange);">
+                            <div class="card-title">3. Gestion du risque</div>
+                            <div class="card-text">Si la demo plante a la minute 17, on a perdu le moment fort. <strong>En premier : si ca marche, euphorie. Si ca plante, il reste 15 min de technique solide.</strong></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card" style="border-left: 4px solid var(--accent-blue);">
+                            <div class="card-title">4. Format TED Talk / Steve Jobs</div>
+                            <div class="card-text">Montrer le resultat, puis expliquer comment. Le jury passe de <strong>"impressionne"</strong> a <strong>"curieux"</strong> — ils VEULENT savoir comment on a fait.</div>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--accent-green);">
+                            <div class="card-title">5. Differenciation</div>
+                            <div class="card-text">99% des groupes : intro &rarr; technique &rarr; technique &rarr; demo &rarr; merci. <strong>On casse le pattern.</strong> Le jury a vu 10 soutenances — la notre commence differemment.</div>
+                        </div>
+                        <div class="warning-box">
+                            <div class="warning-box-title">Prerequis indispensable</div>
+                            <p>Lancer Streamlit et charger les modeles <strong>AVANT</strong> la soutenance. 1er chargement = 30-60 sec. Avoir un backup screenshot si le reseau tombe.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 3: OUSSAMA ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">0:00 - 5:00</span>
+                    <h2 class="slide-title">Oussama — Le Hook</h2>
+                </div>
+
+                <div class="speaker-header">
+                    <div class="speaker-avatar">OA</div>
+                    <div class="speaker-info">
+                        <div class="speaker-name">Oussama Akir</div>
+                        <div class="speaker-role">MC : Ouverture + Demo Live Streamlit (3 min 30)</div>
+                    </div>
+                    <div class="speaker-time">5 min</div>
+                </div>
+
+                <table>
+                    <thead><tr><th>Chrono</th><th>Contenu</th><th>Duree</th></tr></thead>
+                    <tbody>
+                        <tr><td class="highlight">0:00</td><td>Cover — Presenter l'equipe, le projet, le mentor Antoine</td><td>40s</td></tr>
+                        <tr><td class="highlight">0:40</td><td>Sommaire — Plan de la presentation, teasing des metriques</td><td>20s</td></tr>
+                        <tr><td class="highlight">1:00</td><td><strong>DEMO LIVE</strong> — Accueil Streamlit, metriques globales</td><td>30s</td></tr>
+                        <tr><td class="highlight">1:30</td><td>Distribution des 27 classes, desequilibre visible</td><td>20s</td></tr>
+                        <tr><td class="highlight">1:50</td><td>Prediction texte : "iPhone 15 Pro Max 256Go"</td><td>30s</td></tr>
+                        <tr><td class="highlight">2:20</td><td>Prediction image : Upload photo produit, Voting visible</td><td>40s</td></tr>
+                        <tr><td class="highlight">3:00</td><td>Fusion : Texte + Image &rarr; ~94%</td><td>30s</td></tr>
+                        <tr><td class="highlight">3:30</td><td>Cas ou texte et image se corrigent mutuellement</td><td>30s</td></tr>
+                        <tr><td class="highlight">4:00</td><td>Slider ratio image/texte, impact en live</td><td>30s</td></tr>
+                        <tr><td class="highlight">4:30</td><td><strong>Transition &rarr; Michael</strong></td><td>30s</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="script-box">
+                    "Vous venez de voir ~94% d'accuracy en live. Comment on y arrive ? Michael va vous expliquer les donnees brutes et le preprocessing qui rendent tout ca possible."
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 4: MICHAEL ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge speaker">5:00 - 10:00</span>
+                    <h2 class="slide-title">Michael — La Realite du Terrain</h2>
+                </div>
+
+                <div class="speaker-header" style="background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(6,182,212,0.05)); border-color: rgba(37,99,235,0.1);">
+                    <div class="speaker-avatar blue">HM</div>
+                    <div class="speaker-info">
+                        <div class="speaker-name">Michael (Hery M.)</div>
+                        <div class="speaker-role">Contexte Business + Donnees + Preprocessing Texte</div>
+                    </div>
+                    <div class="speaker-time" style="color: var(--accent-blue);">5 min</div>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <table>
+                            <thead><tr><th>Chrono</th><th>Contenu</th><th>Duree</th></tr></thead>
+                            <tbody>
+                                <tr><td class="highlight">5:00</td><td><strong>Challenge Rakuten</strong> — 84 916 produits, 27 categories, 5 langues, 35% descriptions manquantes</td><td>2 min</td></tr>
+                                <tr><td class="highlight">7:00</td><td><strong>Desequilibre</strong> — Ratio 13:1, class_weight, F1 pondere, stratified split</td><td>1 min</td></tr>
+                                <tr><td class="highlight">8:00</td><td><strong>Preprocessing</strong> — HTML &rarr; TF-IDF 280K features (word 1-2 + char 3-5)</td><td>2 min</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <div class="grid-2">
+                            <div class="metric-card">
+                                <div class="metric-value">84K</div>
+                                <div class="metric-label">Produits</div>
+                            </div>
+                            <div class="metric-card warning">
+                                <div class="metric-value">35%</div>
+                                <div class="metric-label">Descriptions manquantes</div>
+                            </div>
+                        </div>
+                        <div class="info-box mt-1">
+                            <div class="info-box-title">Points cles a retenir</div>
+                            <p>
+                                <span class="tag tag-blue">5 langues</span>
+                                <span class="tag tag-red">13:1 desequilibre</span>
+                                <span class="tag tag-purple">280K features TF-IDF</span>
+                                <span class="tag tag-green">Pas de lemmatisation</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="script-box">
+                    "Les donnees sont pretes. Johan va maintenant s'attaquer au plus gros morceau : la partie image et le Voting System."
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 5: JOHAN ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge speaker-img">10:00 - 15:00</span>
+                    <h2 class="slide-title">Johan — L'Artillerie Lourde</h2>
+                </div>
+
+                <div class="speaker-header" style="background: linear-gradient(135deg, rgba(124,58,237,0.05), rgba(37,99,235,0.05)); border-color: rgba(124,58,237,0.1);">
+                    <div class="speaker-avatar purple">JF</div>
+                    <div class="speaker-info">
+                        <div class="speaker-name">Johan Frachon</div>
+                        <div class="speaker-role">Pipeline Image + Modelisation + Voting System</div>
+                    </div>
+                    <div class="speaker-time" style="color: var(--accent-purple);">5 min</div>
+                </div>
+
+                <table>
+                    <thead><tr><th>Chrono</th><th>Contenu</th><th>Duree</th></tr></thead>
+                    <tbody>
+                        <tr><td class="highlight">10:00</td><td><strong>Preprocessing Image</strong> — Resize 224x224, normalisation ImageNet, DINOv3 + EfficientNet-B0. Transfer learning, self-supervised ViT</td><td>1 min</td></tr>
+                        <tr><td class="highlight">11:00</td><td><strong>Benchmark Image</strong> — RF (71%), XGBoost (76.5%, 6h), <strong>DINOv3+MLP (91.4%, 58s)</strong>. Le moment eureka</td><td>1 min 30</td></tr>
+                        <tr><td class="highlight">12:30</td><td><strong>Voting System</strong> — DINOv3 (4/7) + EfficientNet (2/7) + XGBoost calibre (1/7). Sharpening p&sup3;. <strong>Resultat : 92%</strong></td><td>2 min 30</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="grid-3 mt-1">
+                    <div class="metric-card" style="border-top: 3px solid var(--accent-purple);">
+                        <div class="metric-value">91.4%</div>
+                        <div class="metric-label">DINOv3+MLP (poids 4/7)</div>
+                    </div>
+                    <div class="metric-card success" style="border-top: 3px solid var(--accent-green);">
+                        <div class="metric-value">~75%</div>
+                        <div class="metric-label">EfficientNet (poids 2/7)</div>
+                    </div>
+                    <div class="metric-card warning" style="border-top: 3px solid var(--accent-orange);">
+                        <div class="metric-value">76.5%</div>
+                        <div class="metric-label">XGBoost calibre (poids 1/7)</div>
+                    </div>
+                </div>
+
+                <div class="script-box">
+                    "92% en image grace au Voting. Liviu va completer le puzzle avec le texte et la fusion pour atteindre 94%."
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 6: LIVIU ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge speaker-nlp">15:00 - 20:00</span>
+                    <h2 class="slide-title">Liviu — Le Strategiste</h2>
+                </div>
+
+                <div class="speaker-header" style="background: linear-gradient(135deg, rgba(245,158,11,0.05), rgba(239,68,68,0.05)); border-color: rgba(245,158,11,0.1);">
+                    <div class="speaker-avatar orange">LA</div>
+                    <div class="speaker-info">
+                        <div class="speaker-name">Liviu Andronic</div>
+                        <div class="speaker-role">Modelisation Texte + Fusion + Explicabilite + Conclusion</div>
+                    </div>
+                    <div class="speaker-time" style="color: var(--accent-orange);">5 min</div>
+                </div>
+
+                <table>
+                    <thead><tr><th>Chrono</th><th>Contenu</th><th>Duree</th></tr></thead>
+                    <tbody>
+                        <tr><td class="highlight">15:00</td><td><strong>Modelisation Texte</strong> — Benchmark : LogReg (79%), NB (76%), <strong>LinearSVC (83%)</strong>, RF (68%). C=0.5, GridSearch. Pourquoi SVM > CamemBERT</td><td>1 min 30</td></tr>
+                        <tr><td class="highlight">16:30</td><td><strong>Fusion Multimodale</strong> — Late Fusion : Image 92% x 0.6 + Texte 83% x 0.4 = <strong>~94%</strong>. DVD bleu corrige par le texte</td><td>1 min 30</td></tr>
+                        <tr><td class="highlight">18:00</td><td><strong>Explicabilite</strong> — SHAP, LIME, Grad-CAM. Conformite AI Act</td><td>1 min</td></tr>
+                        <tr><td class="highlight">19:00</td><td><strong>Conclusion & Perspectives</strong> — Bilan, impact metier, OCR, CamemBERT, monitoring</td><td>1 min</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="success-box">
+                    <div class="success-box-title">Pourquoi Liviu ferme la presentation</div>
+                    <p>La Fusion est expliquee APRES les deux composants (logique !). Le DS Senior a le mot de la fin. La conclusion + perspectives = la derniere chose que le jury retient.</p>
+                </div>
+
+                <div class="script-box">
+                    "Nous avons un systeme multimodal a 94%, explicable, deploye sur Streamlit. Perspectives : OCR (+3-5%), fine-tuning DINOv3, monitoring en production. Merci, nous sommes prets pour vos questions."
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 7: TRANSITIONS ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge strategy">COORDINATION</span>
+                    <h2 class="slide-title">Transitions & Phrases Exactes</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="card" style="border-left: 4px solid var(--rakuten-red);">
+                            <div class="card-title" style="color: var(--rakuten-red);">Oussama &rarr; Michael</div>
+                            <div class="card-text" style="font-style: italic;">"Vous avez vu le resultat. Michael va vous montrer la matiere premiere : les donnees et le preprocessing."</div>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--accent-blue);">
+                            <div class="card-title" style="color: var(--accent-blue);">Michael &rarr; Johan</div>
+                            <div class="card-text" style="font-style: italic;">"Les donnees sont pretes. Johan va s'attaquer au plus gros morceau : la partie image et le Voting System."</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card" style="border-left: 4px solid var(--accent-purple);">
+                            <div class="card-title" style="color: var(--accent-purple);">Johan &rarr; Liviu</div>
+                            <div class="card-text" style="font-style: italic;">"92% en image grace au Voting. Liviu va completer le puzzle avec le texte et la fusion pour atteindre 94%."</div>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--accent-orange);">
+                            <div class="card-title" style="color: var(--accent-orange);">Liviu (fin)</div>
+                            <div class="card-text" style="font-style: italic;">"Merci pour votre attention. Nous sommes prets pour vos questions."</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning-box mt-1">
+                    <div class="warning-box-title">Regle d'or des transitions</div>
+                    <p>Chaque transition doit <strong>resumer ce qui vient d'etre dit</strong> ET <strong>annoncer ce qui va suivre</strong>. Ca donne au jury un repere temporel et ca guide leur attention.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 8: Q&A STRATEGY ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge qa">Q&A</span>
+                    <h2 class="slide-title">Strategie Questions & Reponses (10 min)</h2>
+                </div>
+
+                <table>
+                    <thead><tr><th>Sujet de la question</th><th>Repond en premier</th><th>Backup</th></tr></thead>
+                    <tbody>
+                        <tr><td>Donnees, desequilibre, preprocessing texte</td><td><strong class="highlight">Michael</strong></td><td>Liviu</td></tr>
+                        <tr><td>Modeles texte, LinearSVC, NLP, TF-IDF</td><td><strong class="highlight">Liviu</strong></td><td>Michael</td></tr>
+                        <tr><td>Image, DINOv3, EfficientNet, CNN, Voting</td><td><strong class="highlight">Johan</strong></td><td>Oussama</td></tr>
+                        <tr><td>Fusion, architecture, explicabilite, AI Act</td><td><strong class="highlight">Liviu</strong></td><td>Johan</td></tr>
+                        <tr><td>Demo, Streamlit, deploiement, MLOps</td><td><strong class="highlight">Oussama</strong></td><td>Liviu</td></tr>
+                        <tr><td>Perspectives, ameliorations futures</td><td><strong class="highlight">Oussama</strong></td><td>Liviu</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="grid-2 mt-1">
+                    <div class="info-box">
+                        <div class="info-box-title">Regle d'or</div>
+                        <p>Chacun repond aux questions sur <strong>SA</strong> partie. Si on ne sait pas :<br><em>"Excellente question. [Prenom], tu peux completer ?"</em></p>
+                    </div>
+                    <div class="danger-box">
+                        <div class="danger-box-title">A eviter absolument</div>
+                        <p>Ne jamais dire "je ne sais pas" seul. Ne jamais contredire un coequipier. Ne jamais depasser 1 min 30 par reponse.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 9: DEMO PRODUCTS ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">DEMO</span>
+                    <h2 class="slide-title">Produits de Demonstration</h2>
+                </div>
+
+                <div class="grid-3">
+                    <div class="card" style="border-top: 4px solid var(--accent-green);">
+                        <div class="card-icon" style="font-size: 2.5rem; text-align: center;">1</div>
+                        <div class="card-title" style="text-align: center;">Cas Facile</div>
+                        <ul class="feature-list">
+                            <li><strong>Texte :</strong> "Harry Potter tome 1 edition poche"</li>
+                            <li><strong>Image :</strong> Couverture du livre</li>
+                            <li><strong>Resultat :</strong> Livres (99%)</li>
+                        </ul>
+                        <div class="success-box" style="margin-top: auto;">
+                            <p style="font-size: 0.9rem;">Texte + Image convergent. Montre que le systeme fonctionne sur un cas simple.</p>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top: 4px solid var(--accent-purple);">
+                        <div class="card-icon" style="font-size: 2.5rem; text-align: center;">2</div>
+                        <div class="card-title" style="text-align: center;">Image Decisive</div>
+                        <ul class="feature-list">
+                            <li><strong>Texte :</strong> "Accessoire bleu pour exterieur"</li>
+                            <li><strong>Image :</strong> Photo bouee piscine</li>
+                            <li><strong>Resultat :</strong> Piscine (92%)</li>
+                        </ul>
+                        <div class="info-box" style="margin-top: auto;">
+                            <p style="font-size: 0.9rem;">Texte trop vague. L'image sauve la classification. Montre la valeur du multimodal.</p>
+                        </div>
+                    </div>
+                    <div class="card" style="border-top: 4px solid var(--accent-orange);">
+                        <div class="card-icon" style="font-size: 2.5rem; text-align: center;">3</div>
+                        <div class="card-title" style="text-align: center;">Texte Decisif</div>
+                        <ul class="feature-list">
+                            <li><strong>Texte :</strong> "DVD Le Grand Bleu Luc Besson"</li>
+                            <li><strong>Image :</strong> Jaquette bleue</li>
+                            <li><strong>Resultat :</strong> DVD/Film (87%)</li>
+                        </ul>
+                        <div class="warning-box" style="margin-top: auto;">
+                            <p style="font-size: 0.9rem;">Image trompeuse (bleu = piscine ?). Le texte "DVD" corrige. La complementarite en action.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 10: CHECKLIST ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge check">CHECKLIST</span>
+                    <h2 class="slide-title">Preparation Jour J</h2>
+                </div>
+
+                <div class="grid-3">
+                    <div class="card" style="border-top: 4px solid var(--accent-blue);">
+                        <div class="card-title">1 semaine avant</div>
+                        <ul class="feature-list">
+                            <li>Connaitre ses slides par coeur</li>
+                            <li>Preparer les 3 images de demo</li>
+                            <li>Relire les 60 questions Q&A</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-top: 4px solid var(--accent-orange);">
+                        <div class="card-title">3 jours avant</div>
+                        <ul class="feature-list">
+                            <li><strong>Repetition 1</strong> sans chrono</li>
+                            <li>Fluidite des transitions</li>
+                            <li>Identifier les points faibles</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-top: 4px solid var(--danger);">
+                        <div class="card-title">La veille</div>
+                        <ul class="feature-list">
+                            <li><strong>Repetition 2</strong> chrono strict</li>
+                            <li>Tester Streamlit sur le poste</li>
+                            <li>Verifier chargement modeles</li>
+                            <li>Backup presentation en PDF</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="danger-box mt-1">
+                    <div class="danger-box-title">Le jour J — 15 min avant</div>
+                    <div class="grid-3" style="margin: 0.5rem 0 0;">
+                        <div style="text-align: center;">
+                            <strong style="font-size: 1.8rem;">1.</strong><br>
+                            Lancer Streamlit
+                        </div>
+                        <div style="text-align: center;">
+                            <strong style="font-size: 1.8rem;">2.</strong><br>
+                            Charger les modeles (warm up)
+                        </div>
+                        <div style="text-align: center;">
+                            <strong style="font-size: 1.8rem;">3.</strong><br>
+                            Images de demo sur le bureau
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 11: RECAP FINAL ===================== -->
+        <div class="slide">
+            <div class="content-full text-center">
+                <h1 class="hero-title" style="font-size: 2.8rem;">Recapitulatif <span class="accent">Final</span></h1>
+
+                <div class="timeline mt-2" style="max-width: 1100px; margin-left: auto; margin-right: auto;">
+                    <div class="timeline-block t1" style="padding: 1.3rem;">
+                        <div class="time">0:00 - 5:00</div>
+                        <div class="name" style="font-size: 1.5rem;">Oussama</div>
+                        <div class="content-label">Cover + Sommaire<br><strong>DEMO LIVE (3 min 30)</strong></div>
+                    </div>
+                    <div class="timeline-arrow">&rarr;</div>
+                    <div class="timeline-block t2" style="padding: 1.3rem;">
+                        <div class="time">5:00 - 10:00</div>
+                        <div class="name" style="font-size: 1.5rem;">Michael</div>
+                        <div class="content-label">Challenge Rakuten<br>Desequilibre + TF-IDF</div>
+                    </div>
+                    <div class="timeline-arrow">&rarr;</div>
+                    <div class="timeline-block t3" style="padding: 1.3rem;">
+                        <div class="time">10:00 - 15:00</div>
+                        <div class="name" style="font-size: 1.5rem;">Johan</div>
+                        <div class="content-label">Pipeline Image<br><strong>Voting System = 92%</strong></div>
+                    </div>
+                    <div class="timeline-arrow">&rarr;</div>
+                    <div class="timeline-block t4" style="padding: 1.3rem;">
+                        <div class="time">15:00 - 20:00</div>
+                        <div class="name" style="font-size: 1.5rem;">Liviu</div>
+                        <div class="content-label">Texte + <strong>Fusion = 94%</strong><br>Explicabilite + Conclusion</div>
+                    </div>
+                </div>
+
+                <div class="success-box mt-2" style="max-width: 800px; margin-left: auto; margin-right: auto;">
+                    <div class="success-box-title" style="justify-content: center;">Regle absolue : 5 minutes CHRONO par personne</div>
+                    <p style="text-align: center;">Si quelqu'un depasse, le suivant est penalise. Respecter le chrono = respecter l'equipe.</p>
+                </div>
+
+                <p style="margin-top: 1.5rem; color: var(--text-muted); font-size: 1.1rem;">
+                    <strong style="color: var(--rakuten-red);">On est prets.</strong> — Soutenance le 16 Fevrier 2026
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <nav>
+        <button class="nav-btn" onclick="prevSlide()" title="Precedent">&larr;</button>
+        <div class="nav-separator"></div>
+        <span class="slide-counter"><span id="current-slide-nav">1</span> / <span id="total-slides-nav"></span></span>
+        <div class="nav-separator"></div>
+        <button class="nav-btn" onclick="nextSlide()" title="Suivant">&rarr;</button>
+    </nav>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let currentSlide = 0;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+        document.getElementById('total-slides-nav').textContent = totalSlides;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index === currentSlide) slide.classList.add('active');
+                else if (index < currentSlide) slide.classList.add('prev');
+            });
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            document.getElementById('current-slide-nav').textContent = currentSlide + 1;
+            document.getElementById('progress-fill').style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+        }
+
+        function nextSlide() { if (currentSlide < totalSlides - 1) { currentSlide++; updateSlide(); } }
+        function prevSlide() { if (currentSlide > 0) { currentSlide--; updateSlide(); } }
+        function goToSlide(index) { if (index >= 0 && index < totalSlides) { currentSlide = index; updateSlide(); } }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            else if (e.key === 'Home') { e.preventDefault(); goToSlide(0); }
+            else if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
+        });
+
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+        document.addEventListener('touchend', (e) => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+        });
+
+        updateSlide();
+    </script>
+</body>
+
+</html>
