@@ -17,6 +17,7 @@ from pathlib import Path
 
 # Files required by the app (filename → human-readable size for progress UI)
 REQUIRED_MODELS = {
+    "category_mapping.json": "4 KB",
     "M1_IMAGE_DeepLearning_DINOv3.pth": "1.2 GB",
     "M2_IMAGE_XGBoost_Encoder.pkl": "<1 KB",
     "M3_IMAGE_Classic_EfficientNetB0.pth": "16 MB",
