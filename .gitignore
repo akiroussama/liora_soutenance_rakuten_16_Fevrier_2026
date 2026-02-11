@@ -38,6 +38,9 @@ images/
 # Outputs
 implementation/outputs/
 
+# Archive
+archive/
+
 # Temp files
 temp_*.jpg
 temp_*.png
