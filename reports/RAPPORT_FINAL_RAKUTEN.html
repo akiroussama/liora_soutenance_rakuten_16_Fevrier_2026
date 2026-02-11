@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classification Multimodale Rakuten | Rapport Final BMLE</title>
+    <title>Classification Multimodale Rakuten | Rapport Final MLE</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -1327,14 +1327,21 @@
                 page-break-before: always;
                 page-break-after: always;
                 min-height: 100vh;
+                height: 100vh;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
                 padding: 4rem 2rem;
-                border: 3px solid var(--gray-200);
+                margin: 0 -20mm;
+                padding-left: calc(20mm + 2rem);
+                padding-right: calc(20mm + 2rem);
+                background: linear-gradient(135deg, #f8f9fa 0%, #f0eef5 50%, #faf8f8 100%) !important;
+                border-top: 5px solid var(--primary);
+                border-bottom: 5px solid var(--primary);
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
+                color-adjust: exact !important;
             }
 
             .part-divider::before,
@@ -1626,7 +1633,7 @@
             </div>
 
             <div class="cover-institution">DataScientest × Mines Paris - PSL</div>
-            <div class="cover-formation">Machine Learning Engineer (BMLE) — Promotion Octobre 2025</div>
+            <div class="cover-formation">Machine Learning Engineer — Promotion Octobre 2025</div>
 
             <div class="cover-divider"></div>
 
@@ -1784,18 +1791,23 @@
 
                 <div class="toc-part">PARTIE VI : APPLICATION STREAMLIT</div>
                 <div class="toc-section"><span>6.1 Architecture de l'Application</span><span>35</span></div>
-                <div class="toc-section"><span>6.2 Fonctionnalités et Interface</span><span>36</span></div>
-                <div class="toc-section"><span>6.3 Démonstration</span><span>37</span></div>
+                <div class="toc-section"><span>6.2 Fonctionnalités</span><span>36</span></div>
+                <div class="toc-section"><span>6.3 Captures d'Écran de l'Application</span><span>37</span></div>
 
                 <div class="toc-part">PARTIE VII : CONCLUSION ET PERSPECTIVES</div>
                 <div class="toc-section"><span>7.1 Bilan du Projet</span><span>38</span></div>
                 <div class="toc-section"><span>7.2 Limites et Difficultés</span><span>39</span></div>
                 <div class="toc-section"><span>7.3 Perspectives d'Amélioration</span><span>40</span></div>
+                <div class="toc-section"><span>7.4 Justification des Choix Techniques</span><span>41</span></div>
+                <div class="toc-section"><span>7.5 Stratégie de Monitoring en Production</span><span>43</span></div>
+                <div class="toc-section"><span>7.6 Reproductibilité Expérimentale</span><span>45</span></div>
 
                 <div class="toc-part">ANNEXES</div>
-                <div class="toc-section"><span>A. Mapping des 27 Catégories</span><span>41</span></div>
-                <div class="toc-section"><span>B. Configuration Technique</span><span>42</span></div>
-                <div class="toc-section"><span>C. Références</span><span>43</span></div>
+                <div class="toc-section"><span>A. Mapping des 27 Catégories</span><span>47</span></div>
+                <div class="toc-section"><span>B. Configuration Technique</span><span>48</span></div>
+                <div class="toc-section"><span>C. Références</span><span>49</span></div>
+                <div class="toc-section"><span>D. Diagramme de Gantt</span><span>50</span></div>
+                <div class="toc-section"><span>E. Description des Fichiers de Code</span><span>51</span></div>
             </nav>
         </section>
 
