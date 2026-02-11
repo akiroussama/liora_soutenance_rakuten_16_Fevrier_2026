@@ -1,0 +1,44 @@
+[  446360ms] [WARNING] Unrecognized feature: 'ambient-light-sensor'. @ https://huggingface.co/spaces/akiroussama/rakuten-classifier:253
+[  446360ms] [WARNING] Unrecognized feature: 'battery'. @ https://huggingface.co/spaces/akiroussama/rakuten-classifier:253
+[  446360ms] [WARNING] Unrecognized feature: 'document-domain'. @ https://huggingface.co/spaces/akiroussama/rakuten-classifier:253
+[  446360ms] [WARNING] Unrecognized feature: 'layout-animations'. @ https://huggingface.co/spaces/akiroussama/rakuten-classifier:253
+[  446360ms] [WARNING] Unrecognized feature: 'legacy-image-formats'. @ https://huggingface.co/spaces/akiroussama/rakuten-classifier:253
+[  446360ms] [WARNING] Unrecognized feature: 'oversized-images'. @ https://huggingface.co/spaces/akiroussama/rakuten-classifier:253
+[  446360ms] [WARNING] Unrecognized feature: 'vr'. @ https://huggingface.co/spaces/akiroussama/rakuten-classifier:253
+[  446360ms] [WARNING] Unrecognized feature: 'wake-lock'. @ https://huggingface.co/spaces/akiroussama/rakuten-classifier:253
+[  448885ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  448885ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  448885ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  448922ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  448922ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  448922ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  448974ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  448974ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  448974ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449122ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449122ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449122ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449306ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449306ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449307ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449337ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449337ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449337ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449353ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449353ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449353ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449447ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449447ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449447ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449504ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449504ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449505ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449573ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449573ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449574ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449700ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449700ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449700ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449749ms] [WARNING] Invalid color passed for widgetBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449750ms] [WARNING] Invalid color passed for widgetBorderColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49
+[  449750ms] [WARNING] Invalid color passed for skeletonBackgroundColor in theme.sidebar: "" @ https://akiroussama-rakuten-classifier.hf.space/static/js/index.Drusyo5m.js:49

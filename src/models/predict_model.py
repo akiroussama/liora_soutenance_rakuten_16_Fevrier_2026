@@ -41,13 +41,18 @@ class VotingPredictor:
         )
 
         # M2 — XGBoost classifier on ResNet50 features (2048-dim)
-        self.m2 = xgb.XGBClassifier()
-        self.m2.load_model(str(self.mdir / "M2_IMAGE_Classic_XGBoost.json"))
-        self.le = joblib.load(self.mdir / "M2_IMAGE_XGBoost_Encoder.pkl")
+        self.has_xgboost = False
+        xgb_path = self.mdir / "M2_IMAGE_Classic_XGBoost.json"
+        if xgb_path.exists():
+            self.m2 = xgb.XGBClassifier()
+            self.m2.load_model(str(xgb_path))
+            self.le = joblib.load(self.mdir / "M2_IMAGE_XGBoost_Encoder.pkl")
 
-        # ResNet50 feature extractor (headless) — feeds M2
-        res = models.resnet50(weights=None)
-        self.ext = nn.Sequential(*list(res.children())[:-1])
+            # ResNet50 feature extractor (headless) — feeds M2
+            res = models.resnet50(weights=None)
+            self.ext = nn.Sequential(*list(res.children())[:-1])
+            self.ext.to(self.device).eval()
+            self.has_xgboost = True
 
         # M3 — EfficientNet-B0 with custom 27-class head
         self.m3 = models.efficientnet_b0(weights=None)
@@ -57,7 +62,7 @@ class VotingPredictor:
         )
 
         # Move all torch models to device and set eval mode
-        for m in [self.m1, self.m3, self.ext]:
+        for m in [self.m1, self.m3]:
             m.to(self.device).eval()
         self.loaded = True
 
@@ -86,22 +91,42 @@ class VotingPredictor:
             # M3 — EfficientNet-B0
             p3 = F.softmax(self.m3(i2), dim=1).cpu().numpy()[0]
 
-            # M2 — XGBoost on ResNet50 features
-            f = self.ext(i2).squeeze().cpu().numpy().reshape(1, -1)
-            raw_p2 = self.m2.predict_proba(f)[0]
+            if self.has_xgboost:
+                # M2 — XGBoost on ResNet50 features
+                f = self.ext(i2).squeeze().cpu().numpy().reshape(1, -1)
+                raw_p2 = self.m2.predict_proba(f)[0]
 
-            # Sharpening: raise to power 3, then renormalize.
-            # This forces XGBoost to commit to a class instead of
-            # spreading probability uniformly across all 27 classes.
-            sharp_p2 = np.power(raw_p2, 3)
-            p2 = sharp_p2 / sharp_p2.sum()
+                # Sharpening: raise to power 3, then renormalize.
+                # This forces XGBoost to commit to a class instead of
+                # spreading probability uniformly across all 27 classes.
+                sharp_p2 = np.power(raw_p2, 3)
+                p2 = sharp_p2 / sharp_p2.sum()
 
-        # Weighted soft vote: DINOv3=4, EfficientNet=2, XGBoost=1
-        f_p = (4.0 * p1 + 1.0 * p2 + 2.0 * p3) / 7.0
+                # Weighted soft vote: DINOv3=4, EfficientNet=2, XGBoost=1
+                f_p = (4.0 * p1 + 1.0 * p2 + 2.0 * p3) / 7.0
+            else:
+                # Fallback: DINOv3 + EfficientNet only (weights 4:2)
+                f_p = (4.0 * p1 + 2.0 * p3) / 6.0
 
         # Return top-5 predictions with original Rakuten category codes
         ids = np.argsort(f_p)[-5:][::-1]
+
+        # Use label encoder if available (XGBoost), otherwise use class index
+        if self.has_xgboost:
+            labels = [str(self.le.inverse_transform([i])[0]) for i in ids]
+        else:
+            # Load category mapping to get actual Rakuten codes
+            import json
+            mapping_path = self.mdir / "category_mapping.json"
+            if mapping_path.exists():
+                with open(mapping_path, 'r') as mf:
+                    cat_map = json.load(mf)
+                code_list = sorted(cat_map.keys())
+                labels = [code_list[i] if i < len(code_list) else str(i) for i in ids]
+            else:
+                labels = [str(i) for i in ids]
+
         return [
-            {"label": str(self.le.inverse_transform([i])[0]), "confidence": float(f_p[i])}
-            for i in ids
+            {"label": labels[j], "confidence": float(f_p[ids[j]])}
+            for j in range(len(ids))
         ]

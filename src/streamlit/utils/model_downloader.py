@@ -18,10 +18,14 @@ from pathlib import Path
 # Files required by the app (filename → human-readable size for progress UI)
 REQUIRED_MODELS = {
     "M1_IMAGE_DeepLearning_DINOv3.pth": "1.2 GB",
-    "M2_IMAGE_Classic_XGBoost.json": "~50 MB",
     "M2_IMAGE_XGBoost_Encoder.pkl": "<1 KB",
     "M3_IMAGE_Classic_EfficientNetB0.pth": "16 MB",
     "text_classifier.joblib": "32 MB",
+}
+
+# Optional models — downloaded if available, but app works without them
+OPTIONAL_MODELS = {
+    "M2_IMAGE_Classic_XGBoost.json": "~50 MB",
 }
 
 
@@ -119,4 +123,19 @@ def ensure_models(models_dir):
             return False
 
     progress.progress(1.0, text="All models downloaded successfully!")
+
+    # Try optional models (non-blocking)
+    optional_missing = [f for f in OPTIONAL_MODELS if not (models_dir / f).exists()]
+    for filename in optional_missing:
+        try:
+            hf_hub_download(
+                repo_id=repo_id,
+                filename=filename,
+                local_dir=str(models_dir),
+                local_dir_use_symlinks=False,
+                token=token,
+            )
+        except Exception:
+            pass  # Optional model not available — app works without it
+
     return True

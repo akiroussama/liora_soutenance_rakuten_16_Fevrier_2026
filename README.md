@@ -190,10 +190,10 @@ huggingface-cli login
 
 # Create a model repository and upload
 huggingface-cli repo create rakuten-models --type model
-huggingface-cli upload oussama-akir/rakuten-models models/ --repo-type model
+huggingface-cli upload akiroussama/rakuten-models models/ --repo-type model
 ```
 
-This uploads all 6 files from `models/` to `huggingface.co/oussama-akir/rakuten-models`.
+This uploads all 6 files from `models/` to `huggingface.co/akiroussama/rakuten-models`.
 
 ### Step 2 — Create a Hugging Face Space
 
@@ -210,7 +210,7 @@ Or create it via the UI at [huggingface.co/new-space](https://huggingface.co/new
 
 ```bash
 # Clone the Space repo
-git clone https://huggingface.co/spaces/oussama-akir/rakuten-classifier
+git clone https://huggingface.co/spaces/akiroussama/rakuten-classifier
 cd rakuten-classifier
 
 # Copy app files (from the project repo)
@@ -241,7 +241,7 @@ In the Space settings (Settings > Variables and secrets), add:
 
 | Key | Value |
 |-----|-------|
-| `huggingface.repo_id` | `oussama-akir/rakuten-models` |
+| `huggingface.repo_id` | `akiroussama/rakuten-models` |
 | `huggingface.token` | *(only if repo is private)* |
 
 Or for local development, copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` and fill in values.

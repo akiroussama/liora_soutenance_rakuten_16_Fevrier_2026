@@ -23,6 +23,7 @@ Pillow>=10.0.0
 
 # ── Visualization ──
 plotly>=5.15.0
+matplotlib>=3.7.0    # Required for pandas background_gradient styling
 graphviz>=0.20.0     # Model architecture diagrams on page 3
 
 # ── NLP ──
