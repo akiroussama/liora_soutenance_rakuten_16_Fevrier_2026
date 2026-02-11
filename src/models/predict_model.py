@@ -121,7 +121,7 @@ class VotingPredictor:
             if mapping_path.exists():
                 with open(mapping_path, 'r') as mf:
                     cat_map = json.load(mf)
-                code_list = sorted(cat_map.keys())
+                code_list = sorted(cat_map.keys(), key=int)
                 labels = [code_list[i] if i < len(code_list) else str(i) for i in ids]
             else:
                 labels = [str(i) for i in ids]
