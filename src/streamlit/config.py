@@ -18,7 +18,9 @@ METADATA_PATH = FEATURES_DIR / "metadata_augmented.json"
 STREAMLIT_DIR = Path(__file__).parent
 ASSETS_DIR = STREAMLIT_DIR / "assets"
 APP_CONFIG = {"title": "Rakuten Product Classifier", "icon": "🛒", "layout": "wide", "initial_sidebar_state": "expanded"}
-MODEL_CONFIG = {"use_mock": False, "fusion_weights": (0.6, 0.4), "top_k": 5, "confidence_threshold": 0.1}
+FUSION_W_IMAGE = 0.6
+FUSION_W_TEXT = 0.4
+MODEL_CONFIG = {"use_mock": False, "fusion_weights": (FUSION_W_IMAGE, FUSION_W_TEXT), "top_k": 5, "confidence_threshold": 0.1}
 IMAGE_CONFIG = {"target_size": (224, 224), "allowed_formats": ["jpg", "jpeg", "png", "webp"], "max_size_mb": 10}
 THEME = {
     "primary_color": "#BF0000", "secondary_color": "#FFFFFF", "background_color": "#F5F5F5",

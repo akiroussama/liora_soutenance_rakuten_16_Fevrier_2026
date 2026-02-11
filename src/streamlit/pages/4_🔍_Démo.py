@@ -22,6 +22,16 @@ st.set_page_config(
 load_css(ASSETS_DIR / "style.css")
 
 st.title("Démonstration Interactive")
+
+# Contexte métier PoC
+st.info("""
+**Proof of Concept — Classificateur de produits Rakuten France**
+
+Ce PoC simule le processus de classification automatique des produits sur une marketplace e-commerce.
+**Avant** : un opérateur classifie manuellement chaque produit (~5 min, 10-15% d'erreur).
+**Après** : le système IA classifie en <1 seconde avec ~6% d'erreur, permettant de traiter **100K+ produits/jour**.
+Le taux d'automatisation avec seuil de confiance à 80% est de **88%** (les 12% restants partent en revue humaine).
+""")
 st.markdown("---")
 
 # chargement unique du cerveau
@@ -180,3 +190,15 @@ with tabs[2]:
                 show_results(res, title="Résultat Fusionné")
         elif launch:
             st.warning("Remplissez les deux champs (Texte et Image) !")
+
+# Sidebar
+with st.sidebar:
+    st.markdown("### Démo Interactive")
+    st.divider()
+    st.markdown("**Poids de fusion actuels**")
+    st.metric("Image", f"{int(clf.w_image*100)}%")
+    st.metric("Texte", f"{int(clf.w_text*100)}%")
+    st.divider()
+    st.markdown("**Modèles chargés**")
+    st.success("Voting (3 modèles)" if clf.voting else "Voting indisponible")
+    st.success("LinearSVC" if clf.text_model else "Texte indisponible")

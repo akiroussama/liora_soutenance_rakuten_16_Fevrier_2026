@@ -134,3 +134,14 @@ with tabs[1]:
             use_container_width=True,
             hide_index=True
         )
+
+# Sidebar
+with st.sidebar:
+    st.markdown("### Modèles")
+    st.divider()
+    st.metric("Image (Voting)", "92%")
+    st.metric("Texte (LinearSVC)", "83%")
+    st.metric("Fusion", "~94%")
+    st.divider()
+    st.markdown("**Voting Weights**")
+    st.markdown("DINOv3: 4/7 | EffNet: 2/7 | XGB: 1/7")

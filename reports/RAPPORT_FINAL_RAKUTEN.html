@@ -3922,6 +3922,61 @@
                     </ul>
                 </div>
             </div>
+
+            <h2><span class="section-number">7.2.1</span> Verrou Scientifique Principal</h2>
+            <p>
+                Le verrou scientifique majeur a été la <strong>calibration des probabilités inter-modèles</strong>
+                pour le Voting System. DINOv3+MLP produit des probabilités bien calibrées via softmax,
+                tandis que XGBoost génère des distributions "molles" réparties uniformément entre les classes.
+                Sans correction, les prédictions de XGBoost diluaient systématiquement les décisions confiantes
+                de DINOv3. La solution — le sharpening (p³/Σp³) — a nécessité une analyse empirique
+                pour trouver l'exposant optimal et valider que la calibration améliorait effectivement
+                la robustesse du vote sans introduire de sur-confiance.
+            </p>
+
+            <h2><span class="section-number">7.2.2</span> Difficultés par Catégorie</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Catégorie</th>
+                        <th>Difficulté</th>
+                        <th>Impact</th>
+                        <th>Solution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Prévisionnel</strong></td>
+                        <td>La modélisation image a pris 3 semaines de plus que prévu (itérations DINOv3, ResNet overfit, Voting)</td>
+                        <td>Retard sur le rapport final</td>
+                        <td>Parallélisation texte/image entre membres</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Données</strong></td>
+                        <td>35% de descriptions manquantes, 5 langues mélangées, images de qualité variable</td>
+                        <td>Bruit dans les features texte</td>
+                        <td>Concaténation designation+description, TF-IDF char n-grams</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IT / Compute</strong></td>
+                        <td>XGBoost Heavy : 6h sur CPU 128GB. Feature extraction DINOv3 : 1h30 sur CPU vs 58s sur GPU</td>
+                        <td>Itérations lentes sans GPU</td>
+                        <td>GPU RTX 4070 pour l'entraînement, CPU pour l'inférence</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Compétences</strong></td>
+                        <td>Vision Transformers (ViT) et self-supervised learning non couverts en formation</td>
+                        <td>Courbe d'apprentissage DINOv3</td>
+                        <td>Auto-formation via documentation Meta AI et papers</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stockage</strong></td>
+                        <td>Modèles > 3GB incompatibles avec Git. Images augmentées ~40GB</td>
+                        <td>Impossibilité de versionner les poids</td>
+                        <td>Google Drive pour les modèles, .gitignore strict</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
 
         <section id="section-7-3">
@@ -3991,6 +4046,416 @@
                     présent sur les images (titre du livre, nom de la marque), créant des features textuelles
                     artificielles
                     qui renforceraient la robustesse du modèle face aux produits mal décrits.
+                </p>
+            </div>
+        </section>
+
+        <section id="section-7-4" class="page-break">
+            <h1><span class="section-number">7.4</span> Justification des Choix Techniques</h1>
+
+            <p>
+                Chaque décision technique majeure de ce projet résulte d'un arbitrage raisonné entre
+                performance, complexité et contraintes opérationnelles. Cette section documente les
+                critères de décision et les alternatives considérées pour les quatre choix structurants
+                du système.
+            </p>
+
+            <h2><span class="section-number">7.4.1</span> Texte : LinearSVC vs Transformers (BERT/CamemBERT)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Critère</th>
+                        <th>LinearSVC + TF-IDF</th>
+                        <th>CamemBERT</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>F1-Score</strong></td>
+                        <td>83.0%</td>
+                        <td>~81% (testé)</td>
+                        <td>LinearSVC</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inférence</strong></td>
+                        <td>&lt;10 ms/produit</td>
+                        <td>~200 ms/produit (GPU)</td>
+                        <td>LinearSVC (x20)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Entraînement</strong></td>
+                        <td>~2 min</td>
+                        <td>~4h (GPU)</td>
+                        <td>LinearSVC</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Infrastructure</strong></td>
+                        <td>CPU seul</td>
+                        <td>GPU obligatoire</td>
+                        <td>LinearSVC</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Taille modèle</strong></td>
+                        <td>~50 MB</td>
+                        <td>~400 MB</td>
+                        <td>LinearSVC</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="callout callout-success">
+                <div class="callout-title">Arbitrage retenu</div>
+                <p>
+                    LinearSVC surpasse CamemBERT en F1-score <em>et</em> en vitesse d'inférence. Ce résultat,
+                    contre-intuitif, s'explique par la nature du corpus : les descriptions produit sont courtes
+                    (moyenne 8 mots), multilingues, et contiennent des codes/références que TF-IDF char n-grams
+                    capture mieux que des embeddings contextuels. BERT excelle sur des textes longs et structurés,
+                    pas sur des listings e-commerce.
+                </p>
+            </div>
+
+            <h2><span class="section-number">7.4.2</span> Fusion : Late Fusion vs Early Fusion</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Critère</th>
+                        <th>Late Fusion (retenu)</th>
+                        <th>Early Fusion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Principe</strong></td>
+                        <td>Combinaison des prédictions (scores)</td>
+                        <td>Concaténation des features avant classification</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Avantage</strong></td>
+                        <td>Chaque modalité s'entraîne indépendamment ; debugging facile</td>
+                        <td>Le classifieur apprend les interactions inter-modalités</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inconvénient</strong></td>
+                        <td>Pas d'interactions texte-image apprises</td>
+                        <td>Dimensionnalité explosive (280K + 1280 features), risque overfitting</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Complexité</strong></td>
+                        <td>Faible (somme pondérée)</td>
+                        <td>Élevée (nouveau classifieur à entraîner)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="callout callout-success">
+                <div class="callout-title">Arbitrage retenu</div>
+                <p>
+                    La late fusion a été privilégiée pour trois raisons : (1) modularité — chaque pipeline
+                    texte/image peut être amélioré indépendamment, (2) interprétabilité — on peut identifier
+                    quelle modalité a contribué à la décision, (3) robustesse — le système fonctionne même
+                    si une modalité est absente (texte seul ou image seule). Le gain estimé de l'early fusion
+                    (+2-3%) ne justifiait pas la complexité ajoutée pour ce PoC.
+                </p>
+            </div>
+
+            <h2><span class="section-number">7.4.3</span> Image : Voting Ensemble vs Modèle Unique</h2>
+            <p>
+                Un modèle unique (DINOv3+MLP, 91.4%) aurait été plus simple à déployer. Le Voting
+                System ajoute de la complexité (3 modèles, alignement des labels, calibration).
+                La justification repose sur trois observations empiriques :
+            </p>
+            <ul class="check-list">
+                <li><strong>Diversité :</strong> La matrice de corrélation inter-modèles (section 4.5.4) montre
+                    que XGBoost est faiblement corrélé avec DINOv3 (r=0.52), confirmant l'apport de diversité</li>
+                <li><strong>Robustesse :</strong> Les tests de rotation (section 4.6.1) montrent que le Voting
+                    maintient 87% de précision à ±30° contre 79% pour DINOv3 seul</li>
+                <li><strong>Automatisation :</strong> Le seuil de confiance à 80% permet d'automatiser 88%
+                    des classifications (vs 82% pour DINOv3 seul)</li>
+            </ul>
+
+            <h2><span class="section-number">7.4.4</span> Feature Extraction : EfficientNet-B0 vs ResNet-152</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Critère</th>
+                        <th>EfficientNet-B0 (retenu)</th>
+                        <th>ResNet-152</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Paramètres</strong></td>
+                        <td>5.3M</td>
+                        <td>60.2M</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ImageNet Top-1</strong></td>
+                        <td>77.1%</td>
+                        <td>78.3%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Features dim</strong></td>
+                        <td>1280</td>
+                        <td>2048</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inférence</strong></td>
+                        <td>~5 ms/image</td>
+                        <td>~15 ms/image</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risque overfitting</strong></td>
+                        <td>Faible (peu de params)</td>
+                        <td>Élevé (confirmé : ResNet "Phoenix")</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="callout callout-success">
+                <div class="callout-title">Arbitrage retenu</div>
+                <p>
+                    EfficientNet-B0 offre le meilleur ratio performance/complexité. La différence de 1.2%
+                    sur ImageNet ne se traduit pas en avantage significatif sur notre dataset spécifique,
+                    tandis que le facteur 11x en paramètres augmente fortement le risque d'overfitting —
+                    comme démontré par le cas d'étude ResNet "Phoenix" (section 4.4.1).
+                </p>
+            </div>
+        </section>
+
+        <section id="section-7-5" class="page-break">
+            <h1><span class="section-number">7.5</span> Stratégie de Monitoring en Production</h1>
+
+            <p>
+                Bien que ce projet soit un PoC, la mise en production d'un système de classification
+                automatique nécessite une stratégie de monitoring rigoureuse. Cette section décrit
+                l'architecture de surveillance envisagée pour garantir la fiabilité du système dans
+                le temps.
+            </p>
+
+            <h2><span class="section-number">7.5.1</span> Détection de Drift</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type de Drift</th>
+                        <th>Indicateur</th>
+                        <th>Seuil d'alerte</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Data Drift</strong></td>
+                        <td>Distribution statistique des features TF-IDF (test KS)</td>
+                        <td>p-value &lt; 0.05 sur 3 jours consécutifs</td>
+                        <td>Réentraîner le vectoriseur TF-IDF</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Concept Drift</strong></td>
+                        <td>Accuracy glissante sur les labels manuels (échantillon 1%)</td>
+                        <td>Chute de &gt;3% par rapport au baseline</td>
+                        <td>Réentraîner le classifieur sur les nouvelles données</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Prediction Drift</strong></td>
+                        <td>Distribution des classes prédites vs historique</td>
+                        <td>Distance KL &gt; 0.1</td>
+                        <td>Investiguer les nouvelles catégories émergentes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Confidence Drift</strong></td>
+                        <td>Score moyen de confiance du système</td>
+                        <td>Chute sous 75% sur une semaine</td>
+                        <td>Analyser les produits en zone grise</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2><span class="section-number">7.5.2</span> Métriques Opérationnelles</h2>
+            <div class="two-columns">
+                <div class="callout callout-info">
+                    <div class="callout-title">📊 Métriques Temps Réel</div>
+                    <ul style="font-size: 9pt;">
+                        <li><strong>Latence P50/P95/P99</strong> : &lt;500ms / &lt;1s / &lt;2s</li>
+                        <li><strong>Throughput</strong> : &gt;100 produits/seconde</li>
+                        <li><strong>Taux de rejet</strong> : % sous le seuil de confiance 80%</li>
+                        <li><strong>Disponibilité</strong> : &gt;99.5% uptime</li>
+                    </ul>
+                </div>
+                <div class="callout callout-success">
+                    <div class="callout-title">🔄 Pipeline de Réentraînement</div>
+                    <ul style="font-size: 9pt;">
+                        <li><strong>Fréquence</strong> : Mensuelle (ou sur alerte drift)</li>
+                        <li><strong>Validation</strong> : A/B test sur 5% du trafic</li>
+                        <li><strong>Rollback</strong> : Automatique si accuracy &lt; baseline - 2%</li>
+                        <li><strong>Versioning</strong> : MLflow pour traçabilité des modèles</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2><span class="section-number">7.5.3</span> Architecture de Déploiement Cible</h2>
+            <div class="code-block">
+                <div class="code-title">Architecture MLOps proposée</div>
+                <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                    PIPELINE DE PRODUCTION                       │
+├─────────────┬─────────────────────┬─────────────────────────────┤
+│  INGESTION  │   INFERENCE API     │      MONITORING             │
+│             │                     │                             │
+│ Kafka/SQS   │  FastAPI + Gunicorn │  Prometheus + Grafana       │
+│ → Produits  │  → Texte: LinearSVC │  → Latence, Throughput      │
+│   entrants  │  → Image: Voting    │  → Accuracy glissante       │
+│             │  → Fusion: 60/40    │  → Drift detection          │
+│             │                     │  → Alertes PagerDuty        │
+├─────────────┼─────────────────────┼─────────────────────────────┤
+│         STOCKAGE                  │      RETRAINING             │
+│  S3 (images) + PostgreSQL (meta)  │  Airflow DAG mensuel        │
+│  MLflow Model Registry            │  → Collecte labels humains  │
+│  Redis (cache prédictions)        │  → Réentraînement           │
+│                                   │  → A/B test → Promotion     │
+└───────────────────────────────────┴─────────────────────────────┘</pre>
+            </div>
+        </section>
+
+        <section id="section-7-6" class="page-break">
+            <h1><span class="section-number">7.6</span> Reproductibilité Expérimentale</h1>
+
+            <p>
+                La reproductibilité des résultats est un critère fondamental de rigueur scientifique.
+                Cette section documente le protocole expérimental suivi pour garantir que les performances
+                rapportées sont fiables et vérifiables.
+            </p>
+
+            <h2><span class="section-number">7.6.1</span> Protocole de Split</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Paramètre</th>
+                        <th>Valeur</th>
+                        <th>Justification</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Split Train/Test</strong></td>
+                        <td>84 916 / 13 812 (86% / 14%)</td>
+                        <td>Split fourni par le challenge Rakuten</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Validation</strong></td>
+                        <td>Stratified 80/20 sur le train</td>
+                        <td>Préserve la distribution des 27 classes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Random Seed</strong></td>
+                        <td>42 (numpy, torch, sklearn)</td>
+                        <td>Reproductibilité inter-runs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stratification</strong></td>
+                        <td>Oui (StratifiedShuffleSplit)</td>
+                        <td>Garantit la représentativité des classes minoritaires</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2><span class="section-number">7.6.2</span> Environnement Matériel</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Composant</th>
+                        <th>Entraînement</th>
+                        <th>Inférence / PoC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>GPU</strong></td>
+                        <td>NVIDIA RTX 4070 (12 GB VRAM)</td>
+                        <td>CPU uniquement</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CPU</strong></td>
+                        <td>Intel i7 / Ryzen 7</td>
+                        <td>Idem</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RAM</strong></td>
+                        <td>32-128 GB</td>
+                        <td>16 GB minimum</td>
+                    </tr>
+                    <tr>
+                        <td><strong>OS</strong></td>
+                        <td>Ubuntu 22.04 / Windows 11</td>
+                        <td>Windows 11</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Python</strong></td>
+                        <td>3.10</td>
+                        <td>3.10</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PyTorch</strong></td>
+                        <td>2.1.0 + CUDA 11.8</td>
+                        <td>2.1.0 (CPU)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2><span class="section-number">7.6.3</span> Temps d'Exécution</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Étape</th>
+                        <th>Durée (GPU)</th>
+                        <th>Durée (CPU)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Feature extraction EfficientNet-B0 (84K images)</td>
+                        <td>~12 min</td>
+                        <td>~1h30</td>
+                    </tr>
+                    <tr>
+                        <td>Feature extraction DINOv3 (84K images)</td>
+                        <td>~58 sec</td>
+                        <td>~1h30</td>
+                    </tr>
+                    <tr>
+                        <td>Entraînement DINOv3+MLP (20 epochs)</td>
+                        <td>~15 min</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td>Entraînement XGBoost</td>
+                        <td>N/A</td>
+                        <td>~6h (128 GB RAM)</td>
+                    </tr>
+                    <tr>
+                        <td>Entraînement TF-IDF + LinearSVC</td>
+                        <td>N/A</td>
+                        <td>~2 min</td>
+                    </tr>
+                    <tr>
+                        <td>Data Augmentation (405K images)</td>
+                        <td>N/A</td>
+                        <td>~45 min</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inférence 1 produit (fusion)</strong></td>
+                        <td><strong>~200 ms</strong></td>
+                        <td><strong>~800 ms</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout callout-info">
+                <div class="callout-title">🔬 Note sur la reproductibilité</div>
+                <p>
+                    Tous les hyperparamètres finaux sont documentés dans les notebooks du dossier
+                    <code>notebooks/</code>. Les modèles entraînés sont disponibles sur Google Drive
+                    (voir Annexe B). Le seed 42 est utilisé systématiquement pour numpy, torch et
+                    sklearn, garantissant la reproductibilité des résultats à environnement matériel
+                    identique. Les légères variations observées entre GPU NVIDIA (non-déterminisme
+                    cuDNN) sont de l'ordre de ±0.2%.
                 </p>
             </div>
         </section>
@@ -4227,6 +4692,178 @@
                         target="_blank">https://github.com/DataScientest-Studio/OCT25_BMLE_RAKUTEN</a></li>
                 <li><strong>Challenge Rakuten</strong> : Rakuten Institute of Technology</li>
             </ul>
+        </section>
+
+        <section id="annexe-d" class="page-break">
+            <h1><span class="section-number">D</span> Diagramme de Gantt</h1>
+            <p>Planning du projet fil rouge, de la phase de cadrage à la soutenance.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Étape</th>
+                        <th>Description</th>
+                        <th>Deadline</th>
+                        <th>Durée</th>
+                        <th>Livrable</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="highlight">0. Cadrage</td>
+                        <td>Prise en main du projet, compréhension du dataset Rakuten, répartition des rôles</td>
+                        <td>26 Nov 2025</td>
+                        <td>1 semaine</td>
+                        <td>Réunion de cadrage</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">1. Exploration + DataViz</td>
+                        <td>Analyse du dataset (84 916 produits, 27 classes), identification du déséquilibre 1:13, statistiques texte/image</td>
+                        <td>09 Déc 2025</td>
+                        <td>2 semaines</td>
+                        <td>Notebooks d'exploration</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">2. Preprocessing</td>
+                        <td>Pipeline texte (TF-IDF 280K), pipeline image (DINOv3 + EfficientNet), feature engineering</td>
+                        <td>18 Déc 2025</td>
+                        <td>1.5 semaines</td>
+                        <td><strong>Rendu 1</strong> : Rapport exploration + preprocessing</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">3. Modélisation</td>
+                        <td>Baselines (RF, XGBoost), LinearSVC texte, DINOv3+MLP image, Voting System, Fusion multimodale</td>
+                        <td>29 Jan 2026</td>
+                        <td>6 semaines</td>
+                        <td><strong>Rendu 2</strong> : Rapport modélisation</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">4. Rapport Final + Code</td>
+                        <td>Rédaction rapport final, nettoyage GitHub, documentation, tests de robustesse</td>
+                        <td>11 Fév 2026</td>
+                        <td>2 semaines</td>
+                        <td><strong>Rapport Final</strong> + Code GitHub</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">5. Streamlit + Soutenance</td>
+                        <td>Application Streamlit multimodale, démo interactive, préparation orale</td>
+                        <td>Sem. 16 Fév 2026</td>
+                        <td>1 semaine</td>
+                        <td>Soutenance (20 min + 10 min Q&A)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout callout-info" style="margin-top: 1.5rem;">
+                <div class="callout-title">📋 Répartition des Rôles</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Membre</th>
+                            <th>Contribution Principale</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Johan Frachon</strong></td>
+                            <td>Pipeline image complet : DINOv3, EfficientNet, XGBoost, Voting System</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Liviu Andronic</strong></td>
+                            <td>Modélisation NLP (LinearSVC, GridSearch), fusion multimodale, expertise technique</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hery M. Ralaimanantsoa</strong></td>
+                            <td>Preprocessing texte, nettoyage données, TF-IDF, exploration du dataset</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Oussama Akir</strong></td>
+                            <td>Pipeline image, application Streamlit, intégration, présentation</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="annexe-e" class="page-break">
+            <h1><span class="section-number">E</span> Description des Fichiers de Code</h1>
+            <p>Arborescence du repository GitHub et description de chaque composant.</p>
+
+            <div class="code-block">
+                <div class="code-title">Structure du Repository</div>
+OCT25_BMLE_RAKUTEN/
+├── src/
+│   ├── streamlit/           <span class="code-comment"># Application Streamlit multimodale</span>
+│   │   ├── app.py           <span class="code-comment"># Page d'accueil (métriques, navigation)</span>
+│   │   ├── config.py        <span class="code-comment"># Configuration globale (chemins, paramètres)</span>
+│   │   ├── pages/           <span class="code-comment"># Pages multi-onglets</span>
+│   │   │   ├── 1_📊_Données.py      <span class="code-comment"># Exploration du dataset</span>
+│   │   │   ├── 2_⚙️_Preprocessing.py <span class="code-comment"># Pipeline texte + image</span>
+│   │   │   ├── 3_🧠_Modèles.py      <span class="code-comment"># Architecture Voting</span>
+│   │   │   ├── 4_🔍_Démo.py         <span class="code-comment"># Démo interactive (texte/image/fusion)</span>
+│   │   │   └── 5_💡_Conclusions.py   <span class="code-comment"># Résultats et perspectives</span>
+│   │   ├── utils/
+│   │   │   ├── real_classifier.py   <span class="code-comment"># Classifieur multimodal (fusion)</span>
+│   │   │   ├── data_loader.py       <span class="code-comment"># Chargement données</span>
+│   │   │   └── ui_utils.py          <span class="code-comment"># Fonctions UI (CSS, composants)</span>
+│   │   └── assets/          <span class="code-comment"># Images et CSS</span>
+│   └── models/
+│       └── predict_model.py <span class="code-comment"># VotingPredictor (inférence 3 modèles)</span>
+├── notebooks/               <span class="code-comment"># Notebooks d'analyse et modélisation</span>
+│   ├── 01_*.ipynb           <span class="code-comment"># Exploration des données</span>
+│   ├── 02_*.ipynb           <span class="code-comment"># Preprocessing texte + image</span>
+│   ├── 03_*.ipynb           <span class="code-comment"># Benchmarks et modélisation</span>
+│   └── 05_*.ipynb           <span class="code-comment"># Voting System et explicabilité</span>
+├── implementation/notebooks/ <span class="code-comment"># Notebooks image détaillés</span>
+│   ├── M1_IMAGE_Dino.ipynb          <span class="code-comment"># DINOv3 + MLP (91.4%)</span>
+│   ├── M2_IMAGE_XGBoost.ipynb       <span class="code-comment"># XGBoost sur features (76.5%)</span>
+│   ├── M3_IMAGE_EfficientNet.ipynb  <span class="code-comment"># EfficientNet-B0 (~75%)</span>
+│   ├── M4_IMAGE_Deep_learning_Phoenix_Overfit.ipynb <span class="code-comment"># ResNet (overfit, abandonné)</span>
+│   └── M5_IMAGE_Voting_Final.ipynb  <span class="code-comment"># Voting System final (92%)</span>
+├── models/                  <span class="code-comment"># Poids des modèles (Git LFS / Google Drive)</span>
+│   ├── M1_IMAGE_DeepLearning_DINOv3.pth   <span class="code-comment"># ~1.2 GB</span>
+│   ├── M2_IMAGE_XGBoost_Encoder.pkl       <span class="code-comment"># LabelEncoder</span>
+│   ├── M3_IMAGE_Classic_EfficientNetB0.pth <span class="code-comment"># ~16 MB</span>
+│   ├── text_classifier.joblib             <span class="code-comment"># Pipeline TF-IDF + LinearSVC</span>
+│   └── category_mapping.json              <span class="code-comment"># Code → Nom catégorie</span>
+├── reports/                 <span class="code-comment"># Livrables</span>
+│   ├── RAPPORT_FINAL_RAKUTEN.html         <span class="code-comment"># Ce document</span>
+│   └── PRESENTATION_RAKUTEN_SOUTENANCE.html <span class="code-comment"># Slides de soutenance</span>
+├── data/                    <span class="code-comment"># Données brutes (non versionnées)</span>
+└── .gitignore               <span class="code-comment"># Exclusions (données, modèles, secrets)</span>
+            </div>
+
+            <h2>E.1 Fichiers Clés</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fichier</th>
+                        <th>Rôle</th>
+                        <th>Technologies</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>real_classifier.py</code></td>
+                        <td>Classifieur multimodal : charge les 3 modèles image + le modèle texte, effectue la fusion pondérée (60% image, 40% texte)</td>
+                        <td>PyTorch, scikit-learn, joblib</td>
+                    </tr>
+                    <tr>
+                        <td><code>predict_model.py</code></td>
+                        <td>VotingPredictor : orchestre le vote pondéré (4/7 DINOv3, 2/7 EfficientNet, 1/7 XGBoost) avec sharpening</td>
+                        <td>PyTorch, XGBoost, NumPy</td>
+                    </tr>
+                    <tr>
+                        <td><code>config.py</code></td>
+                        <td>Configuration centralisée : chemins des modèles, paramètres de fusion, format image</td>
+                        <td>Python pathlib</td>
+                    </tr>
+                    <tr>
+                        <td><code>M5_IMAGE_Voting_Final.ipynb</code></td>
+                        <td>Notebook principal : construction du Voting System, calibration, tests de robustesse</td>
+                        <td>PyTorch, sklearn, matplotlib</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
 
         <!-- Footer -->

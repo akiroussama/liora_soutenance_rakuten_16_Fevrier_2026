@@ -11,16 +11,13 @@ root_dir = os.path.abspath(os.path.join(current_dir, "../../../"))
 if root_dir not in sys.path:
     sys.path.append(root_dir)
 
-from config import MODELS_DIR, TEXT_MODEL_PATH, CATEGORY_MAPPING_PATH
+from config import MODELS_DIR, TEXT_MODEL_PATH, CATEGORY_MAPPING_PATH, FUSION_W_IMAGE, FUSION_W_TEXT
 from src.models.predict_model import VotingPredictor
 
 class MultimodalClassifier:
     def __init__(self):
-        # MISE A JOUR STRATEGIQUE :
-        # Puisque nous avons fiabilisé l'image (DINOv3 + Sharpening),
-        # nous augmentons sa part dans la décision finale.
-        self.w_text = 0.4
-        self.w_image = 0.6
+        self.w_text = FUSION_W_TEXT
+        self.w_image = FUSION_W_IMAGE
         
         # 1. Chargement du Mapping
         try:

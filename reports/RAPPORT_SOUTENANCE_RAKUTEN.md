@@ -5,13 +5,13 @@
 
 **Équipe** :
 - Johan FRACHON
-- Liviu [NOM]
-- Hery [NOM]
+- Liviu ANDRONIC
+- Hery M. RALAIMANANTSOA
 - Oussama AKIR
 
 **Mentor** : Antoine
 
-**Date de soutenance** : Semaine du 16 février 2025
+**Date de soutenance** : Semaine du 16 février 2026
 
 ---
 
@@ -379,7 +379,7 @@ streamlit run src/streamlit/app.py
 | **Format** | PDF |
 | **Police** | 11-12pt |
 | **Interligne** | 1.15-1.5 |
-| **Deadline** | 11 février 2025 |
+| **Deadline** | 11 février 2026 |
 
 ---
 
