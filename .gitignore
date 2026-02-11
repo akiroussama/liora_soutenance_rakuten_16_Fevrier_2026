@@ -11,7 +11,9 @@ __pycache__/
 *.pyo
 .ipynb_checkpoints/
 
-# Models (weights)
+# Models (downloaded at runtime from HF Hub)
+models/*
+!models/.gitkeep
 *.pth
 *.pkl
 *.joblib
