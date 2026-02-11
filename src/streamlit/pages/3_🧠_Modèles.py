@@ -74,7 +74,7 @@ with tabs[0]:
     # COLONNE 1 : LE RADAR
     with c1:
         st.markdown("##### 🎯 Synthèse (Radar)")
-        img_radar = str(ASSETS_DIR / "comparaison profil modele.png")
+        img_radar = str(ASSETS_DIR / "radar_models.png")
         if os.path.exists(img_radar):
             st.image(img_radar, use_container_width=True)
             st.caption("✅ **Analyse :** Le Voting (Rouge) enveloppe les autres modèles, cumulant robustesse et précision.")
@@ -84,7 +84,7 @@ with tabs[0]:
     # COLONNE 2 : LA CALIBRATION
     with c2:
         st.markdown("##### 📐 Calibration (XGBoost)")
-        img_calib = str(ASSETS_DIR / "calibré.png")
+        img_calib = str(ASSETS_DIR / "calibration.png")
         if os.path.exists(img_calib):
             st.image(img_calib, use_container_width=True)
             st.caption("✅ **Correction :** Le 'Sharpening' (Vert) force XGBoost à trancher pour ne pas diluer le vote.")
