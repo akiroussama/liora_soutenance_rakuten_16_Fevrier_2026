@@ -1,5 +1,9 @@
 """
-Page d'exploration des données Rakuten.
+Page 1 — Dataset Exploration.
+
+Shows class distribution (27 categories), text statistics (designation/description),
+sample products per category, and class imbalance analysis (ratio 13.4x).
+Falls back to realistic mock data if CSVs are not available.
 """
 import streamlit as st
 import plotly.express as px

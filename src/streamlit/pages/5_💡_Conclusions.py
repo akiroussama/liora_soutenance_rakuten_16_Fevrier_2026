@@ -1,5 +1,9 @@
 """
-Page de conclusions et perspectives.
+Page 5 — Conclusions & Perspectives.
+
+Summarizes results (~94% fusion accuracy), business impact (5min -> <1s per product),
+known limitations (minority classes, temporal drift), and future improvements
+(CamemBERT, CLIP, OCR on images, CI/CD monitoring pipeline).
 """
 import streamlit as st
 import sys

@@ -1,5 +1,13 @@
 """
-Page de démonstration interactive.
+Page 4 — Interactive Demo (PoC).
+
+Three tabs for live classification using real trained models:
+  - Text:   Enter a product description -> LinearSVC prediction
+  - Image:  Upload a product photo -> Voting System (DINOv3+EfficientNet+XGBoost)
+  - Fusion: Both inputs + adjustable weight slider (default 60% image / 40% text)
+
+Business context: automates product classification from ~5min/product (manual)
+to <1s (AI) with 88% full automation rate at 80% confidence threshold.
 """
 import streamlit as st
 import time
@@ -9,9 +17,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from config import APP_CONFIG, ASSETS_DIR
+from config import APP_CONFIG, ASSETS_DIR, MODELS_DIR
 from utils.ui_utils import load_css
 from utils.real_classifier import MultimodalClassifier
+from utils.model_downloader import ensure_models
 
 st.set_page_config(
     page_title=f"Démo - {APP_CONFIG['title']}",
@@ -34,9 +43,10 @@ Le taux d'automatisation avec seuil de confiance à 80% est de **88%** (les 12% 
 """)
 st.markdown("---")
 
-# chargement unique du cerveau
+# Download models from HF Hub if not present locally (runs once, cached)
 @st.cache_resource
 def get_clf():
+    ensure_models(MODELS_DIR)
     return MultimodalClassifier()
 
 clf = get_clf()

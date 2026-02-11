@@ -21,6 +21,7 @@ __pycache__/
 *.pem
 *.env
 .env
+.streamlit/secrets.toml
 
 # IDE
 .vscode/

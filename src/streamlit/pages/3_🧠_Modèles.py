@@ -1,5 +1,9 @@
 """
-Page Architecture & Modèles.
+Page 3 — Model Architecture.
+
+Tab 1 (Vision): Graphviz voting pipeline diagram (DINOv3 x4, EfficientNet x2, XGBoost x1),
+radar chart, calibration plot, and inter-model correlation matrix.
+Tab 2 (Text): NLP pipeline code block, benchmark table (LinearSVC 83% > CamemBERT 81%).
 """
 import streamlit as st
 import pandas as pd

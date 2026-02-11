@@ -1,5 +1,9 @@
 """
-Page de présentation du pipeline de preprocessing.
+Page 2 — Preprocessing Pipeline.
+
+Visualizes the text pipeline (cleaning -> language detection -> TF-IDF ~280K features)
+and image pipeline (resize 224px -> ImageNet normalization -> DINOv3 feature extraction).
+Includes an interactive demo: paste raw HTML text, see cleaned output.
 """
 import streamlit as st
 import re
