@@ -1205,14 +1205,14 @@
         /* Print Styles - Comprehensive */
         @media print {
 
-            /* Reset page with generous margins */
+            /* Page margins: top/bottom via @page, left/right via container padding */
             @page {
                 size: A4;
-                margin: 18mm 20mm 18mm 20mm;
+                margin: 15mm 0 15mm 0;
             }
 
             @page :first {
-                margin-top: 15mm;
+                margin-top: 10mm;
             }
 
             /* Hide print button */
@@ -1237,7 +1237,7 @@
             }
 
             .document-container {
-                padding: 0;
+                padding: 0 20mm !important;
                 margin: 0;
                 box-shadow: none;
                 max-width: 100% !important;
