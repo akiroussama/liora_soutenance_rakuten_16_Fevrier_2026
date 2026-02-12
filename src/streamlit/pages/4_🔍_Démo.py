@@ -1,17 +1,27 @@
 """
-Page de démonstration interactive.
+Page 4 — Interactive Demo (PoC).
+
+Three tabs for live classification using real trained models:
+  - Text:   Enter a product description -> LinearSVC prediction
+  - Image:  Upload a product photo -> Voting System (DINOv3+EfficientNet+XGBoost)
+  - Fusion: Both inputs + adjustable weight slider (default 60% image / 40% text)
+
+Business context: automates product classification from ~5min/product (manual)
+to <1s (AI) with 88% full automation rate at 80% confidence threshold.
 """
 import streamlit as st
 import time
+import os
 import sys
 import pandas as pd
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from config import APP_CONFIG, ASSETS_DIR
+from config import APP_CONFIG, ASSETS_DIR, MODELS_DIR
 from utils.ui_utils import load_css
 from utils.real_classifier import MultimodalClassifier
+from utils.model_downloader import ensure_models
 
 st.set_page_config(
     page_title=f"Démo - {APP_CONFIG['title']}",
@@ -34,9 +44,23 @@ Le taux d'automatisation avec seuil de confiance à 80% est de **88%** (les 12% 
 """)
 st.markdown("---")
 
-# chargement unique du cerveau
+# Architecture visuelle de la demo
+with st.expander("Architecture du systeme de classification", expanded=False):
+    img_explain = str(ASSETS_DIR / "explainability_drive.png")
+    if os.path.exists(img_explain):
+        st.image(img_explain, use_container_width=True)
+        st.caption("Les 3 modeles du Voting analysent chaque image differemment : "
+                   "DINOv3 (attention globale), EfficientNet (details), XGBoost (features statistiques).")
+
+    img_accuracy = str(ASSETS_DIR / "model_accuracy_comparison.png")
+    if os.path.exists(img_accuracy):
+        st.image(img_accuracy, use_container_width=True)
+        st.caption("Le VOTING combine les 3 avis pour atteindre 92.4% d'accuracy image.")
+
+# Download models from HF Hub if not present locally (runs once, cached)
 @st.cache_resource
 def get_clf():
+    ensure_models(MODELS_DIR)
     return MultimodalClassifier()
 
 clf = get_clf()

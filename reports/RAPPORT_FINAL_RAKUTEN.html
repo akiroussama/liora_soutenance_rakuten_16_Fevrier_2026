@@ -1208,7 +1208,7 @@
             /* Page margins: top/bottom via @page, left/right via container padding */
             @page {
                 size: A4;
-                margin: 30mm 0 18mm 0;
+                margin: 35mm 0 18mm 0;
             }
 
             @page :first {
@@ -1317,17 +1317,27 @@
                 display: none;
             }
 
-            /* TOC */
+            /* TOC - tighter spacing for print */
             .toc-page {
                 page-break-after: always;
             }
+            .toc-title {
+                margin-bottom: 1.5rem;
+            }
+            .toc-part {
+                margin-top: 0.8rem;
+                margin-bottom: 0.3rem;
+                padding: 0.4rem 0.75rem;
+            }
+            .toc-section {
+                padding: 0.25rem 0;
+                padding-left: 1.5rem;
+            }
 
-            /* Part dividers */
+            /* Part dividers — no fixed height, let page-break handle isolation */
             .part-divider {
                 page-break-before: always;
                 page-break-after: always;
-                min-height: 100vh;
-                height: 100vh;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -1383,8 +1393,19 @@
             .callout,
             .code-block,
             .formula-box,
-            .key-result {
+            .key-result,
+            .metrics-grid,
+            .exec-metrics,
+            .metric-card {
                 page-break-inside: avoid;
+            }
+
+            /* TOC: keep part headers with their sections */
+            .toc-part {
+                page-break-after: avoid;
+            }
+            .toc-page nav {
+                page-break-inside: auto;
             }
 
             img {

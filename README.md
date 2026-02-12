@@ -1,45 +1,112 @@
-BMLE Rakuten DS Project - Oct 2025
-==============================
+# Rakuten Product Classifier
 
-This repo is a Starting Pack for DS projects. You can rearrange the structure to make it fits your project.
+Multimodal e-commerce product classification into 27 categories using text and image pipelines, fused via late fusion.
 
-Project Organization
-------------
+| Pipeline | Model | F1-Score |
+|----------|-------|----------|
+| Text | TF-IDF + LinearSVC | 83% |
+| Image | Voting (DINOv3 + EfficientNet + XGBoost) | 92% |
+| **Fusion** | **Late Fusion (60/40)** | **~94%** |
 
-    ├── LICENSE
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data               <- Should be in your computer but not on Github (only in .gitignore)
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's name, and a short `-` delimited description, e.g.
-    │                         `1.0-alban-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, links, and all other explanatory materials.
-    │
-    ├── reports            <- The reports that you'll make during this project as PDF
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   ├── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │   │   └── visualize.py
+**Team**: Johan Frachon, Liviu Andronic, Hery M. Ralaimanantsoa, Oussama Akir
+**Program**: Machine Learning Engineer (RNCP) -- DataScientest x Mines Paris-PSL (Oct 2025)
 
---------
+**Live Demo**: [akiroussama-rakuten-classifier.hf.space](https://akiroussama-rakuten-classifier.hf.space)
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/akiroussama/liora_soutenance_rakuten_16_Fevrier_2026.git
+cd liora_soutenance_rakuten_16_Fevrier_2026
+pip install -r requirements.txt
+```
+
+Configure model downloads (one of):
+- Copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` and fill in `repo_id`
+- Or set env var: `export HF_REPO_ID=akiroussama/rakuten-models`
+
+```bash
+streamlit run src/streamlit/app.py
+```
+
+Models (~2.5 GB) are downloaded automatically from [Hugging Face Hub](https://huggingface.co/akiroussama/rakuten-models) on first launch.
+
+---
+
+## Architecture
+
+```
+Product Input (text + image)
+         |
+    +----+----+
+    v         v
+  TEXT       IMAGE
+    |         |
+ TF-IDF    +--+----------+
+    |       v  v          v
+ LinearSVC  DINOv3  EfficientNet  XGBoost
+  (83%)     (w=4/7)  (w=2/7)     (w=1/7)
+    |         +------+------+
+    |            VOTING (92%)
+    |                |
+    +----- LATE FUSION (60% image / 40% text) --- ~94%
+```
+
+---
+
+## Project Structure
+
+```
+.
+├── src/
+│   ├── features/
+│   │   └── build_features.py        # Image preprocessing (DINOv3 518px / standard 224px)
+│   ├── models/
+│   │   └── predict_model.py         # VotingPredictor — 3-model ensemble with sharpening
+│   └── streamlit/
+│       ├── app.py                   # Home page & entry point
+│       ├── config.py                # Paths, fusion weights, HF repo ID
+│       ├── pages/                   # 5 interactive pages
+│       ├── utils/                   # Classifiers, data loading, preprocessing
+│       ├── assets/                  # CSS + model charts
+│       └── tests/                   # Unit, integration, robustness tests
+├── models/                          # Downloaded at runtime from HF Hub (gitignored)
+├── .streamlit/                      # Streamlit config + secrets template
+├── requirements.txt
+└── LICENSE
+```
+
+---
+
+## Models
+
+All model weights are hosted on [Hugging Face Hub](https://huggingface.co/akiroussama/rakuten-models) and downloaded automatically at runtime.
+
+| File | Size | Role |
+|------|------|------|
+| `M1_IMAGE_DeepLearning_DINOv3.pth` | 1.2 GB | DINOv3 ViT-Large (91.4% standalone) |
+| `M3_IMAGE_Classic_EfficientNetB0.pth` | 16 MB | EfficientNet-B0 CNN (~75%) |
+| `M2_IMAGE_XGBoost_Encoder.pkl` | <1 KB | Label encoder for XGBoost |
+| `text_classifier.joblib` | 32 MB | TF-IDF FeatureUnion + LinearSVC (83%) |
+| `category_mapping.json` | 4 KB | 27-category code-to-name mapping |
+
+XGBoost model (`M2_IMAGE_Classic_XGBoost.json`) is optional. The Voting System falls back to DINOv3 + EfficientNet (weights 4:2) when unavailable.
+
+---
+
+## Tests
+
+```bash
+cd src/streamlit
+python -m pytest tests/test_robustness.py -v
+```
+
+38 tests covering: model download fallbacks, graceful degradation with missing models, voting weight correctness, error message clarity, prediction format regression, 27-class integrity, and app structure validation.
+
+---
+
+## License
+
+MIT

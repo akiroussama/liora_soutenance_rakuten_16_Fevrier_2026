@@ -1,5 +1,9 @@
 """
-Application Streamlit - Classification de produits Rakuten.
+Home page — Rakuten Product Classifier.
+
+Entry point for the Streamlit multi-page app. Displays project overview,
+key metrics (84K products, 27 categories, ~94% fusion accuracy),
+pipeline summary, and navigation buttons to Demo and Data pages.
 """
 import streamlit as st
 from config import APP_CONFIG, MODEL_CONFIG, ASSETS_DIR
