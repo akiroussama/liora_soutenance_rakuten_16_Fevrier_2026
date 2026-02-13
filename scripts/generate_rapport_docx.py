@@ -202,7 +202,7 @@ def create_rapport():
     metrics = [
         ("84 916", "Produits"),
         ("27", "Catégories"),
-        ("92%", "Accuracy Image"),
+        ("~79%", "Accuracy Image"),
         ("83%", "Accuracy Texte")
     ]
 
@@ -254,7 +254,7 @@ def create_rapport():
     run = p.add_run("Voting System d'images")
     run.bold = True
     run = p.add_run(" fusionnant trois architectures complémentaires : DINOv3 (Vision Transformer), XGBoost sur features ResNet, et EfficientNet-B0. Ce système de vote atteint ")
-    run = p.add_run("92% d'accuracy")
+    run = p.add_run("~79% d'accuracy")
     run.bold = True
     run = p.add_run(" sur les images seules.")
 
@@ -278,9 +278,9 @@ def create_rapport():
     table.style = 'Table Grid'
 
     results = [
-        ("Accuracy Image (Voting)", "92%"),
+        ("Accuracy Image (Voting)", "~79%"),
         ("Accuracy Texte (LinearSVC)", "83%"),
-        ("Fusion Multimodale", "~94%"),
+        ("Fusion Multimodale", "F1~0.85"),
         ("Catégories Classifiées", "27")
     ]
 
@@ -609,7 +609,7 @@ def create_rapport():
 
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run("Du Transfer Learning au Voting System à 92%")
+    run = p.add_run("Du Transfer Learning au Voting System à ~79%")
     run.font.size = Pt(11)
     run.font.italic = True
     run.font.color.rgb = RGBColor(0x6B, 0x72, 0x80)
@@ -710,7 +710,7 @@ def create_rapport():
     # Big result
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run("RÉSULTAT VOTING SYSTEM : 92% ACCURACY")
+    run = p.add_run("RÉSULTAT VOTING SYSTEM : ~79% ACCURACY")
     run.font.name = 'Georgia'
     run.font.size = Pt(18)
     run.font.bold = True
@@ -761,8 +761,8 @@ def create_rapport():
     fusion_data = [
         ["Configuration", "Accuracy", "F1 Weighted", "Avantage"],
         ["Texte seul (LinearSVC)", "83%", "0.83", "Rapide, interprétable"],
-        ["Image seule (Voting)", "92%", "~0.92", "Haute performance"],
-        ["Fusion Multimodale", "~94%", "~0.93", "Robustesse maximale"]
+        ["Image seule (Voting)", "~79%", "~0.79", "Diversité architecturale"],
+        ["Fusion Multimodale", "~85%", "~0.85", "Robustesse maximale"]
     ]
 
     for i, row_data in enumerate(fusion_data):
@@ -811,7 +811,7 @@ def create_rapport():
 
     doc.add_heading("Contributions Principales", level=2)
     p = doc.add_paragraph("• Méthodologie : Pipeline complet de preprocessing texte et image avec gestion du déséquilibre de classes (ratio 1:13)", style='List Bullet')
-    p = doc.add_paragraph("• Performance : Voting System innovant combinant 3 architectures pour atteindre 92% sur les images", style='List Bullet')
+    p = doc.add_paragraph("• Performance : Voting System innovant combinant 3 architectures pour atteindre ~79% sur les images", style='List Bullet')
     p = doc.add_paragraph("• Application : Interface Streamlit multimodale fonctionnelle avec visualisations et explicabilité", style='List Bullet')
 
     # Section 7.3

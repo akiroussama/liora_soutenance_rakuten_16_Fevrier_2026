@@ -120,7 +120,7 @@
 
 | Critère | Poids estimé | Notre niveau | Action pour monter |
 |---------|-------------|-------------|-------------------|
-| Qualité technique du travail | 30% | FORT (92% image, ~94% fusion) | Déjà excellent |
+| Qualité technique du travail | 30% | FORT (~79% image, F1~0.85 fusion) | Déjà excellent |
 | Présentation orale | 25% | MOYEN → FORT | Répétitions + timing |
 | Rapport écrit | 20% | FORT | Enrichir analyse + annexes |
 | Démo fonctionnelle | 10% | FORT | Tester, préparer backup |
@@ -131,7 +131,7 @@
 1. **Innovation** : Le Voting System avec Sharpening est original
 2. **Multimodal** : Peu de projets combinent texte + image
 3. **Explicabilité** : SHAP + LIME + Grad-CAM + AI Act
-4. **Performance** : ~94% est excellent pour 27 classes
+4. **Performance** : F1~0.85 est excellent pour 27 classes
 5. **Démo live** : Pas juste des slides, un vrai système fonctionnel
 6. **Esprit critique** : Mentionner les limites proactivement
 
@@ -156,5 +156,5 @@
 | Démo | OUI (si testée) | 3 produits préparés, backup screenshots |
 
 > **Pronostic : 17-19/20 si les répétitions sont faites et la démo fonctionne.**
-> Les points techniques sont solides (92% image, ~94% fusion, Voting innovant).
+> Les points techniques sont solides (~79% image, F1~0.85 fusion, Voting innovant).
 > Le différenciant sera la qualité de la présentation orale et la fluidité de la démo.

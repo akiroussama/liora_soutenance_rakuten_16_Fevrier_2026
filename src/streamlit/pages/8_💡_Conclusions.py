@@ -1,7 +1,7 @@
 """
 Page 6 — Conclusions & Perspectives.
 
-Summarizes results (~94% fusion accuracy), business impact (5min -> <1s per product),
+Summarizes results (F1~0.85 fusion), business impact (5min -> <1s per product),
 known limitations (minority classes, temporal drift), and future improvements
 (CamemBERT, CLIP, OCR on images, CI/CD monitoring pipeline).
 """
@@ -34,13 +34,13 @@ st.divider()
 st.header("Resultats Cles")
 
 col1, col2, col3, col4 = st.columns(4)
-col1.metric("Accuracy Fusion", "~94%", "+11% vs texte seul")
+col1.metric("F1 Fusion", "~0.85", "+0.02 vs texte seul")
 col2.metric("Categories", "27", "Toutes couvertes")
 col3.metric("Modeles testes", "40+", "DL + ML + NLP")
 col4.metric("Champion Texte", "LinearSVC", "F1 = 83%")
 
 st.success("Classification automatique de **84 916 produits** en 27 categories, "
-           "avec un systeme de fusion texte+image atteignant ~94% d'accuracy.")
+           "avec un systeme de fusion texte+image atteignant un F1-score d'environ 0.85.")
 
 # Image recapitulative : accuracy par modele
 img_accuracy = str(ASSETS_DIR / "model_accuracy_comparison.png")
@@ -48,15 +48,15 @@ if os.path.exists(img_accuracy):
     c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
         st.image(img_accuracy, width="stretch")
-        st.caption("Accuracy par modele : le VOTING (92.4%) surpasse chaque modele individuel.")
+        st.caption("Accuracy par modele (scores corriges). XGBoost (85.32%) est le champion individuel, Voting (79.28%) apporte la robustesse.")
 
 # Graphique funnel : progression des resultats
 st.subheader("Progression des Performances")
 
 fig_funnel = go.Figure(go.Funnel(
-    y=["Baseline (RandomForest)", "Texte (LinearSVC)", "Image (Voting 3 modeles)",
+    y=["Baseline (RandomForest)", "Image (Voting 3 modeles)", "Texte (LinearSVC)",
        "Fusion (Texte + Image)"],
-    x=[72, 83, 92.4, 94],
+    x=[72, 79, 83, 85],
     textinfo="value+percent initial",
     marker=dict(color=["#FFCDD2", "#EF9A9A", "#E57373", "#BF0000"]),
 ))
@@ -85,7 +85,7 @@ with col2:
     st.subheader("Apres (IA)")
     st.markdown("""
     - Temps : **< 1 sec/produit**
-    - Erreur : **~6%** (fusion)
+    - Erreur : **~15%** (fusion)
     - Scalabilite : **100K+/jour** (1 serveur)
     - Taux automatisation : **88%** (seuil 80%)
     """)
@@ -104,7 +104,7 @@ if os.path.exists(img_radar):
     c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
         st.image(img_radar, width="stretch")
-        st.caption("Profils des modeles : le VOTING (rouge) enveloppe tous les modeles individuels.")
+        st.caption("Profils des modeles. XGBoost domine en accuracy (85.32%), le Voting apporte diversite et robustesse.")
 
 # ROI chart
 st.subheader("Retour sur Investissement")
@@ -120,10 +120,10 @@ fig_roi.add_trace(go.Bar(
 ))
 fig_roi.add_trace(go.Bar(
     x=["Temps/produit", "Taux erreur", "Volume/jour", "Automatisation"],
-    y=[1, 6, 100, 88],
+    y=[1, 15, 100, 70],
     name="Apres (IA)",
     marker_color="#BF0000",
-    text=["< 1 sec", "6%", "100K+/jour", "88%"],
+    text=["< 1 sec", "~15%", "100K+/jour", "~70%"],
     textposition="auto",
 ))
 fig_roi.update_layout(
@@ -193,7 +193,7 @@ st.header("Conclusion")
 
 st.info("""
 **Mission accomplie** : Classification multimodale de produits e-commerce
-avec **~94% d'accuracy** (fusion texte+image). Solution deployee sur
+avec un **F1-score d'environ 0.85** (fusion texte+image). Solution deployee sur
 Hugging Face Spaces, scalable a 100K+ produits/jour, avec
 interpretabilite complete (SHAP, Grad-CAM) et conformite AI Act.
 """)
@@ -202,10 +202,10 @@ interpretabilite complete (SHAP, Grad-CAM) et conformite AI Act.
 with st.sidebar:
     st.markdown("### Conclusions")
     st.divider()
-    st.success("Accuracy: ~94%")
+    st.success("F1 Fusion: ~0.85")
     st.success("27 categories")
     st.success("40+ modeles testes")
-    st.success("88% automatisation")
+    st.success("~70% automatisation")
     st.divider()
     st.markdown("**Remerciements**")
     st.markdown("DataScientest, Mentors, Equipe")

@@ -40,11 +40,11 @@
 
 **[ACTION : Ouvrir le navigateur sur http://localhost:8502 — Page Accueil]**
 
-> Le jury voit : 4 metriques en gros (84 916 / 27 / Texte+Image / ~94%), le pipeline en 3 colonnes, et la grille des 27 categories avec emojis.
+> Le jury voit : 4 metriques en gros (84 916 / 27 / Texte+Image / F1~0.85), le pipeline en 3 colonnes, et la grille des 27 categories avec emojis.
 
 **"Voici notre application deployee sur Hugging Face Spaces.**
 
-**En haut, les chiffres cles — 84 916 produits, 27 categories, deux modalites texte et image, et ~94% de precision globale.**
+**En haut, les chiffres cles — 84 916 produits, 27 categories, deux modalites texte et image, et un F1 de 0.85 en fusion.**
 
 **En dessous, notre pipeline : le texte passe par un nettoyage et TF-IDF, l'image par DINOv3, et la fusion combine les deux.**
 
@@ -131,7 +131,7 @@
 
 **DINOv3 regarde l'ensemble, EfficientNet les details, XGBoost les statistiques.**
 
-**Et le resultat — le Voting a 92.4% surpasse chaque modele individuel. En fusionnant avec le texte : ~94%."**
+**Et le resultat — le Voting combine ces 3 visions pour atteindre 79% en image. Le texte a 83% est notre modalite la plus forte. En fusion : F1~0.85."**
 
 ---
 
@@ -153,7 +153,7 @@
 **[ECRAN : rester sur la page Performance]**
 **[REGARD : se tourner vers Michael]**
 
-**"Vous venez de voir le systeme en action : texte, image, fusion. ~94% d'accuracy, en temps reel.**
+**"Vous venez de voir le systeme en action : texte, image, fusion. F1~0.85, en temps reel.**
 
 **La question maintenant : comment on y arrive ?**
 

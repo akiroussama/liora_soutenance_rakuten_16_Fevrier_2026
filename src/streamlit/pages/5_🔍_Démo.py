@@ -59,7 +59,7 @@ with st.expander("Architecture du systeme de classification", expanded=False):
         c1, c2, c3 = st.columns([1, 2, 1])
         with c2:
             st.image(img_accuracy, width="stretch")
-            st.caption("Le VOTING combine les 3 avis pour atteindre 92.4% d'accuracy image.")
+            st.caption("Le VOTING combine 3 architectures complementaires pour une accuracy image de 79.28%.")
 
 # Download models from HF Hub if not present locally (runs once, cached)
 @st.cache_resource

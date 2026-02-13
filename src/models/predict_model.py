@@ -2,9 +2,9 @@
 Voting Predictor — Ensemble inference engine for image classification.
 
 Combines three models via weighted soft voting:
-  - M1: DINOv3 ViT-Large (weight 4/7) — best single model, self-supervised features
-  - M2: XGBoost on ResNet50 features (weight 1/7) — uncorrelated with neural nets
-  - M3: EfficientNet-B0 (weight 2/7) — lightweight CNN for diversity
+  - M1: DINOv3 ViT-Large (weight 4/7) — self-supervised features, 79.43%
+  - M2: XGBoost on ResNet50 features (weight 1/7) — best single model at 85.32%
+  - M3: EfficientNet-B0 (weight 2/7) — lightweight CNN for diversity, 66.63%
 
 XGBoost probabilities are "sharpened" (p^3 / sum(p^3)) to prevent
 its flat distributions from diluting confident predictions from DINOv3.

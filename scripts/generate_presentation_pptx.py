@@ -196,7 +196,7 @@ def create_presentation():
     # Metrics row
     add_metric_box(slide, 3, 9.5, "84 916", "Produits", RAKUTEN_RED)
     add_metric_box(slide, 8, 9.5, "27", "Categories", RAKUTEN_RED)
-    add_metric_box(slide, 13, 9.5, "92%", "Accuracy Image", SUCCESS_GREEN)
+    add_metric_box(slide, 13, 9.5, "~79%", "Accuracy Image", WARNING_ORANGE)
     add_metric_box(slide, 18, 9.5, "83%", "Accuracy Texte", WARNING_ORANGE)
 
     # Team
@@ -215,7 +215,7 @@ def create_presentation():
         ("03", "Preprocessing (TF-IDF + CNN)"),
         ("04", "Modelisation Texte - 83%"),
         ("05", "Modelisation Image (ML vs DL)"),
-        ("06", "Voting System - 92%"),
+        ("06", "Voting System - ~79%"),
         ("07", "Fusion Multimodale - 94%"),
         ("08", "Architecture End-to-End"),
         ("09", "Distribution des Classes"),
@@ -338,7 +338,7 @@ def create_presentation():
                  font_size=11, color=WARNING_ORANGE)
 
     add_text_box(slide, 13, 8, 10, 2,
-                 "Rupture Deep Learning: MLP atteint 91.4% en 58 secondes sur GPU RTX 4070.",
+                 "Apport Deep Learning: MLP atteint 79.43% en 58 secondes sur GPU RTX 4070.",
                  font_size=11, color=SUCCESS_GREEN)
 
     # ========== SLIDE 7: VOTING SYSTEM ==========
@@ -371,7 +371,7 @@ def create_presentation():
     final_box.line.fill.background()
 
     add_text_box(slide, 20.2, 4.8, 3.6, 0.6, "VOTING", font_size=12, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-    add_text_box(slide, 20.2, 5.5, 3.6, 0.8, "92%", font_size=24, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
+    add_text_box(slide, 20.2, 5.5, 3.6, 0.8, "~79%", font_size=24, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
     add_text_box(slide, 20.2, 6.5, 3.6, 0.5, "Final", font_size=10, color=WHITE, align=PP_ALIGN.CENTER)
 
     add_text_box(slide, 1.5, 8.5, 10, 1.5,
@@ -386,7 +386,7 @@ def create_presentation():
     slide = add_content_slide(prs, "FUSION", "Fusion Multimodale - Late Fusion", WARNING_ORANGE)
 
     add_text_box(slide, 1.5, 3.5, 22, 1.5,
-                 "Image (92%) x 0.6  +  Texte (83%) x 0.4  =  Final (~94%)",
+                 "Image (~79%) x 0.6  +  Texte (83%) x 0.4  =  Final (F1~0.85)",
                  font_size=18, bold=True, color=DARK_TEXT, align=PP_ALIGN.CENTER)
 
     add_text_box(slide, 1.5, 6, 10, 2.5,
@@ -396,8 +396,8 @@ def create_presentation():
     table_data = [
         ["Configuration", "Accuracy"],
         ["Texte seul", "83%"],
-        ["Image seule", "92%"],
-        ["Fusion Multimodale", "~94%"],
+        ["Image seule", "~79%"],
+        ["Fusion Multimodale", "F1~0.85"],
     ]
     add_table(slide, 13, 6, 9, table_data)
 
@@ -422,7 +422,7 @@ TF-IDF    Transfer Learning
    v         v
 LinearSVC  Voting System
   83%     (DINOv3+XGBoost+EffNet)
-   |         92%
+   |         ~79%
    |         |
    +----+----+
         |
@@ -431,7 +431,7 @@ LinearSVC  Voting System
    (alpha=0.6 img, 0.4 txt)
         |
         v
-   PREDICTION ~94%
+   PREDICTION F1~0.85
 """,
                  font_size=10, color=DARK_TEXT, align=PP_ALIGN.CENTER)
 
@@ -459,7 +459,7 @@ LinearSVC  Voting System
 
     examples = [
         ("Cas Clair", "Texte: 'Harry Potter tome 1'\nImage: Couverture livre", "-> Livres (99%)", SUCCESS_GREEN),
-        ("Image Decisive", "Texte: 'Accessoire bleu'\nImage: Bouee piscine", "-> Piscine (92%)", ACCENT_BLUE),
+        ("Image Decisive", "Texte: 'Accessoire bleu'\nImage: Bouee piscine", "-> Piscine (87%)", ACCENT_BLUE),
         ("Texte Decisif", "Texte: 'DVD Le Grand Bleu'\nImage: Pochette bleue", "-> DVD/Film (87%)", ACCENT_PURPLE),
     ]
 
@@ -481,16 +481,16 @@ LinearSVC  Voting System
     # ========== SLIDE 12: CONCLUSION ==========
     slide = add_title_slide(prs, "Conclusion & Perspectives", "")
 
-    add_metric_box(slide, 3, 4, "92%", "Image Voting", SUCCESS_GREEN)
+    add_metric_box(slide, 3, 4, "~79%", "Image Voting", WARNING_ORANGE)
     add_metric_box(slide, 10.5, 4, "83%", "Texte SVC", RAKUTEN_RED)
-    add_metric_box(slide, 18, 4, "~94%", "Fusion", WARNING_ORANGE)
+    add_metric_box(slide, 18, 4, "F1~0.85", "Fusion", SUCCESS_GREEN)
 
     add_text_box(slide, 1.5, 7.5, 7, 2,
                  "Methodologie\nPipeline complet avec gestion du desequilibre",
                  font_size=11, color=DARK_TEXT, align=PP_ALIGN.CENTER)
 
     add_text_box(slide, 9.5, 7.5, 7, 2,
-                 "Performance\nVoting System innovant a 92%",
+                 "Performance\nVoting System innovant a ~79%",
                  font_size=11, color=DARK_TEXT, align=PP_ALIGN.CENTER)
 
     add_text_box(slide, 17.5, 7.5, 7, 2,

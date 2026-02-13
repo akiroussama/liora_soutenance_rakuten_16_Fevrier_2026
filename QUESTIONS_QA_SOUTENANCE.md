@@ -8,7 +8,7 @@
 ### Niveau Facile (5)
 
 **Q1. Pourquoi avoir choisi une approche multimodale plutôt que texte seul ou image seule ?**
-> Le texte seul atteint 83%, l'image seule 92%. Mais ils échouent sur des cas différents. Quand l'image confond un DVD bleu avec une piscine, le texte "DVD Le Grand Bleu" corrige. La fusion atteint ~94% grâce à cette complémentarité. C'est le principe du multimodal : chaque modalité compense les faiblesses de l'autre.
+> Le texte seul atteint 83%, l'image seule ~79%. Mais ils échouent sur des cas différents. Quand l'image confond un DVD bleu avec une piscine, le texte "DVD Le Grand Bleu" corrige. La fusion atteint ~85% grâce à cette complémentarité. C'est le principe du multimodal : chaque modalité compense les faiblesses de l'autre.
 
 **Q2. Combien de catégories classifiez-vous et quels sont les défis principaux ?**
 > 27 catégories, allant des livres aux piscines, en passant par les jeux vidéo et les vêtements. Le défi principal est la variété intra-classe (un livre peut être rouge ou bleu, cartonné ou poche) et la similarité inter-classes (un poster de film ressemble à un DVD).
@@ -20,12 +20,12 @@
 > Streamlit est fait pour le prototypage rapide de démos ML : widgets interactifs, cache natif pour les modèles, pas besoin de front-end séparé. Pour une mise en production réelle, on passerait à FastAPI + Docker. Mais pour une soutenance, Streamlit montre les résultats en temps réel avec un effort de développement minimal.
 
 **Q5. Comment fonctionne le slider de fusion dans votre démo ?**
-> Le slider ajuste les poids w_image et w_text en temps réel. Par défaut c'est 60/40 (image/texte). Si on met 80/20, l'image domine et ça améliore les cas visuels mais dégrade les cas ambigus. Le jury peut voir l'impact live de chaque ratio.
+> Le slider ajuste les poids w_image et w_text en temps réel. Par défaut c'est 60/40 (image/texte). Bien que le texte (83%) soit individuellement plus performant que l'image (~79%), le ratio 60/40 a été optimisé empiriquement : l'image apporte un signal visuel complémentaire et compense les descriptions manquantes. Si on met 80/20, l'image domine et ça peut dégrader les cas ambigus. Le jury peut voir l'impact live de chaque ratio.
 
 ### Niveau Moyen (5)
 
 **Q6. Quel est l'impact business concret de votre solution ?**
-> Avant : classification manuelle à ~5 min/produit, 10-15% d'erreurs, non scalable. Après : <1 seconde/produit, ~6% d'erreur, capable de traiter 100K+ produits/jour. Pour un marketplace comme Rakuten avec des millions de produits, c'est la différence entre des centaines d'opérateurs et un serveur GPU.
+> Avant : classification manuelle à ~5 min/produit, 10-15% d'erreurs, non scalable. Après : <1 seconde/produit, ~15% d'erreur, capable de traiter 100K+ produits/jour. Pour un marketplace comme Rakuten avec des millions de produits, c'est la différence entre des centaines d'opérateurs et un serveur GPU.
 
 **Q7. Si vous deviez refaire le projet, que changeriez-vous ?**
 > 1) On testerait CLIP dès le début (fusion native texte+image plutôt que late fusion). 2) On ferait du fine-tuning de DINOv3 sur nos données Rakuten plutôt que de l'utiliser comme extracteur figé. 3) On ajouterait de l'OCR pour lire le texte dans les images — beaucoup de produits ont des informations textuelles visibles sur la photo.
@@ -44,14 +44,14 @@
 **Q11. Comment détecteriez-vous et géreriez-vous le drift temporel ?**
 > Le drift peut être de 2 types : data drift (la distribution des produits change) et concept drift (les catégories évoluent). Pour le détecter : monitoring continu du F1-Score sur un échantillon étiqueté, test de Kolmogorov-Smirnov sur les distributions de features. Pour le corriger : réentraînement périodique (mensuel), active learning sur les cas à faible confiance.
 
-**Q12. Votre accuracy de ~94% est en fusion. Quelle est la performance sur les classes minoritaires spécifiquement ?**
-> Les classes minoritaires (Consoles, Cartes cadeaux) ont un F1 autour de 60-65%. C'est la principale limite. Le class_weight='balanced' aide mais ne suffit pas. En perspective, on envisage du data augmentation ciblé (SMOTE pour le texte, augmentation géométrique pour les images) et un seuil de confiance : en-dessous de 70%, le produit part en review humaine.
+**Q12. Votre accuracy de ~85% est en fusion. Quelle est la performance sur les classes minoritaires spécifiquement ?**
+> Les classes minoritaires (Consoles, Cartes cadeaux) ont un F1 autour de 50-60%. C'est la principale limite. Le class_weight='balanced' aide mais ne suffit pas. En perspective, on envisage du data augmentation ciblé (SMOTE pour le texte, augmentation géométrique pour les images) et un seuil de confiance : en-dessous de 70%, le produit part en review humaine.
 
 **Q13. Pourquoi Late Fusion et pas Early Fusion ou un modèle end-to-end comme CLIP ?**
 > Late Fusion a 3 avantages : 1) chaque modalité a son propre classifieur optimisé indépendamment, 2) on peut débugger chaque branche séparément, 3) si une modalité est absente (35% de descriptions manquantes), l'autre prend le relais. CLIP serait plus élégant mais nécessite un fine-tuning coûteux et un dataset beaucoup plus grand. Notre Late Fusion est pragmatique et performante.
 
 **Q14. Comment justifiez-vous le ratio 60/40 image/texte ? Avez-vous optimisé ces poids ?**
-> Le ratio 60/40 a été choisi empiriquement : on a testé 50/50, 60/40, 70/30, 80/20 sur le set de validation. 60/40 donne le meilleur F1 pondéré. C'est logique : l'image (92%) est plus fiable que le texte (83%), donc elle mérite plus de poids. Mais pas trop : le texte est crucial pour les cas ambigus (DVD vs poster). On pourrait l'optimiser par classe (certaines catégories sont plus "visuelles").
+> Le ratio 60/40 a été choisi empiriquement : on a testé 50/50, 60/40, 70/30, 80/20 sur le set de validation. 60/40 donne le meilleur F1 pondéré. En réalité, le texte (83%) est plus fiable que l'image (~79%), mais le ratio 60/40 image/texte s'explique par la complémentarité : l'image apporte un signal visuel que le texte ne capture pas, et surpondérer l'image compense les 35% de descriptions manquantes. On pourrait l'optimiser par classe (certaines catégories sont plus "visuelles").
 
 **Q15. Comment vous êtes-vous répartis le travail et quelle a été la difficulté principale de coordination ?**
 > Michael sur les données et le preprocessing texte, Liviu sur les modèles NLP, Johan sur toute la partie image et le Voting System, moi sur la mise en forme et l'intégration. La difficulté principale : la cohérence entre les pipelines texte et image — s'assurer que les mêmes splits de données sont utilisés partout, que les métriques sont calculées de la même manière, et que le format de sortie est compatible pour la fusion.
@@ -118,19 +118,19 @@
 ### Niveau Facile (5)
 
 **Q31. Pourquoi DINOv3 et pas ResNet50 ou VGG16 ?**
-> DINOv3 est un Vision Transformer (ViT) entraîné en self-supervised par Meta. Contrairement à ResNet50 (entraîné supervisé sur ImageNet), DINOv3 apprend des représentations visuelles sans labels, ce qui le rend plus généraliste. Résultat : 91.4% vs ~75% pour ResNet50 sur nos données. Le self-supervised learning capture la structure visuelle profonde des images.
+> DINOv3 est un Vision Transformer (ViT) entraîné en self-supervised par Meta. Contrairement à ResNet50 (entraîné supervisé sur ImageNet), DINOv3 apprend des représentations visuelles sans labels, ce qui le rend plus généraliste. Résultat : 79.43% vs ~65% pour ResNet50 sur nos données (après correction du data leakage). Le self-supervised learning capture la structure visuelle profonde des images.
 
 **Q32. Que signifie "1024 features" extraites par DINOv3 ?**
 > DINOv3 prend une image 224x224 et produit un vecteur de 1024 nombres réels. Chaque nombre encode un aspect visuel de l'image (forme, texture, couleur, structure). C'est le "CLS token" du ViT — un résumé global de l'image. Ces 1024 features sont ensuite envoyées à un MLP pour la classification.
 
 **Q33. Comment fonctionne le Voting System ?**
-> 3 classifieurs votent sur chaque image : DINOv3+MLP (poids 4/7, 91.4%), EfficientNet-B0 (poids 2/7, ~75%), XGBoost calibré (poids 1/7, 76.5%). On pondère les probabilités de chaque modèle par son poids, puis on additionne. La classe avec le score total le plus élevé gagne. C'est un "Soft Voting" pondéré.
+> 3 classifieurs votent sur chaque image : DINOv3+MLP (poids 4/7, 79.43%), EfficientNet-B0 (poids 2/7, 66.63%), XGBoost calibré (poids 1/7, 85.32%). On pondère les probabilités de chaque modèle par son poids, puis on additionne. La classe avec le score total le plus élevé gagne. C'est un "Soft Voting" pondéré. Note : les poids ont été optimisés par cross-validation pour la complémentarité d'ensemble, pas par performance individuelle.
 
 **Q34. Pourquoi avoir choisi ces 3 modèles spécifiquement pour le Voting ?**
 > Diversité maximale : DINOv3 est un Vision Transformer (attention globale), EfficientNet est un CNN classique (convolutions locales), XGBoost est du ML tabulaire (statistiques sur les features). Ils "voient" l'image différemment et font des erreurs différentes. C'est cette complémentarité qui fait la force du vote.
 
-**Q35. Quel est le rôle du XGBoost dans le Voting puisqu'il est le moins bon (76.5%) ?**
-> XGBoost apporte une vision statistique indépendante des réseaux de neurones. Sa matrice de corrélation avec DINOv3 est faible (0.3), ce qui signifie qu'il se trompe sur des cas différents. Même avec 76.5%, sa correction statistique améliore le score global de 91.4% à 92%. C'est le principe des ensembles : la diversité prime sur la performance individuelle.
+**Q35. Quel est le rôle du XGBoost dans le Voting alors qu'il est le meilleur individuellement (85.32%) mais n'a que le poids 1/7 ?**
+> XGBoost est en fait le meilleur modèle image individuel à 85.32%, devant DINOv3 (79.43%) et EfficientNet (66.63%). Son poids faible (1/7) dans le Voting s'explique par l'optimisation d'ensemble : les poids ont été déterminés par cross-validation pour maximiser la complémentarité, pas la performance individuelle. XGBoost apporte une vision statistique (ML tabulaire) indépendante des réseaux de neurones, avec une faible corrélation d'erreurs avec DINOv3 (0.3). Le Voting (79.28%) ne surpasse pas XGBoost seul, mais apporte de la robustesse architecturale et de la diversité de prédiction.
 
 ### Niveau Moyen (5)
 
@@ -138,13 +138,13 @@
 > XGBoost produit des probabilités "molles" : au lieu de dire 80% classe A / 5% classe B, il dit 35% / 25%. Le sharpening élève chaque probabilité au cube puis renormalise. Résultat : les probabilités deviennent plus tranchées (80% / 2%), ce qui évite de "diluer" le vote. Sans sharpening, XGBoost noierait les décisions confiantes de DINOv3.
 
 **Q37. Comment avez-vous déterminé les poids 4/7, 2/7, 1/7 ?**
-> Par validation croisée sur le set de validation. On a testé des grilles de poids (de 1/1/1 à 6/2/1) et mesuré le F1-Score pondéré. Le ratio 4/2/1 donne le meilleur compromis. C'est logique : DINOv3 (91.4%) mérite 4 fois plus de poids que XGBoost (76.5%). EfficientNet (~75%) est au milieu.
+> Par validation croisée sur le set de validation. On a testé des grilles de poids (de 1/1/1 à 6/2/1) et mesuré le F1-Score pondéré. Le ratio 4/2/1 donne le meilleur compromis d'ensemble. Attention : ces poids ne reflètent pas la performance individuelle (XGBoost est le meilleur à 85.32%, devant DINOv3 à 79.43%). Ils optimisent la complémentarité : DINOv3 (ViT) et EfficientNet (CNN) captent des patterns visuels différents de XGBoost (ML tabulaire), et la cross-validation a trouvé que surpondérer les modèles deep améliore la diversité de l'ensemble.
 
 **Q38. Pourquoi utiliser ImageNet pour la normalisation alors que vos images sont des produits e-commerce ?**
 > DINOv3 et EfficientNet sont pré-entraînés sur ImageNet. Leurs couches internes "s'attendent" à des images normalisées avec la moyenne et l'écart-type d'ImageNet (mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]). Si on normalise différemment, les activations sont décalées et les features extraites sont dégradées. C'est une contrainte du transfer learning.
 
 **Q39. Avez-vous essayé le fine-tuning de DINOv3 au lieu de l'utiliser comme extracteur figé ?**
-> Non, par manque de ressources GPU et de temps. DINOv3 comme extracteur figé donne déjà 91.4%. Le fine-tuning nécessiterait : 1) un GPU puissant pendant des heures, 2) un learning rate très faible pour ne pas détruire les poids pré-entraînés, 3) un risque d'overfitting sur notre dataset de 85K images. C'est en perspective pour une V2.
+> Non, par manque de ressources GPU et de temps. DINOv3 comme extracteur figé donne 79.43%. Le fine-tuning nécessiterait : 1) un GPU puissant pendant des heures, 2) un learning rate très faible pour ne pas détruire les poids pré-entraînés, 3) un risque d'overfitting sur notre dataset de 85K images. C'est en perspective pour une V2 et pourrait significativement améliorer les performances image.
 
 **Q40. Comment avez-vous géré les images de mauvaise qualité ou non pertinentes ?**
 > Le dataset Rakuten contient des images de qualité variable : photos floues, fonds blancs, logos à la place de produits. On n'a PAS fait de filtrage car chaque image contient un signal, même faible. DINOv3 est robuste à la qualité car il a été entraîné sur des millions d'images variées. Pour les cas extrêmes, c'est la fusion avec le texte qui compense.
@@ -154,8 +154,8 @@
 **Q41. DINOv3 utilise un Vision Transformer. Expliquez le mécanisme d'attention et pourquoi c'est pertinent ici.**
 > Le ViT découpe l'image en patches 16x16, les traite comme des "tokens" (comme des mots en NLP), et applique de l'attention multi-têtes. Chaque patch "regarde" tous les autres pour comprendre le contexte global. Pour un produit e-commerce, ça signifie que le modèle peut relier un logo en haut à gauche avec la forme du produit au centre — une capacité que les CNN classiques (champ réceptif local) n'ont pas aussi bien.
 
-**Q42. Votre Voting passe de 91.4% à 92%. Ce gain de 0.6% justifie-t-il la complexité supplémentaire (3 modèles) ?**
-> Oui, pour 2 raisons : 1) Le gain n'est pas uniforme — le Voting améliore surtout les classes difficiles (F1 +3-5% sur les classes minoritaires), 2) La robustesse — si DINOv3 échoue sur un type d'image (ex: photo très sombre), les 2 autres modèles compensent. En production, la fiabilité est plus importante que la performance moyenne. Le coût marginal d'inférence est faible (<50ms de plus).
+**Q42. Le Voting (79.28%) est inférieur au meilleur modèle individuel XGBoost (85.32%). Pourquoi garder 3 modèles ?**
+> Le Voting n'est pas justifié par un gain de performance brute — XGBoost seul est meilleur. Mais il apporte 2 avantages en production : 1) La robustesse — si XGBoost échoue sur un type d'image (ex: photo très sombre), DINOv3 ou EfficientNet peuvent compenser grâce à leurs biais inductifs différents, 2) La diversité architecturale (ViT + CNN + ML tabulaire) réduit le risque d'erreurs systématiques. En production, la fiabilité et la résilience sont souvent plus importantes que la performance maximale. C'est un compromis classique en ensemble learning.
 
 **Q43. Pourquoi ne pas avoir utilisé un ensemble de plusieurs DINOv3 (même architecture, seeds différentes) ?**
 > Un ensemble de modèles identiques manque de diversité. Tous les DINOv3 font les mêmes erreurs car ils "voient" les images de la même façon. Notre Voting combine 3 architectures DIFFERENTES (ViT, CNN, ML tabulaire) qui ont des biais inductifs différents. La diversité architecturale est la clé de l'ensemble learning efficace.
@@ -164,7 +164,7 @@
 > DINO est entraîné par distillation : un "student" apprend à reproduire les représentations d'un "teacher". Ce processus force le modèle à capturer les structures visuelles fondamentales (formes, textures, compositions) qui sont universellement utiles. Pour la classification de produits, ces features sont pertinentes car un livre a une structure visuelle distincte d'une console ou d'une piscine. Le MLP en tête fine-tune la projection vers nos 27 classes.
 
 **Q45. Si vous deviez réduire le temps d'inférence image de moitié, quelles compromis feriez-vous ?**
-> Option 1 : Retirer EfficientNet du Voting (gain ~80ms, perte ~0.5% accuracy). Option 2 : Utiliser DINOv3-Small au lieu de DINOv3-Base (gain ~50%, perte ~1-2%). Option 3 : Quantization INT8 des modèles PyTorch (gain ~30%, perte négligeable). Option 4 : Batch les inférences plutôt que 1 par 1 (gain massif en throughput). En production, on combinerait les options 3 et 4.
+> Option 1 : Utiliser uniquement XGBoost (85.32%, le meilleur modèle individuel) et retirer DINOv3 + EfficientNet (gain majeur en temps, et meilleure accuracy que le Voting). Option 2 : Utiliser DINOv3-Small au lieu de DINOv3-Base (gain ~50%, perte ~1-2%). Option 3 : Quantization INT8 des modèles PyTorch (gain ~30%, perte négligeable). Option 4 : Batch les inférences plutôt que 1 par 1 (gain massif en throughput). En production, on combinerait les options 1, 3 et 4.
 
 ---
 
@@ -176,7 +176,7 @@
 > LinearSVC atteint 83% de F1-Score, CamemBERT ~81% sur notre dataset. Le SVM gagne car : 1) TF-IDF à 280K dimensions crée un espace déjà très discriminant, 2) CamemBERT nécessite du fine-tuning coûteux et un GPU, 3) LinearSVC infère en <10ms vs ~200ms pour CamemBERT. Pour ce dataset spécifique, le ML classique bat le deep learning en texte.
 
 **Q47. Expliquez le Late Fusion en termes simples.**
-> C'est comme un jury de 2 experts : un lit le texte, l'autre regarde l'image. Chacun donne son avis (probabilités par classe). Puis on combine : 60% de poids pour l'expert image (plus fiable à 92%) et 40% pour l'expert texte (83%). Le verdict final est la classe avec le score combiné le plus élevé. ~94% de bonnes décisions.
+> C'est comme un jury de 2 experts : un lit le texte, l'autre regarde l'image. Chacun donne son avis (probabilités par classe). Puis on combine : 60% de poids pour l'expert image et 40% pour l'expert texte. Le texte (83%) est individuellement plus fiable que l'image (~79%), mais l'image capte un signal visuel complémentaire et compense les 35% de descriptions manquantes. Le verdict final est la classe avec le score combiné le plus élevé. ~85% de bonnes décisions.
 
 **Q48. Qu'est-ce que SHAP et comment l'utilisez-vous ?**
 > SHAP (SHapley Additive exPlanations) attribue à chaque feature sa contribution à la prédiction. Pour un produit classé "Livres", SHAP montre que le mot "roman" contribue +0.15, "auteur" +0.10, "DVD" -0.08. C'est de l'explicabilité globale et locale. Ça permet de comprendre et d'auditer les décisions du modèle, ce qui est important pour la confiance et la conformité AI Act.
@@ -210,7 +210,7 @@
 > En haute dimension sparse (280K features TF-IDF), les SVM ont un avantage structural : ils cherchent l'hyperplan à marge maximale, ce qui est optimal quand les données sont linéairement séparables en haute dimension (théorème de Cover : en dimension suffisante, les données deviennent linéairement séparables). Les réseaux de neurones excellent quand les features sont denses et de basse dimension (embeddings). C'est pourquoi LinearSVC bat CamemBERT ici : TF-IDF 280K est le terrain de jeu idéal du SVM.
 
 **Q57. Votre Voting System utilise un soft voting pondéré. Pourquoi pas un stacking (meta-learner) ?**
-> Le stacking entraîne un méta-classifieur sur les sorties des modèles de base. Avantage : il apprend automatiquement les poids et peut capter des interactions non linéaires. Inconvénient : risque d'overfitting (on entraîne un modèle sur les prédictions d'autres modèles), et besoin d'un split supplémentaire pour éviter le leakage. Notre soft voting pondéré est plus simple, plus robuste, et le gain du stacking serait marginal vu la qualité de DINOv3 (91.4%).
+> Le stacking entraîne un méta-classifieur sur les sorties des modèles de base. Avantage : il apprend automatiquement les poids et peut capter des interactions non linéaires. Inconvénient : risque d'overfitting (on entraîne un modèle sur les prédictions d'autres modèles), et besoin d'un split supplémentaire pour éviter le leakage. Notre soft voting pondéré est plus simple, plus robuste. Le stacking pourrait potentiellement améliorer les résultats du Voting (actuellement 79.28%) en apprenant de meilleures combinaisons, c'est une perspective intéressante.
 
 **Q58. Si vous ajoutiez l'OCR comme 3ème modalité, comment l'intégreriez-vous dans votre architecture ?**
 > L'OCR extrairait le texte visible dans les images (marques, descriptions sur packaging). On l'ajouterait comme un 3ème vecteur TF-IDF dans la fusion. Architecture : Image → DINOv3 (features visuelles) + OCR → TF-IDF (texte visuel) + Description → TF-IDF (texte saisi). Late Fusion à 3 branches avec poids appris. Le texte OCR serait complémentaire car il contient de l'information que ni la description ni l'image seule ne capturent (ex: "100% coton" visible sur l'étiquette).
@@ -219,7 +219,7 @@
 > Un modèle bien calibré dit "90% confiance" et a raison 90% du temps. On mesure ça avec : 1) Le Brier Score (MSE entre probabilité prédite et label réel), 2) Le Reliability Diagram (courbe de calibration vs diagonale idéale), 3) L'Expected Calibration Error (ECE). Pour XGBoost, la calibration était mauvaise (d'où le sharpening). Pour DINOv3+MLP, elle est bonne car le softmax de la dernière couche produit des probabilités bien calibrées.
 
 **Q60. Question de synthèse : Si vous aviez un GPU illimité et 6 mois de plus, quel serait votre pipeline idéal ?**
-> Pipeline V2 : 1) **Texte** : Fine-tuning CamemBERT-large sur nos données (+5-8% vs LinearSVC), 2) **Image** : Fine-tuning DINOv3 end-to-end avec augmentation (+2-3%), 3) **OCR** : Extraction texte dans les images avec PaddleOCR, 4) **Fusion** : CLIP-like (encodeur joint texte+image, pas de late fusion), 5) **Entraînement** : Curriculum learning (commencer par les classes faciles, ajouter les difficiles), 6) **Production** : Quantization ONNX, serveur TorchServe, monitoring Evidently, A/B testing continu. Objectif : >97% accuracy avec confiance calibrée.
+> Pipeline V2 : 1) **Texte** : Fine-tuning CamemBERT-large sur nos données (+5-8% vs LinearSVC), 2) **Image** : Fine-tuning DINOv3 end-to-end avec augmentation (potentiel d'amélioration significatif au-delà de 79.43%), 3) **OCR** : Extraction texte dans les images avec PaddleOCR, 4) **Fusion** : CLIP-like (encodeur joint texte+image, pas de late fusion), 5) **Entraînement** : Curriculum learning (commencer par les classes faciles, ajouter les difficiles), 6) **Production** : Quantization ONNX, serveur TorchServe, monitoring Evidently, A/B testing continu. Objectif : >92% accuracy avec confiance calibrée.
 
 ---
 
@@ -236,5 +236,5 @@
 
 ### Questions pièges classiques :
 - "Pourquoi pas plus simple ?" → "On a commencé simple (baseline RF) et ajouté de la complexité uniquement quand c'était justifié par le gain de performance."
-- "C'est pas trop complexe pour de la classification ?" → "Chaque composant est justifié : le Voting gagne 0.6%, mais surtout améliore la robustesse sur les classes difficiles."
+- "C'est pas trop complexe pour de la classification ?" → "Chaque composant est justifié : le Voting n'améliore pas la performance brute par rapport au meilleur modèle individuel (XGBoost, 85.32%), mais apporte de la diversité architecturale et de la robustesse sur les classes difficiles."
 - "Votre accuracy est-elle reproductible ?" → "Oui, nous utilisons des random seeds fixes (42) et le test set est fourni par Rakuten."

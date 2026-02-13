@@ -73,8 +73,8 @@ with tabs[0]:
         img_radar = str(ASSETS_DIR / "radar_models.png")
         if os.path.exists(img_radar):
             st.image(img_radar, width="stretch")
-            st.caption("Le Voting (Rouge) enveloppe les modeles individuels sur les 5 axes : "
-                       "Precision, Confiance, Robustesse, Universalite, Vitesse.")
+            st.caption("Profils des modeles. XGBoost (85.32%) domine en accuracy individuelle, "
+                       "mais le Voting apporte robustesse et diversite architecturale.")
 
     with c2:
         st.markdown("##### Matrice de Complementarite")
@@ -121,10 +121,10 @@ with tabs[0]:
     st.markdown("""
     | Modele | Architecture | Accuracy | Poids | Role |
     |--------|-------------|----------|-------|------|
-    | **DINOv3** | ViT-B/14 (Transformer) | 79.1% seul | **4/7** | Vision globale, Le Patron |
-    | **EfficientNet** | CNN B0 | 75.4% seul | **2/7** | Details fins, L'Expert |
-    | **XGBoost** | Gradient Boosting | 80.1% seul | **1/7** | Correction, Le Statisticien |
-    | **VOTING** | Ensemble pondere | **92.4%** | - | Decision finale |
+    | **DINOv3** | ViT-B/14 (Transformer) | 79.43% seul | **4/7** | Vision globale, Le Patron |
+    | **EfficientNet** | CNN B0 | 66.63% seul | **2/7** | Details fins, L'Expert |
+    | **XGBoost** | Gradient Boosting | **85.32%** seul | **1/7** | Champion accuracy, Le Statisticien |
+    | **VOTING** | Ensemble pondere | **79.28%** | - | Robustesse, diversite architecturale |
     """)
 
 # ==========================================
@@ -193,9 +193,9 @@ with tabs[1]:
 with st.sidebar:
     st.markdown("### Modeles")
     st.divider()
-    st.metric("Image (Voting)", "92.4%")
-    st.metric("Texte (LinearSVC)", "83%")
-    st.metric("Fusion", "~94%")
+    st.metric("Image (Voting)", "F1 ~ 0.79")
+    st.metric("Texte (LinearSVC)", "F1 = 0.83")
+    st.metric("Fusion", "F1 ~ 0.85")
     st.divider()
     st.markdown("**Voting Weights**")
     st.markdown("DINOv3: 4/7 | EffNet: 2/7 | XGB: 1/7")

@@ -5,8 +5,8 @@ Multimodal e-commerce product classification into 27 categories using text and i
 | Pipeline | Model | F1-Score |
 |----------|-------|----------|
 | Text | TF-IDF + LinearSVC | 83% |
-| Image | Voting (DINOv3 + EfficientNet + XGBoost) | 92% |
-| **Fusion** | **Late Fusion (60/40)** | **~94%** |
+| Image | Voting (DINOv3 + EfficientNet + XGBoost) | ~79% |
+| **Fusion** | **Late Fusion (60/40)** | **~85%** |
 
 **Team**: Johan Frachon, Liviu Andronic, Hery M. Ralaimanantsoa, Oussama Akir
 **Program**: Machine Learning Engineer (RNCP) -- DataScientest x Mines Paris-PSL (Oct 2025)
@@ -49,9 +49,9 @@ Product Input (text + image)
  LinearSVC  DINOv3  EfficientNet  XGBoost
   (83%)     (w=4/7)  (w=2/7)     (w=1/7)
     |         +------+------+
-    |            VOTING (92%)
+    |            VOTING (~79%)
     |                |
-    +----- LATE FUSION (60% image / 40% text) --- ~94%
+    +----- LATE FUSION (60% image / 40% text) --- ~85%
 ```
 
 ---
@@ -86,8 +86,8 @@ All model weights are hosted on [Hugging Face Hub](https://huggingface.co/akirou
 
 | File | Size | Role |
 |------|------|------|
-| `M1_IMAGE_DeepLearning_DINOv3.pth` | 1.2 GB | DINOv3 ViT-Large (91.4% standalone) |
-| `M3_IMAGE_Classic_EfficientNetB0.pth` | 16 MB | EfficientNet-B0 CNN (~75%) |
+| `M1_IMAGE_DeepLearning_DINOv3.pth` | 1.2 GB | DINOv3 ViT-Large (79.43% standalone) |
+| `M3_IMAGE_Classic_EfficientNetB0.pth` | 16 MB | EfficientNet-B0 CNN (66.63%) |
 | `M2_IMAGE_XGBoost_Encoder.pkl` | <1 KB | Label encoder for XGBoost |
 | `text_classifier.joblib` | 32 MB | TF-IDF FeatureUnion + LinearSVC (83%) |
 | `category_mapping.json` | 4 KB | 27-category code-to-name mapping |

@@ -38,9 +38,9 @@ st.title("Performance des Modeles")
 st.divider()
 
 col1, col2, col3, col4, col5 = st.columns(5)
-col1.metric("Texte (LinearSVC)", "83%")
-col2.metric("Image (Voting)", "92.4%")
-col3.metric("Fusion", "~94%")
+col1.metric("Texte (LinearSVC)", "F1 = 0.83")
+col2.metric("Image (Voting)", "F1 ~ 0.79")
+col3.metric("Fusion", "F1 ~ 0.85")
 col4.metric("Modeles testes", "40+")
 col5.metric("Categories", "27")
 
@@ -65,8 +65,8 @@ with tabs[0]:
         c1, c2, c3 = st.columns([1, 2, 1])
         with c2:
             st.image(img_accuracy, width="stretch")
-            st.caption("Accuracy sur le jeu de test. Le VOTING (92.4%) surpasse chaque modele individuel. "
-                       "Phoenix/ResNet50 (90%) est en overfitting — exclu du voting final.")
+            st.caption("Accuracy sur le jeu de test (scores corriges apres correction data leakage). "
+                       "XGBoost (85.32%) est le champion individuel. Le VOTING (79.28%) combine la diversite architecturale.")
 
     st.markdown("---")
 
@@ -75,16 +75,16 @@ with tabs[0]:
 
     comparison_data = pd.DataFrame({
         "Modalite": ["Texte seul (LinearSVC)", "Image seule (Voting)", "Fusion (Texte+Image)"],
-        "Accuracy": ["83.0%", "92.4%", "~94%"],
-        "F1 Macro": ["81.2%", "91.8%", "~93%"],
+        "F1 Weighted": ["0.83", "~0.79", "~0.85"],
+        "Accuracy": ["83.0%", "79.28%", "~85%"],
         "Latence": ["< 10ms", "~250ms", "~260ms"],
-        "Avantage": ["Rapide, interpretable", "Precis, robuste", "Le meilleur des 2"],
+        "Avantage": ["Champion F1, rapide", "Diversite architecturale", "Complementarite texte+image"],
     })
 
     st.dataframe(
         comparison_data.style.highlight_max(
             axis=0,
-            subset=["Accuracy"],
+            subset=["F1 Weighted"],
             props="color: black; background-color: #d4edda; font-weight: bold;"
         ),
         width="stretch",
@@ -92,9 +92,9 @@ with tabs[0]:
     )
 
     st.success("""
-    **La fusion late-fusion (60% image + 40% texte) atteint ~94%**, soit +2% par rapport
-    a l'image seule et +11% par rapport au texte seul. Les deux modalites se completent :
-    le texte corrige les erreurs d'image, et vice versa.
+    **La fusion late-fusion (60% image + 40% texte) atteint un F1 d'environ 0.85**, soit +0.02 par rapport
+    au texte seul. Le texte (83%) est la modalite dominante ; l'image apporte la diversite
+    pour les categories visuellement distinctives.
     """)
 
 # ==========================================
@@ -127,14 +127,14 @@ with tabs[1]:
             "L:[2048,1024,512] | Adam | ReLU | Drop:0.5",
             "L:[1024,512] | Adam | GELU | Drop:0.5",
         ],
-        "F1-Score": ["91.4%", "90.9%", "89.8%", "89.7%", "89.4%"],
+        "F1-Score": ["79.4%", "79.0%", "78.0%", "77.9%", "77.7%"],
         "Temps (sec)": ["55.7", "57.7", "58.3", "55.7", "76.7"],
     })
 
     st.dataframe(podium, width="stretch", hide_index=True)
 
-    st.info("Le Deep Learning domine les 19 premieres places. Le premier ML classique "
-            "(XGBoost_Heavy_CPU) n'arrive qu'en 20e position avec 76.5% de F1.")
+    st.info("Apres correction du data leakage, XGBoost sur features ResNet atteint 85.32% — "
+            "le champion des modeles image. Le DL (DINOv3) reste competitif a 79.43%.")
 
 # ==========================================
 # TAB 3 : BENCHMARK CPU/GPU
@@ -281,10 +281,10 @@ with tabs[3]:
 with st.sidebar:
     st.markdown("### Performance")
     st.divider()
-    st.metric("Texte", "83%")
-    st.metric("Image", "92.4%")
-    st.metric("Fusion", "~94%")
+    st.metric("Texte", "F1 = 0.83")
+    st.metric("Image", "F1 ~ 0.79")
+    st.metric("Fusion", "F1 ~ 0.85")
     st.divider()
     st.markdown("**40+ configs testees**")
-    st.markdown("DL champion: F1 = 91.4%")
+    st.markdown("XGBoost champion: 85.32%")
     st.markdown("GPU: x24 acceleration")

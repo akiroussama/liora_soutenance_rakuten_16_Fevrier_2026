@@ -37,7 +37,7 @@ load_css(ASSETS_DIR / "style.css")
 # ==========================================
 st.title("Explicabilite des Modeles")
 st.markdown("""
-**Pourquoi l'explicabilite ?** Un modele a 94% d'accuracy ne suffit pas en production.
+**Pourquoi l'explicabilite ?** Un modele a F1~0.85 ne suffit pas en production.
 Il faut comprendre *pourquoi* il decide, pour detecter les biais, gagner la confiance
 des utilisateurs, et respecter les exigences reglementaires (AI Act europeen).
 """)
@@ -286,8 +286,8 @@ with tabs[2]:
     """)
 
     st.success("""
-    **Resultat** : Le Voting atteint **92% d'accuracy** en combinant 3 modeles complementaires.
-    La diversite des approches (Transformer + CNN + ML classique) est la cle de la robustesse.
+    **Resultat** : Le Voting atteint **79.28% d'accuracy** en combinant 3 architectures complementaires.
+    XGBoost seul atteint 85.32%, mais la diversite (Transformer + CNN + ML) assure la robustesse.
     """)
 
 # ==========================================
@@ -367,19 +367,27 @@ with tabs[3]:
     st.subheader("Formule de Fusion")
 
     st.latex(r"""
-    P_{fusion}(c) = w_{image} \cdot P_{voting}(c) + w_{texte} \cdot P_{svc}(c)
+    P_{fusion}(c) = 0.6 \cdot P_{voting}(c) + 0.4 \cdot P_{svc}(c)
     """)
 
     st.markdown("""
-    Avec **w_image = 0.6** et **w_texte = 0.4** (par defaut, ajustable dans la page Demo).
+    **Configuration retenue : 60% Image / 40% Texte** (ajustable dans la page Demo).
     Pour chaque classe *c*, le score fusionne est la moyenne ponderee des probabilites
     des deux modalites.
     """)
 
+    c_img, c_txt = st.columns(2)
+    with c_img:
+        st.markdown("**Poids Image : 60%**")
+        st.progress(0.6)
+    with c_txt:
+        st.markdown("**Poids Texte : 40%**")
+        st.progress(0.4)
+
     c1, c2, c3 = st.columns(3)
-    c1.metric("Texte seul", "83%", help="LinearSVC + TF-IDF")
-    c2.metric("Image seule", "92%", help="Voting (DINOv3 + EffNet + XGBoost)")
-    c3.metric("Fusion", "~94%", "+2% vs image seule", help="Late fusion ponderee")
+    c1.metric("Texte seul", "F1 = 0.83", help="LinearSVC + TF-IDF")
+    c2.metric("Image seule", "F1 ~ 0.79", help="Voting (DINOv3 + EffNet + XGBoost)")
+    c3.metric("Fusion", "F1 ~ 0.85", "+0.02 vs texte seul", help="Late fusion ponderee")
 
 # ==========================================
 # SIDEBAR

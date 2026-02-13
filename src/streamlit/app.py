@@ -2,7 +2,7 @@
 Home page — Rakuten Product Classifier.
 
 Entry point for the Streamlit multi-page app. Displays project overview,
-key metrics (84K products, 27 categories, ~94% fusion accuracy),
+key metrics (84K products, 27 categories, F1~0.85 fusion),
 pipeline summary, and navigation buttons to Demo and Data pages.
 """
 import streamlit as st
@@ -38,7 +38,7 @@ col1, col2, col3, col4 = st.columns(4)
 col1.metric("Produits", "84 916")
 col2.metric("Catégories", "27")
 col3.metric("Modalités", "Texte + Image")
-col4.metric("Précision", "~94%")
+col4.metric("F1 Fusion", "0.85")
 
 st.divider()
 

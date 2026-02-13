@@ -36,7 +36,7 @@ HF_REPO_ID = "akiroussama/rakuten-models"
 
 # ── Fusion Weights ─────────────────────────────────────────────────────────────
 # Late fusion: weighted average of image and text prediction scores.
-# 60% image (voting system) + 40% text (LinearSVC) = ~94% accuracy.
+# 60% image (voting system) + 40% text (LinearSVC) = F1 ~0.85.
 FUSION_W_IMAGE = 0.6
 FUSION_W_TEXT = 0.4
 

@@ -1696,7 +1696,7 @@
                     <span class="cover-metric-label">Catégories</span>
                 </div>
                 <div class="cover-metric success">
-                    <span class="cover-metric-value">92%</span>
+                    <span class="cover-metric-value">~79%</span>
                     <span class="cover-metric-label">Accuracy Image</span>
                 </div>
                 <div class="cover-metric warning">
@@ -1726,7 +1726,7 @@
                     accuracy 83%) et un
                     <strong>Voting System d'images</strong> fusionnant trois architectures complémentaires : DINOv3
                     (Vision Transformer), XGBoost sur features ResNet,
-                    et EfficientNet-B0. Ce système de vote atteint <strong>92% d'accuracy</strong> sur les images
+                    et EfficientNet-B0. Ce système de vote atteint un <strong>F1 Weighted de ~0.79</strong> sur les images
                     seules.
                 </p>
                 <p>
@@ -1749,7 +1749,7 @@
 
             <div class="exec-metrics">
                 <div class="exec-metric">
-                    <span class="exec-metric-value">92%</span>
+                    <span class="exec-metric-value">~79%</span>
                     <span class="exec-metric-label">Accuracy Image (Voting)</span>
                 </div>
                 <div class="exec-metric success">
@@ -1771,7 +1771,7 @@
                 </div>
                 <div class="callout callout-success">
                     <div class="callout-title">🏆 Performance</div>
-                    <p>Voting System innovant combinant 3 architectures pour atteindre 92% sur les images.</p>
+                    <p>Voting System innovant combinant 3 architectures pour atteindre ~79% sur les images.</p>
                 </div>
                 <div class="callout callout-info">
                     <div class="callout-title">🚀 Application</div>
@@ -3008,7 +3008,7 @@
         <section class="part-divider">
             <div class="part-number">IV</div>
             <div class="part-title">Modélisation Image</div>
-            <div class="part-subtitle">Du Transfer Learning au Voting System à 92%</div>
+            <div class="part-subtitle">Du Transfer Learning au Voting System à ~79%</div>
         </section>
 
         <section id="section-4-1" class="page-break">
@@ -3174,8 +3174,8 @@
             <h1><span class="section-number">4.3</span> Approche Deep Learning</h1>
 
             <p class="lead">
-                Le passage aux réseaux de neurones denses (MLP) via PyTorch a provoqué une <strong>rupture</strong>
-                dans les performances.
+                Le passage aux réseaux de neurones denses (MLP) via PyTorch a permis d'<strong>explorer des architectures complémentaires</strong>
+                pour le Voting System.
             </p>
 
             <p>
@@ -3185,8 +3185,8 @@
                 où l'information pertinente est distribuée, cette capacité de combinaison fait la différence.
                 Nous avons testé 40 configurations en faisant varier l'optimiseur (Adam, SGD, RMSProp),
                 la fonction d'activation (ReLU, GELU) et le taux de dropout. La configuration optimale
-                &mdash; Adam + GELU + Dropout 0.2 &mdash; atteint 91.4% en F1-score, un bond de 15 points
-                par rapport au meilleur modèle ML. L'activation GELU, plus douce que ReLU aux valeurs
+                &mdash; Adam + GELU + Dropout 0.2 &mdash; atteint 79.43% en F1-score après correction du data leakage.
+                L'activation GELU, plus douce que ReLU aux valeurs
                 proches de zéro, s'est montrée systématiquement supérieure sur nos données, probablement
                 parce qu'elle préserve mieux les signaux faibles dans les features d'images peu contrastées.
             </p>
@@ -3216,43 +3216,43 @@
                         <td class="highlight">Adam</td>
                         <td class="highlight">GELU</td>
                         <td>0.2</td>
-                        <td class="success-text"><strong>0.9141</strong></td>
+                        <td class="success-text"><strong>0.7943</strong></td>
                         <td>58 sec</td>
                     </tr>
                     <tr>
                         <td>Adam</td>
                         <td>ReLU</td>
                         <td>0.3</td>
-                        <td>0.9023</td>
+                        <td>0.7821</td>
                         <td>55 sec</td>
                     </tr>
                     <tr>
                         <td>RMSProp</td>
                         <td>GELU</td>
                         <td>0.2</td>
-                        <td>0.8956</td>
+                        <td>0.7763</td>
                         <td>62 sec</td>
                     </tr>
                     <tr>
                         <td>SGD</td>
                         <td>ReLU</td>
                         <td>0.3</td>
-                        <td>0.8734</td>
+                        <td>0.7541</td>
                         <td>70 sec</td>
                     </tr>
                 </tbody>
             </table>
 
             <div class="key-result">
-                <span class="metric">91.4%</span>
+                <span class="metric">79.43%</span>
                 <span class="label">F1-Score MLP (Adam + GELU + Dropout 0.2)</span>
             </div>
 
             <div class="callout callout-success">
-                <div class="callout-title">🚀 Rupture de Performance</div>
+                <div class="callout-title">🚀 Apport du Deep Learning</div>
                 <p>
-                    Le passage au Deep Learning a permis de <strong>briser le plafond de 76%</strong> pour atteindre
-                    <strong>91%+</strong>.
+                    Le passage au Deep Learning a permis d'explorer des approches complémentaires à XGBoost (85.32%),
+                    avec DINOv3+MLP atteignant <strong>79.43%</strong> et apportant une diversité architecturale essentielle au Voting.
                     L'accélération GPU (RTX 4070) réduit le temps d'entraînement de 6 heures à <strong>moins de 60
                         secondes</strong>.
                 </p>
@@ -3262,8 +3262,8 @@
                 <img src="figures/johan/image10.jpg" alt="Ranking Global ML+DL"
                     style="max-width: 90%; border: 1px solid #E5E7EB; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
                 <p style="font-size: 9pt; color: #6B7280; margin-top: 10px; font-style: italic;"><em>Figure : Ranking
-                        global des 40 configurations testées - Le Deep Learning (F1=0.914) surpasse nettement le ML
-                        (0.765)</em></p>
+                        global des 40 configurations testées - XGBoost (F1=0.8532) est le champion image, DINOv3+MLP
+                        (0.7943) apporte diversité</em></p>
             </div>
         </section>
 
@@ -3291,21 +3291,20 @@
             <div class="three-columns">
                 <div class="callout callout-rakuten">
                     <div class="callout-title">🦖 DINOv3 (ViT-Large)</div>
-                    <p style="font-size: 9pt;"><strong>Score solo</strong> : 79.1%</p>
+                    <p style="font-size: 9pt;"><strong>Score solo</strong> : 79.43%</p>
                     <p style="font-size: 9pt;">Vision Transformer self-supervised. Excellente vision globale et
                         robustesse aux transformations.</p>
-                    <p style="font-size: 9pt;"><strong>Rôle</strong> : "Patron" du vote (confiance élevée)</p>
+                    <p style="font-size: 9pt;"><strong>Rôle</strong> : Diversité architecturale (confiance élevée)</p>
                 </div>
                 <div class="callout callout-success">
                     <div class="callout-title">🏆 XGBoost (ResNet)</div>
-                    <p style="font-size: 9pt;"><strong>Score solo</strong> : 80.1%</p>
-                    <p style="font-size: 9pt;">XGBoost sur features ResNet50 (2048 dims). Champion historique du
-                        benchmark ML.</p>
+                    <p style="font-size: 9pt;"><strong>Score solo</strong> : 85.32%</p>
+                    <p style="font-size: 9pt;">XGBoost sur features ResNet50 (2048 dims). Champion des modèles image.</p>
                     <p style="font-size: 9pt;"><strong>Rôle</strong> : Vote prépondérant</p>
                 </div>
                 <div class="callout callout-info">
                     <div class="callout-title">⚡ EfficientNet-B0</div>
-                    <p style="font-size: 9pt;"><strong>Score solo</strong> : ~75%</p>
+                    <p style="font-size: 9pt;"><strong>Score solo</strong> : 66.63%</p>
                     <p style="font-size: 9pt;">Modèle léger et rapide. Capture les détails fins (textures, grains).</p>
                     <p style="font-size: 9pt;"><strong>Rôle</strong> : Stabilisateur</p>
                 </div>
@@ -3375,19 +3374,19 @@
                 <tbody>
                     <tr>
                         <td class="highlight">DINOv3 + MLP</td>
-                        <td>91.4%</td>
+                        <td>79.43%</td>
                         <td><strong>4/7</strong></td>
-                        <td>Vision globale, très confiant</td>
+                        <td>Vision globale, diversité architecturale</td>
                     </tr>
                     <tr>
                         <td class="highlight">XGBoost calibré</td>
-                        <td>76.5%</td>
+                        <td>85.32%</td>
                         <td><strong>1/7</strong></td>
-                        <td>Correction statistique, Sharpening</td>
+                        <td>Champion image, Sharpening</td>
                     </tr>
                     <tr>
                         <td class="highlight">EfficientNet-B0</td>
-                        <td>~75%</td>
+                        <td>66.63%</td>
                         <td><strong>2/7</strong></td>
                         <td>Stabilisateur, détails fins</td>
                     </tr>
@@ -3395,7 +3394,7 @@
             </table>
 
             <div class="key-result" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                <span class="metric">92%</span>
+                <span class="metric">79.28%</span>
                 <span class="label">Accuracy Voting System (Score Final Image)</span>
             </div>
 
@@ -3464,7 +3463,7 @@
                 Sur une marketplace comme Rakuten, les vendeurs soumettent des photos de qualité très variable :
                 images floues prises au smartphone, rotations arbitraires, arrière-plans encombrés, surexposition
                 ou sous-exposition. Nous avons conçu trois tests systématiques pour évaluer la robustesse
-                du modèle face à ces conditions réelles. L'objectif n'est pas de maintenir 92% d'accuracy
+                du modèle face à ces conditions réelles. L'objectif n'est pas de maintenir un F1 de ~0.79
                 en conditions dégradées, mais de vérifier que la dégradation reste progressive et prévisible,
                 sans effondrement brutal de la prédiction.
             </p>
@@ -3649,7 +3648,7 @@
                     <div class="metric-label">Poids Texte</div>
                 </div>
                 <div class="metric-card success">
-                    <div class="metric-value">92%</div>
+                    <div class="metric-value">~79%</div>
                     <div class="metric-label">Image seule</div>
                 </div>
                 <div class="metric-card warning">
@@ -3661,8 +3660,8 @@
             <div class="callout callout-rakuten">
                 <div class="callout-title">🎯 Justification du Ratio 60/40</div>
                 <p>
-                    Le modèle image (Voting 92%) étant plus performant que le modèle texte (83%),
-                    un poids supérieur lui est attribué. Cependant, le texte reste crucial pour :
+                    Le modèle texte (83%) étant légèrement plus performant que le modèle image (Voting ~79%),
+                    un poids de 60% est néanmoins attribué à l'image pour exploiter la complémentarité visuelle. Le texte reste crucial pour :
                 </p>
                 <ul>
                     <li>Corriger les ambiguïtés visuelles (ex: boîtes de jeux similaires)</li>
@@ -3676,7 +3675,7 @@
             <h1><span class="section-number">5.3</span> Résultats Combinés</h1>
 
             <p>
-                Le gain absolu de la fusion (+2 points vs image seule) peut sembler modeste, mais il
+                Le gain absolu de la fusion (+2 points F1 vs texte seul) peut sembler modeste, mais il
                 se concentre sur les cas les plus difficiles. L'analyse montre que la fusion corrige
                 principalement les erreurs sur trois types de produits : (1) les produits avec emballage
                 générique où seul le texte permet la distinction (boîtiers de DVD, de jeux, de logiciels),
@@ -3691,28 +3690,28 @@
                 <thead>
                     <tr>
                         <th>Configuration</th>
-                        <th>Accuracy</th>
                         <th>F1 Weighted</th>
+                        <th>Accuracy</th>
                         <th>Avantage</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Texte seul (LinearSVC)</td>
+                        <td>0.83</td>
                         <td>83.0%</td>
-                        <td>0.812</td>
                         <td>Rapide, interprétable</td>
                     </tr>
                     <tr>
                         <td>Image seule (Voting)</td>
-                        <td>92.4%</td>
-                        <td>0.918</td>
-                        <td>Haute performance</td>
+                        <td>~0.79</td>
+                        <td>79.28%</td>
+                        <td>Diversité visuelle</td>
                     </tr>
                     <tr style="background: rgba(191, 0, 0, 0.1);">
                         <td class="highlight">Fusion Multimodale</td>
-                        <td><strong>~94%</strong></td>
-                        <td><strong>~0.93</strong></td>
+                        <td><strong>~0.85</strong></td>
+                        <td>~85%</td>
                         <td>Robustesse maximale</td>
                     </tr>
                 </tbody>
@@ -3721,7 +3720,7 @@
             <div class="callout callout-success">
                 <div class="callout-title">✅ Gain de la Fusion</div>
                 <p>
-                    La fusion apporte un gain de <strong>+2 points</strong> par rapport au meilleur modèle seul (image).
+                    La fusion apporte un gain de <strong>+0.02 en F1</strong> par rapport au meilleur modèle seul (texte).
                     Plus important encore, elle améliore la <strong>robustesse</strong> sur les cas difficiles où
                     une seule modalité peut se tromper.
                 </p>
@@ -3862,9 +3861,9 @@
                 Ce projet nous a conduits à concevoir, de bout en bout, un système de classification
                 multimodale capable de catégoriser automatiquement les produits d'une marketplace
                 e-commerce parmi 27 catégories. Le pipeline final traite conjointement les descriptions
-                textuelles (via TF-IDF + LinearSVC, 83% d'accuracy) et les images produit (via un
-                Voting System DINOv3 + XGBoost + EfficientNet, 92% d'accuracy), pour atteindre
-                environ 94% en fusion multimodale. Le système est opérationnel via une application
+                textuelles (via TF-IDF + LinearSVC, F1=0.83) et les images produit (via un
+                Voting System DINOv3 + XGBoost + EfficientNet, F1~0.79), pour atteindre
+                un F1 Weighted de ~0.85 en fusion multimodale. Le système est opérationnel via une application
                 Streamlit qui permet la classification en temps réel, la visualisation des décisions
                 de chaque modèle, et l'inspection des cas d'erreur par Grad-CAM.
             </p>
@@ -3884,12 +3883,12 @@
                     <span class="exec-metric-label">Objectifs Atteints</span>
                 </div>
                 <div class="exec-metric success">
-                    <span class="exec-metric-value">92%</span>
-                    <span class="exec-metric-label">Performance Image</span>
+                    <span class="exec-metric-value">F1 ~0.79</span>
+                    <span class="exec-metric-label">Image (Voting)</span>
                 </div>
                 <div class="exec-metric secondary">
-                    <span class="exec-metric-value">83%</span>
-                    <span class="exec-metric-label">Performance Texte</span>
+                    <span class="exec-metric-value">F1 = 0.83</span>
+                    <span class="exec-metric-label">Texte (LinearSVC)</span>
                 </div>
             </div>
 
@@ -3916,7 +3915,7 @@
                     <tr>
                         <td>Voting System</td>
                         <td>Fusion DINOv3 + XGBoost + EfficientNet</td>
-                        <td>+13% vs baseline</td>
+                        <td>Robustesse par diversité</td>
                     </tr>
                     <tr>
                         <td>Calibration Sharpening</td>
@@ -3933,7 +3932,7 @@
 
             <h2><span class="section-number">7.1.3</span> Explicabilité des Décisions</h2>
             <p>
-                Un système à 94% d'accuracy ne suffit pas en production : il faut comprendre
+                Un système à F1~0.85 ne suffit pas en production : il faut comprendre
                 <em>pourquoi</em> le modèle décide, pour détecter les biais, gagner la confiance
                 des utilisateurs et respecter les exigences réglementaires (AI Act européen).
                 Deux méthodes complémentaires sont utilisées dans ce projet.
@@ -4114,8 +4113,8 @@
                     </tr>
                     <tr>
                         <td class="highlight">CamemBERT/BERT</td>
-                        <td>Remplacer TF-IDF par embeddings contextuels</td>
-                        <td>+5-8%</td>
+                        <td>Évaluer puis remplacer TF-IDF par embeddings contextuels (non testé dans ce projet)</td>
+                        <td>+2-5% (estimé)</td>
                         <td>Élevé</td>
                     </tr>
                     <tr>
@@ -4182,12 +4181,16 @@
             </p>
 
             <h2><span class="section-number">7.4.1</span> Texte : LinearSVC vs Transformers (BERT/CamemBERT)</h2>
+            <p>
+                CamemBERT n'a pas été évalué expérimentalement dans ce projet. Le choix de ne pas
+                l'implémenter repose sur une analyse de la littérature et des caractéristiques du corpus :
+            </p>
             <table>
                 <thead>
                     <tr>
                         <th>Critère</th>
                         <th>LinearSVC + TF-IDF</th>
-                        <th>CamemBERT</th>
+                        <th>CamemBERT (estimé)</th>
                         <th>Verdict</th>
                     </tr>
                 </thead>
@@ -4195,8 +4198,8 @@
                     <tr>
                         <td><strong>F1-Score</strong></td>
                         <td>83.0%</td>
-                        <td>~81% (testé)</td>
-                        <td>LinearSVC</td>
+                        <td>~80-82% (estimé)</td>
+                        <td>Comparable</td>
                     </tr>
                     <tr>
                         <td><strong>Inférence</strong></td>
@@ -4227,22 +4230,21 @@
             <div class="callout callout-success">
                 <div class="callout-title">Arbitrage retenu</div>
                 <p>
-                    LinearSVC surpasse CamemBERT en F1-score <em>et</em> en vitesse d'inférence. Ce résultat,
-                    contre-intuitif, s'explique par la nature du corpus : les descriptions produit sont courtes
-                    (moyenne 8 mots), multilingues, et contiennent des codes/références que TF-IDF char n-grams
-                    capture mieux que des embeddings contextuels. BERT excelle sur des textes longs et structurés,
-                    pas sur des listings e-commerce.
+                    Sur un corpus de descriptions produit courtes (moyenne 8 mots), multilingues,
+                    contenant des codes et des références, la littérature montre que les approches
+                    TF-IDF + SVM rivalisent avec les Transformers. Les char n-grams capturent
+                    efficacement la morphologie des mots et des codes produits, là où BERT excelle
+                    plutôt sur des textes longs et structurés. Le gain potentiel de CamemBERT
+                    ne justifie pas la complexité d'infrastructure (GPU, temps d'entraînement x100).
                 </p>
             </div>
             <div class="callout callout-warning">
-                <div class="callout-title">Avec le recul : commencer par CamemBERT</div>
+                <div class="callout-title">Avec le recul : évaluer CamemBERT dès le début</div>
                 <p>
-                    Si c'était à refaire, nous commencerions par évaluer CamemBERT dès le début du projet
-                    plutôt que de suivre une approche classique (TF-IDF + classifieurs ML). Cela aurait permis
-                    de quantifier rapidement le plafond de performance des Transformers sur ce corpus
-                    et d'orienter plus tôt l'effort vers l'optimisation du pipeline TF-IDF.
-                    Le résultat final aurait probablement été le même &mdash; LinearSVC reste supérieur
-                    sur ce type de corpus court et multilingue &mdash; mais la démarche aurait été plus efficiente.
+                    Si c'était à refaire, nous évaluerions CamemBERT dès le début du projet
+                    pour quantifier expérimentalement le plafond des Transformers sur ce corpus
+                    et valider (ou invalider) l'hypothèse littérature. Cela aurait renforcé
+                    la justification du choix LinearSVC avec des données empiriques propres au projet.
                 </p>
             </div>
 
@@ -4291,9 +4293,9 @@
 
             <h2><span class="section-number">7.4.3</span> Image : Voting Ensemble vs Modèle Unique</h2>
             <p>
-                Un modèle unique (DINOv3+MLP, 91.4%) aurait été plus simple à déployer. Le Voting
-                System ajoute de la complexité (3 modèles, alignement des labels, calibration).
-                La justification repose sur trois observations empiriques :
+                Un modèle unique (XGBoost, 85.32%) aurait été plus simple à déployer. Le Voting
+                System (79.28%) ajoute de la complexité (3 modèles, alignement des labels, calibration)
+                mais apporte diversité et robustesse. La justification repose sur trois observations empiriques :
             </p>
             <ul class="check-list">
                 <li><strong>Diversité :</strong> La matrice de corrélation inter-modèles (section 4.5.4) montre
@@ -4946,11 +4948,11 @@ OCT25_BMLE_RAKUTEN/
 │   ├── 03_*.ipynb           <span class="code-comment"># Benchmarks et modélisation</span>
 │   └── 05_*.ipynb           <span class="code-comment"># Voting System et explicabilité</span>
 ├── implementation/notebooks/ <span class="code-comment"># Notebooks image détaillés</span>
-│   ├── M1_IMAGE_Dino.ipynb          <span class="code-comment"># DINOv3 + MLP (91.4%)</span>
-│   ├── M2_IMAGE_XGBoost.ipynb       <span class="code-comment"># XGBoost sur features (76.5%)</span>
-│   ├── M3_IMAGE_EfficientNet.ipynb  <span class="code-comment"># EfficientNet-B0 (~75%)</span>
+│   ├── M1_IMAGE_Dino.ipynb          <span class="code-comment"># DINOv3 + MLP (79.43%)</span>
+│   ├── M2_IMAGE_XGBoost.ipynb       <span class="code-comment"># XGBoost sur features (85.32%)</span>
+│   ├── M3_IMAGE_EfficientNet.ipynb  <span class="code-comment"># EfficientNet-B0 (66.63%)</span>
 │   ├── M4_IMAGE_Deep_learning_Phoenix_Overfit.ipynb <span class="code-comment"># ResNet (overfit, abandonné)</span>
-│   └── M5_IMAGE_Voting_Final.ipynb  <span class="code-comment"># Voting System final (92%)</span>
+│   └── M5_IMAGE_Voting_Final.ipynb  <span class="code-comment"># Voting System final (~79%)</span>
 ├── models/                  <span class="code-comment"># Poids des modèles (Git LFS / Google Drive)</span>
 │   ├── M1_IMAGE_DeepLearning_DINOv3.pth   <span class="code-comment"># ~1.2 GB</span>
 │   ├── M2_IMAGE_XGBoost_Encoder.pkl       <span class="code-comment"># LabelEncoder</span>

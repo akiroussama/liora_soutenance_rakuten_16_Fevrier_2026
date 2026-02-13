@@ -193,18 +193,18 @@ FeatureUnion([
 <!--
 - Principe de l'ensemble voting
 - Pondération : DINO + XGBoost + EfficientNet
-- Score final : 92%
+- Score final : ~79% (robustesse architecturale)
 - Justification des poids
 -->
 
 ### 5.7 Comparatif des modèles image
 | Modèle | Accuracy | F1-Score | Params | Temps inference |
 |--------|----------|----------|--------|-----------------|
-| M1 DINOv3 | 79.1% | - | - | - |
-| M2 XGBoost | 80.1% | - | - | - |
-| M3 EfficientNet | ~75% | - | - | - |
+| M1 DINOv3 | 79.43% | - | - | - |
+| M2 XGBoost | **85.32%** | - | - | - |
+| M3 EfficientNet | 66.63% | - | - | - |
 | M4 ResNet (overfit) | 91%* | - | - | - |
-| **M5 Voting** | **92%** | - | - | - |
+| **M5 Voting** | **79.28%** | - | - | - |
 
 ---
 
@@ -281,7 +281,7 @@ src/streamlit/
 
 ### 8.1 Bilan du projet
 <!--
-- Objectifs atteints : classification 92%
+- Objectifs atteints : classification ~85% (fusion texte+image)
 - Démarche scientifique : exploration → modélisation → production
 - Travail d'équipe
 -->

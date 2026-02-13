@@ -342,7 +342,7 @@
 
                 <div class="grid-3 mt-2" style="max-width: 700px; margin-left: auto; margin-right: auto;">
                     <div class="metric-card success">
-                        <div class="metric-value">92%</div>
+                        <div class="metric-value">~79%</div>
                         <div class="metric-label">Image (Voting)</div>
                     </div>
                     <div class="metric-card warning">
@@ -350,7 +350,7 @@
                         <div class="metric-label">Texte (SVC)</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value">~94%</div>
+                        <div class="metric-value">F1 ~ 0.85</div>
                         <div class="metric-label">Fusion</div>
                     </div>
                 </div>
@@ -377,7 +377,7 @@
                     </div>
                     <div class="flow-arrow">&rarr;</div>
                     <div class="flow-box" style="background: rgba(124,58,237,0.1); border: 2px solid var(--accent-purple); color: var(--accent-purple);">
-                        Image = 92%<br><small style="font-weight: 400;">Le gros morceau</small>
+                        Image ~ 79%<br><small style="font-weight: 400;">Le gros morceau</small>
                     </div>
                     <div class="flow-arrow">&rarr;</div>
                     <div class="flow-box" style="background: rgba(245,158,11,0.1); border: 2px solid var(--accent-orange); color: var(--accent-orange);">
@@ -385,7 +385,7 @@
                     </div>
                     <div class="flow-arrow">&rarr;</div>
                     <div class="flow-box" style="background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan)); color: white; border: none;">
-                        Fusion = 94%<br><small style="font-weight: 400;">L'assemblage final</small>
+                        Fusion F1 ~ 0.85<br><small style="font-weight: 400;">L'assemblage final</small>
                     </div>
                 </div>
 
@@ -393,9 +393,9 @@
                     <div class="success-box">
                         <div class="success-box-title">Pourquoi cet ordre ?</div>
                         <ul style="list-style: none; padding: 0; margin: 0;">
-                            <li style="padding: 0.3rem 0;">&#10003; La <strong>Demo</strong> ouvre sur l'impact — le jury voit 94% avant toute theorie</li>
+                            <li style="padding: 0.3rem 0;">&#10003; La <strong>Demo</strong> ouvre sur l'impact — le jury voit F1~0.85 avant toute theorie</li>
                             <li style="padding: 0.3rem 0;">&#10003; Les <strong>Donnees</strong> posent le contexte — le jury comprend la difficulte</li>
-                            <li style="padding: 0.3rem 0;">&#10003; <strong>Image (92%)</strong> puis <strong>Texte (83%)</strong> — chaque brique independamment</li>
+                            <li style="padding: 0.3rem 0;">&#10003; <strong>Image (~79%)</strong> puis <strong>Texte (83%)</strong> — chaque brique independamment</li>
                             <li style="padding: 0.3rem 0;">&#10003; La <strong>Fusion</strong> arrive en dernier — le jury connait deja les 2 composants</li>
                         </ul>
                     </div>
@@ -422,7 +422,7 @@
                     </div>
                     <div style="display: flex; align-items: flex-start; gap: 1rem; padding: 0.7rem 1rem; background: white; border-radius: 10px; border-left: 4px solid var(--accent-purple); box-shadow: var(--card-shadow);">
                         <span style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--accent-purple); flex-shrink: 0; width: 28px;">2</span>
-                        <div><strong style="color: var(--text-main);">Ancrage psychologique</strong> — Quand le jury <strong>VOIT 94% en live</strong>, chaque explication technique est percue comme "la preuve que ca marche". Sans demo d'abord, les slides restent abstraites.</div>
+                        <div><strong style="color: var(--text-main);">Ancrage psychologique</strong> — Quand le jury <strong>VOIT F1~0.85 en live</strong>, chaque explication technique est percue comme "la preuve que ca marche". Sans demo d'abord, les slides restent abstraites.</div>
                     </div>
                     <div style="display: flex; align-items: flex-start; gap: 1rem; padding: 0.7rem 1rem; background: white; border-radius: 10px; border-left: 4px solid var(--accent-orange); box-shadow: var(--card-shadow);">
                         <span style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--accent-orange); flex-shrink: 0; width: 28px;">3</span>
@@ -471,7 +471,7 @@
                         <tr><td class="highlight">1:30</td><td>Distribution des 27 classes, desequilibre visible</td><td>20s</td></tr>
                         <tr><td class="highlight">1:50</td><td>Prediction texte : "iPhone 15 Pro Max 256Go"</td><td>30s</td></tr>
                         <tr><td class="highlight">2:20</td><td>Prediction image : Upload photo produit, Voting visible</td><td>40s</td></tr>
-                        <tr><td class="highlight">3:00</td><td>Fusion : Texte + Image &rarr; ~94%</td><td>30s</td></tr>
+                        <tr><td class="highlight">3:00</td><td>Fusion : Texte + Image &rarr; F1~0.85</td><td>30s</td></tr>
                         <tr><td class="highlight">3:30</td><td>Cas ou texte et image se corrigent mutuellement</td><td>30s</td></tr>
                         <tr><td class="highlight">4:00</td><td>Slider ratio image/texte, impact en live</td><td>30s</td></tr>
                         <tr><td class="highlight">4:30</td><td><strong>Transition &rarr; Michael</strong></td><td>30s</td></tr>
@@ -479,7 +479,7 @@
                 </table>
 
                 <div class="script-box">
-                    "Vous venez de voir ~94% d'accuracy en live. Comment on y arrive ? Michael va vous expliquer les donnees brutes et le preprocessing qui rendent tout ca possible."
+                    "Vous venez de voir un F1 de 0.85 en live. Comment on y arrive ? Michael va vous expliquer les donnees brutes et le preprocessing qui rendent tout ca possible."
                 </div>
             </div>
         </div>
@@ -562,28 +562,28 @@
                     <thead><tr><th>Chrono</th><th>Contenu</th><th>Duree</th></tr></thead>
                     <tbody>
                         <tr><td class="highlight">10:00</td><td><strong>Preprocessing Image</strong> — Resize 224x224, normalisation ImageNet, DINOv3 + EfficientNet-B0. Transfer learning, self-supervised ViT</td><td>1 min</td></tr>
-                        <tr><td class="highlight">11:00</td><td><strong>Benchmark Image</strong> — RF (71%), XGBoost (76.5%, 6h), <strong>DINOv3+MLP (91.4%, 58s)</strong>. Le moment eureka</td><td>1 min 30</td></tr>
-                        <tr><td class="highlight">12:30</td><td><strong>Voting System</strong> — DINOv3 (4/7) + EfficientNet (2/7) + XGBoost calibre (1/7). Sharpening p&sup3;. <strong>Resultat : 92%</strong></td><td>2 min 30</td></tr>
+                        <tr><td class="highlight">11:00</td><td><strong>Benchmark Image</strong> — RF (71%), <strong>XGBoost (85.32%, 6h)</strong>, DINOv3+MLP (79.43%, 58s). XGBoost champion image</td><td>1 min 30</td></tr>
+                        <tr><td class="highlight">12:30</td><td><strong>Voting System</strong> — DINOv3 (4/7) + EfficientNet (2/7) + XGBoost calibre (1/7). Sharpening p&sup3;. <strong>Resultat : ~79%</strong></td><td>2 min 30</td></tr>
                     </tbody>
                 </table>
 
                 <div class="grid-3 mt-1">
                     <div class="metric-card" style="border-top: 3px solid var(--accent-purple);">
-                        <div class="metric-value">91.4%</div>
+                        <div class="metric-value">79.43%</div>
                         <div class="metric-label">DINOv3+MLP (poids 4/7)</div>
                     </div>
                     <div class="metric-card success" style="border-top: 3px solid var(--accent-green);">
-                        <div class="metric-value">~75%</div>
+                        <div class="metric-value">66.63%</div>
                         <div class="metric-label">EfficientNet (poids 2/7)</div>
                     </div>
                     <div class="metric-card warning" style="border-top: 3px solid var(--accent-orange);">
-                        <div class="metric-value">76.5%</div>
+                        <div class="metric-value">85.32%</div>
                         <div class="metric-label">XGBoost calibre (poids 1/7)</div>
                     </div>
                 </div>
 
                 <div class="script-box">
-                    "92% en image grace au Voting. Liviu va completer le puzzle avec le texte et la fusion pour atteindre 94%."
+                    "~79% en image avec le Voting. Liviu va completer le puzzle avec le texte et la fusion pour atteindre F1~0.85."
                 </div>
             </div>
         </div>
@@ -608,8 +608,8 @@
                 <table>
                     <thead><tr><th>Chrono</th><th>Contenu</th><th>Duree</th></tr></thead>
                     <tbody>
-                        <tr><td class="highlight">15:00</td><td><strong>Modelisation Texte</strong> — Benchmark : LogReg (79%), NB (76%), <strong>LinearSVC (83%)</strong>, RF (68%). C=0.5, GridSearch. Pourquoi SVM > CamemBERT</td><td>1 min 30</td></tr>
-                        <tr><td class="highlight">16:30</td><td><strong>Fusion Multimodale</strong> — Late Fusion : Image 92% x 0.6 + Texte 83% x 0.4 = <strong>~94%</strong>. DVD bleu corrige par le texte</td><td>1 min 30</td></tr>
+                        <tr><td class="highlight">15:00</td><td><strong>Modelisation Texte</strong> — Benchmark : LogReg (79%), NB (76%), <strong>LinearSVC (83%)</strong>, RF (68%). C=0.5, GridSearch. Pourquoi SVM plutot que CamemBERT (non teste, justification litterature)</td><td>1 min 30</td></tr>
+                        <tr><td class="highlight">16:30</td><td><strong>Fusion Multimodale</strong> — Late Fusion : Image ~79% x 0.6 + Texte 83% x 0.4 = <strong>F1~0.85</strong>. DVD bleu corrige par le texte</td><td>1 min 30</td></tr>
                         <tr><td class="highlight">18:00</td><td><strong>Explicabilite</strong> — SHAP, Grad-CAM. Conformite AI Act</td><td>1 min</td></tr>
                         <tr><td class="highlight">19:00</td><td><strong>Conclusion & Perspectives</strong> — Bilan, impact metier, OCR, CamemBERT, monitoring</td><td>1 min</td></tr>
                     </tbody>
@@ -621,7 +621,7 @@
                 </div>
 
                 <div class="script-box">
-                    "Nous avons un systeme multimodal a 94%, explicable, deploye sur Streamlit. Perspectives : OCR (+3-5%), fine-tuning DINOv3, monitoring en production. Merci, nous sommes prets pour vos questions."
+                    "Nous avons un systeme multimodal a F1~0.85, explicable, deploye sur Streamlit. Perspectives : OCR (+3-5%), fine-tuning DINOv3, monitoring en production. Merci, nous sommes prets pour vos questions."
                 </div>
             </div>
         </div>
@@ -651,7 +651,7 @@
                         <div style="flex-shrink: 0; width: 140px;">
                             <span style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--accent-purple); font-size: 1.05rem;">Johan &rarr; Liviu</span>
                         </div>
-                        <div style="font-style: italic; color: var(--text-muted); font-size: 1.05rem; line-height: 1.5;">"92% en image grace au Voting. Liviu va completer le puzzle avec le texte et la fusion pour atteindre 94%."</div>
+                        <div style="font-style: italic; color: var(--text-muted); font-size: 1.05rem; line-height: 1.5;">"~79% en image avec le Voting. Liviu va completer le puzzle avec le texte et la fusion pour atteindre F1~0.85."</div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 1.2rem; padding: 1rem 1.2rem; background: white; border-radius: 10px; border-left: 4px solid var(--accent-orange); box-shadow: var(--card-shadow);">
                         <div style="flex-shrink: 0; width: 140px;">
@@ -728,7 +728,7 @@
                         <ul class="feature-list">
                             <li><strong>Texte :</strong> "Accessoire bleu pour exterieur"</li>
                             <li><strong>Image :</strong> Photo bouee piscine</li>
-                            <li><strong>Resultat :</strong> Piscine (92%)</li>
+                            <li><strong>Resultat :</strong> Piscine (88%)</li>
                         </ul>
                         <div class="info-box" style="margin-top: auto;">
                             <p style="font-size: 0.9rem;">Texte trop vague. L'image sauve la classification. Montre la valeur du multimodal.</p>
@@ -827,13 +827,13 @@
                     <div class="timeline-block t3" style="padding: 1.3rem;">
                         <div class="time">10:00 - 15:00</div>
                         <div class="name" style="font-size: 1.5rem;">Johan</div>
-                        <div class="content-label">Pipeline Image<br><strong>Voting System = 92%</strong></div>
+                        <div class="content-label">Pipeline Image<br><strong>Voting System ~ 79%</strong></div>
                     </div>
                     <div class="timeline-arrow">&rarr;</div>
                     <div class="timeline-block t4" style="padding: 1.3rem;">
                         <div class="time">15:00 - 20:00</div>
                         <div class="name" style="font-size: 1.5rem;">Liviu</div>
-                        <div class="content-label">Texte + <strong>Fusion = 94%</strong><br>Explicabilite + Conclusion</div>
+                        <div class="content-label">Texte + <strong>Fusion F1 ~ 0.85</strong><br>Explicabilite + Conclusion</div>
                     </div>
                 </div>
 

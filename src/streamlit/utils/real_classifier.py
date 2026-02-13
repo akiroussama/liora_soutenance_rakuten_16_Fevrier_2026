@@ -2,9 +2,9 @@
 Production multimodal classifier — uses real trained models.
 
 Supports three prediction modes:
-  - Text only:  TF-IDF + LinearSVC pipeline (83% accuracy)
-  - Image only: Voting System with 3 models (92% accuracy)
-  - Fusion:     Weighted average of both (60% image + 40% text = ~94%)
+  - Text only:  TF-IDF + LinearSVC pipeline (F1=0.83)
+  - Image only: Voting System with 3 models (F1~0.79)
+  - Fusion:     Weighted average of both (60% image + 40% text, F1~0.85)
 
 The text model uses decision_function + softmax to produce probabilities
 from LinearSVC (which doesn't natively support predict_proba).
