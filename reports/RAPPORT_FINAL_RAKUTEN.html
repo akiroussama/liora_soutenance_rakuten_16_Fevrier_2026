@@ -3699,14 +3699,14 @@
                 <tbody>
                     <tr>
                         <td>Texte seul (LinearSVC)</td>
-                        <td>83%</td>
-                        <td>0.83</td>
+                        <td>83.0%</td>
+                        <td>0.812</td>
                         <td>Rapide, interprétable</td>
                     </tr>
                     <tr>
                         <td>Image seule (Voting)</td>
-                        <td>92%</td>
-                        <td>~0.92</td>
+                        <td>92.4%</td>
+                        <td>0.918</td>
                         <td>Haute performance</td>
                     </tr>
                     <tr style="background: rgba(191, 0, 0, 0.1);">
@@ -3750,7 +3750,7 @@
                 │ ├── 4_Démo <span class="code-comment"># Classification interactive</span>
                 │ ├── 5_Performance <span class="code-comment"># Métriques et confusion matrix</span>
                 │ ├── 6_Conclusions <span class="code-comment"># Résultats et perspectives</span>
-                │ └── 8_Explicabilité <span class="code-comment"># SHAP, LIME, Grad-CAM</span>
+                │ └── 8_Explicabilité <span class="code-comment"># SHAP, Grad-CAM</span>
                 ├── utils/ <span class="code-comment"># Code métier (classifiers)</span>
                 └── tests/ <span class="code-comment"># Tests pytest</span>
             </div>
@@ -3930,6 +3930,55 @@
                     </tr>
                 </tbody>
             </table>
+
+            <h2><span class="section-number">7.1.3</span> Explicabilité des Décisions</h2>
+            <p>
+                Un système à 94% d'accuracy ne suffit pas en production : il faut comprendre
+                <em>pourquoi</em> le modèle décide, pour détecter les biais, gagner la confiance
+                des utilisateurs et respecter les exigences réglementaires (AI Act européen).
+                Deux méthodes complémentaires sont utilisées dans ce projet.
+            </p>
+
+            <div class="two-columns">
+                <div class="callout callout-success">
+                    <div class="callout-title">SHAP &mdash; Explicabilité Texte</div>
+                    <p>
+                        <strong>SHAP</strong> (SHapley Additive exPlanations) s'appuie sur la théorie des jeux
+                        (valeurs de Shapley) pour mesurer la contribution marginale de chaque mot à la
+                        prédiction finale. Le modèle texte (TF-IDF + LinearSVC) étant linéaire, les
+                        coefficients TF-IDF sont directement interprétables : pour chaque produit, on
+                        identifie les mots qui poussent le plus vers la catégorie prédite
+                        (ex : "iphone" et "smartphone" → Téléphones).
+                    </p>
+                    <ul style="font-size: 9pt;">
+                        <li><strong>Portée</strong> : Globale (importance des features sur tout le dataset)
+                            et locale (contribution par produit)</li>
+                        <li><strong>Cohérence</strong> : 94% des prédictions présentent des top features stables</li>
+                        <li><strong>Avantage</strong> : Explication exacte, sans approximation, grâce à la linéarité du modèle</li>
+                    </ul>
+                </div>
+                <div class="callout callout-success">
+                    <div class="callout-title">Grad-CAM &mdash; Explicabilité Image</div>
+                    <p>
+                        <strong>Grad-CAM</strong> (Gradient-weighted Class Activation Mapping) révèle les zones
+                        de l'image qui influencent le plus la décision du modèle. Pour le Voting System,
+                        chaque modèle produit une heatmap différente :
+                    </p>
+                    <ul style="font-size: 9pt;">
+                        <li><strong>DINOv3</strong> : Attention Maps du Vision Transformer &mdash; vision globale,
+                            comprend le contexte spatial (poids 4/7)</li>
+                        <li><strong>EfficientNet-B0</strong> : Grad-CAM sur la couche <code>features[8]</code>
+                            &mdash; détails fins, textures, motifs locaux (poids 2/7)</li>
+                        <li><strong>XGBoost</strong> : Feature Importance &mdash; classement des dimensions
+                            les plus décisives parmi les features extraites (poids 1/7)</li>
+                    </ul>
+                    <p>
+                        La complémentarité des zones observées par chaque modèle est précisément ce qui
+                        rend le Voting System robuste : si un modèle se trompe sur une zone, les autres
+                        corrigent via le vote pondéré.
+                    </p>
+                </div>
+            </div>
         </section>
 
         <section id="section-7-2">
@@ -4087,8 +4136,29 @@
                         <td>Scalabilité</td>
                         <td>Moyen</td>
                     </tr>
+                    <tr>
+                        <td class="highlight">Pipeline CI/CD MLOps</td>
+                        <td>Architecture bout-en-bout : ingestion des données, modélisation,
+                            persistence et chargement de la dernière version du modèle,
+                            serving via API, orchestrateur (Airflow/Prefect)</td>
+                        <td>Industrialisation</td>
+                        <td>Élevé</td>
+                    </tr>
                 </tbody>
             </table>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">Approche actuelle vs MLOps</div>
+                <p>
+                    Le projet actuel suit une approche <strong>one-off modeling / proof of concept</strong> :
+                    les modèles sont entraînés manuellement, les poids stockés sur Hugging Face, et l'application
+                    Streamlit sert de démonstrateur. L'étape suivante serait l'implémentation d'une architecture
+                    CI/CD MLOps complète avec une pipeline automatisée depuis l'ingestion des données jusqu'au
+                    serving du modèle via une API REST, avec versioning des modèles (MLflow) et
+                    réentraînement orchestré (Airflow/Prefect). Ce sujet constitue naturellement
+                    le prolongement de ce projet dans le cadre de la formation MLOps.
+                </p>
+            </div>
 
             <div class="callout callout-success">
                 <div class="callout-title">🚀 Prochaine Étape Prioritaire : OCR</div>
@@ -4162,6 +4232,17 @@
                     (moyenne 8 mots), multilingues, et contiennent des codes/références que TF-IDF char n-grams
                     capture mieux que des embeddings contextuels. BERT excelle sur des textes longs et structurés,
                     pas sur des listings e-commerce.
+                </p>
+            </div>
+            <div class="callout callout-warning">
+                <div class="callout-title">Avec le recul : commencer par CamemBERT</div>
+                <p>
+                    Si c'était à refaire, nous commencerions par évaluer CamemBERT dès le début du projet
+                    plutôt que de suivre une approche classique (TF-IDF + classifieurs ML). Cela aurait permis
+                    de quantifier rapidement le plafond de performance des Transformers sur ce corpus
+                    et d'orienter plus tôt l'effort vers l'optimisation du pipeline TF-IDF.
+                    Le résultat final aurait probablement été le même &mdash; LinearSVC reste supérieur
+                    sur ce type de corpus court et multilingue &mdash; mais la démarche aurait été plus efficiente.
                 </p>
             </div>
 

@@ -169,7 +169,7 @@ if os.path.exists(img_missing):
         st.markdown("""
         **Constats :**
         - `designation` : 100% rempli
-        - `description` : ~30% manquant
+        - `description` : ~35% manquant
         - `productid` : 100% rempli
         - `imageid` : 100% rempli
         - `prdtypecode` : 100% rempli

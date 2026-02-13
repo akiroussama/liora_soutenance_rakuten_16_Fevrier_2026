@@ -146,7 +146,7 @@ st.markdown("""
 | Classes minoritaires (1180, 60) | F1 plus faible (~60%) | Moyenne | Class weighting, augmentation |
 | Confusion 1280/1281 | ~15% d'erreur mutuelle | Moyenne | Fusion texte+image aide |
 | Drift temporel | Nouveaux produits non reconnus | Haute | Reentrainement periodique |
-| Qualite texte variable | Descriptions manquantes 30% | Moyenne | Fallback sur designation seule |
+| Qualite texte variable | Descriptions manquantes 35% | Moyenne | Fallback sur designation seule |
 | XGBoost fragile seul | 34% confiance sur cas difficiles | Basse | Poids 1/7 dans le voting |
 """)
 
@@ -170,7 +170,7 @@ with col1:
 with col2:
     st.subheader("Moyen terme")
     st.markdown("""
-    - Fine-tuning **CamemBERT** (+2% F1)
+    - Evaluer **CamemBERT** (Transformers)
     - Modele **CLIP** (vision-language)
     - Active learning (cas ambigus)
     - Cross-validation robuste

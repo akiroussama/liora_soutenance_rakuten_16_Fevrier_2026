@@ -29,7 +29,7 @@ L'app tourne sur `http://localhost:8501`
 │   ├── 5_Performance   # Métriques (accuracy, F1, confusion matrix)
 │   ├── 6_Conclusions   # Résultats et perspectives
 │   ├── 7_Qualité       # Tests automatisés et couverture
-│   └── 8_Explicabilité # SHAP, LIME, Grad-CAM
+│   └── 8_Explicabilité # SHAP, Grad-CAM
 ├── utils/              # Code métier
 └── tests/              # Tests pytest
 ```

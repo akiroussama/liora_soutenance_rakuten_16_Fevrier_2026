@@ -200,7 +200,7 @@
 |--------|-------|---------|-------|
 | 15:00 | Modelisation Texte | Benchmark : LogReg (0.79), NB (0.76), **LinearSVC (0.83)**, RF (0.68). C=0.5 optimise par GridSearch, class_weight='balanced'. Pourquoi SVM > CamemBERT en haute dimension | 1 min 30 |
 | 16:30 | Fusion Multimodale | Late Fusion : Image 92% x 0.6 + Texte 83% x 0.4 = **~94%**. Complementarite des modalites. Exemple : DVD bleu corrige par le texte. **Maintenant le jury connait les deux composants !** | 1 min 30 |
-| 18:00 | Explicabilite | SHAP (global texte), LIME (local texte), Grad-CAM (heatmap image). Conformite AI Act. On sait POURQUOI le modele decide | 1 min |
+| 18:00 | Explicabilite | SHAP (global texte), Grad-CAM (heatmap image). Conformite AI Act. On sait POURQUOI le modele decide | 1 min |
 | 19:00 | Conclusion & Perspectives | Bilan : 94% en fusion, systeme explicable, deploye sur Streamlit. Perspectives : OCR (+3-5%), CamemBERT, fine-tuning DINOv3, monitoring en production | 1 min |
 | 20:00 | — | **FIN — Merci, questions ?** | — |
 

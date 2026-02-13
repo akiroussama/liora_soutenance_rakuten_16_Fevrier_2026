@@ -207,13 +207,13 @@ with tabs[3]:
         c1, c2 = st.columns([1, 1])
         with c1:
             st.image(img_hery, width="stretch")
-            st.caption("Comparaison des performances texte : LinearSVC, LogReg, CamemBERT.")
+            st.caption("Comparaison des performances texte : LinearSVC, LogReg, Random Forest.")
         with c2:
             st.markdown("""
             **Observations** :
             - LinearSVC domine sur la majorite des classes
             - Les classes 1280/1281 sont les plus confondues
-            - CamemBERT approche LinearSVC mais coute 20x plus
+            - Random Forest est en retrait sur les classes a faible effectif
             """)
 
     st.markdown("---")

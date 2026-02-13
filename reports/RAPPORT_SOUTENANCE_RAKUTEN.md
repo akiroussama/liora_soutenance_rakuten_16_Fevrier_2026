@@ -225,10 +225,7 @@ FeatureUnion([
 #### 6.4.1 SHAP (texte)
 <!-- Feature importance, exemples -->
 
-#### 6.4.2 LIME (texte)
-<!-- Explications locales -->
-
-#### 6.4.3 Grad-CAM (image)
+#### 6.4.2 Grad-CAM (image)
 <!-- Visualisation des zones d'attention -->
 
 ### 6.5 Analyse des erreurs
@@ -252,7 +249,7 @@ src/streamlit/
 │   ├── 5_Performance   # Métriques
 │   ├── 6_Conclusions   # Résultats
 │   ├── 7_Qualité       # Tests
-│   └── 8_Explicabilité # SHAP, LIME, Grad-CAM
+│   └── 8_Explicabilité # SHAP, Grad-CAM
 ├── utils/              # Code métier
 └── tests/              # Tests pytest
 ```

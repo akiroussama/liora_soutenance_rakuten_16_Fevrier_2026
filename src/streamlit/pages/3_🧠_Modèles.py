@@ -2,7 +2,7 @@
 Page 3 — Model Architecture.
 
 Tab 1 (Vision): Graphviz voting pipeline + calibration before/after + complementarity matrix + radar.
-Tab 2 (Text): NLP pipeline, benchmark table (LinearSVC 83% > CamemBERT 81%).
+Tab 2 (Text): NLP pipeline, benchmark table (LinearSVC 83%), CamemBERT in perspectives.
 """
 import streamlit as st
 import pandas as pd
@@ -152,10 +152,10 @@ with tabs[1]:
         st.markdown("#### Benchmark Texte")
 
         df_text = pd.DataFrame({
-            "Modele": ["LinearSVC", "CamemBERT", "Random Forest", "LogReg"],
-            "F1-Score": ["83.0%", "81.0%", "72.0%", "69.5%"],
-            "Vitesse": ["< 10ms", "~200ms", "~50ms", "< 10ms"],
-            "Interpretable": ["Oui", "Non", "Partiel", "Oui"],
+            "Modele": ["LinearSVC", "Random Forest", "LogReg"],
+            "F1-Score": ["83.0%", "72.0%", "69.5%"],
+            "Vitesse": ["< 10ms", "~50ms", "< 10ms"],
+            "Interpretable": ["Oui", "Partiel", "Oui"],
         })
 
         st.dataframe(
@@ -171,18 +171,22 @@ with tabs[1]:
     st.markdown("---")
 
     st.markdown("""
-    **Pourquoi LinearSVC plutot que CamemBERT ?**
+    **Pourquoi pas CamemBERT ?**
 
-    | Critere | LinearSVC | CamemBERT |
+    CamemBERT (Transformer) n'a pas ete retenu pour ce projet. Sur un corpus de descriptions
+    produit courtes (moyenne 8 mots), multilingues, avec des codes/references, la litterature
+    montre que les approches TF-IDF + SVM rivalisent avec les Transformers :
+
+    | Critere | LinearSVC | CamemBERT (estime) |
     |---------|-----------|-----------|
-    | F1-Score | **83.0%** | 81.0% |
+    | F1-Score | **83.0%** | ~80-82% |
     | Vitesse inference | **< 10ms** | ~200ms |
     | Interpretabilite | **Coefficients directs** | Boite noire |
     | Ressources GPU | **Aucune** | 4 GB VRAM |
     | Deploiement | **Simple (joblib)** | Complexe (PyTorch) |
 
-    Le LinearSVC gagne sur tous les criteres sauf la capacite de fine-tuning.
-    Pour 2% de F1 supplementaire, CamemBERT coute 20x en ressources.
+    Le gain potentiel ne justifie pas la complexite d'infrastructure (GPU, temps d'entrainement x100).
+    CamemBERT reste une **perspective d'amelioration** pour un prochain cycle.
     """)
 
 # Sidebar

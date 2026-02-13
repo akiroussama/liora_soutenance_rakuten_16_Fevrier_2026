@@ -3,7 +3,7 @@ Page 8 — Explicabilite des Modeles.
 
 Demonstrates real explainability techniques used in the project:
   - Tab 1 (Vision): Grad-CAM heatmaps, Attention Maps, Focus Battle across models
-  - Tab 2 (Texte): SHAP feature importance demo, LIME approximation demo
+  - Tab 2 (Texte): SHAP feature importance demo
   - Tab 3 (Robustesse): Rotation stress test, model diversity radar, podium
   - Tab 4 (Conformite): AI Act, business value of explainability
 
@@ -49,7 +49,7 @@ st.divider()
 # ==========================================
 tabs = st.tabs([
     "🖼️ Vision (Grad-CAM)",
-    "📝 Texte (SHAP / LIME)",
+    "📝 Texte (SHAP)",
     "🛡️ Robustesse & Diversite",
     "⚖️ Conformite & Apport"
 ])
@@ -146,98 +146,59 @@ with tabs[0]:
         st.warning("Image rapport_technique_gradcam.png introuvable.")
 
 # ==========================================
-# TAB 2 : TEXTE — SHAP & LIME
+# TAB 2 : TEXTE — SHAP
 # ==========================================
 with tabs[1]:
     st.header("Explicabilite du Modele Texte")
     st.markdown("""
     Le modele texte (TF-IDF + LinearSVC, 83% accuracy) est un modele lineaire :
-    chaque mot contribue directement au score de decision. On utilise **SHAP** et **LIME**
+    chaque mot contribue directement au score de decision. On utilise **SHAP**
     pour quantifier cette contribution.
     """)
 
-    col_shap, col_lime = st.columns(2, gap="large")
-
     # --- SHAP ---
-    with col_shap:
-        st.subheader("SHAP (SHapley Additive exPlanations)")
-        st.markdown("""
-        **Principe** : Base sur la theorie des jeux (valeurs de Shapley).
-        Mesure la contribution marginale de chaque mot a la prediction finale.
-        """)
+    st.subheader("SHAP (SHapley Additive exPlanations)")
+    st.markdown("""
+    **Principe** : Base sur la theorie des jeux (valeurs de Shapley).
+    Mesure la contribution marginale de chaque mot a la prediction finale.
+    """)
 
-        st.info("**Produit** : iPhone 15 Pro Max 256GB Smartphone Apple")
+    st.info("**Produit** : iPhone 15 Pro Max 256GB Smartphone Apple")
 
-        shap_data = pd.DataFrame({
-            'Feature': ['iphone', 'smartphone', 'apple', 'telephone', '256gb', 'pro'],
-            'SHAP Value': [0.42, 0.28, 0.18, 0.15, 0.12, 0.08],
-        })
+    shap_data = pd.DataFrame({
+        'Feature': ['iphone', 'smartphone', 'apple', 'telephone', '256gb', 'pro'],
+        'SHAP Value': [0.42, 0.28, 0.18, 0.15, 0.12, 0.08],
+    })
 
-        fig_shap = px.bar(
-            shap_data, x='SHAP Value', y='Feature', orientation='h',
-            color='SHAP Value',
-            color_continuous_scale=['#FFE5E5', '#BF0000'],
-        )
-        fig_shap.update_layout(
-            height=280,
-            coloraxis_showscale=False,
-            margin=dict(l=0, r=10, t=10, b=10),
-            xaxis_title="Contribution SHAP",
-            yaxis_title="",
-        )
-        st.plotly_chart(fig_shap, width="stretch")
+    fig_shap = px.bar(
+        shap_data, x='SHAP Value', y='Feature', orientation='h',
+        color='SHAP Value',
+        color_continuous_scale=['#FFE5E5', '#BF0000'],
+    )
+    fig_shap.update_layout(
+        height=280,
+        coloraxis_showscale=False,
+        margin=dict(l=0, r=10, t=10, b=10),
+        xaxis_title="Contribution SHAP",
+        yaxis_title="",
+    )
+    st.plotly_chart(fig_shap, width="stretch")
 
-        c1, c2 = st.columns(2)
-        c1.metric("Prediction", "Telephones (2583)")
-        c2.metric("Confiance", "94.2%")
+    c1, c2 = st.columns(2)
+    c1.metric("Prediction", "Telephones (2583)")
+    c2.metric("Confiance", "94.2%")
 
-        st.caption("Les mots 'iphone' et 'smartphone' poussent fortement vers la categorie Telephones.")
-
-    # --- LIME ---
-    with col_lime:
-        st.subheader("LIME (Local Interpretable Explanations)")
-        st.markdown("""
-        **Principe** : Cree un modele lineaire local autour de la prediction.
-        Perturbe le texte (supprime des mots) et observe l'impact sur le score.
-        """)
-
-        st.info("**Produit** : Console PlayStation 5 jeux video Sony")
-
-        lime_data = pd.DataFrame({
-            'Feature': ['playstation', 'console', 'video', 'jeux', 'sony'],
-            'Poids LIME': [0.35, 0.22, 0.15, 0.18, 0.12],
-        })
-
-        fig_lime = px.bar(
-            lime_data, x='Poids LIME', y='Feature', orientation='h',
-            color='Poids LIME',
-            color_continuous_scale=['#E3F2FD', '#1565C0'],
-        )
-        fig_lime.update_layout(
-            height=280,
-            coloraxis_showscale=False,
-            margin=dict(l=0, r=10, t=10, b=10),
-            xaxis_title="Poids LIME",
-            yaxis_title="",
-        )
-        st.plotly_chart(fig_lime, width="stretch")
-
-        c1, c2 = st.columns(2)
-        c1.metric("Prediction", "Jeux Video (2905)")
-        c2.metric("Fidelite LIME", "R² = 0.89")
-
-        st.caption("'playstation' est le mot le plus discriminant pour cette categorie.")
+    st.caption("Les mots 'iphone' et 'smartphone' poussent fortement vers la categorie Telephones.")
 
     st.markdown("---")
 
     # --- Metriques globales ---
     st.subheader("Metriques d'Explicabilite Texte")
 
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3 = st.columns(3)
     c1.metric("Coherence SHAP", "94%", help="Pourcentage de predictions ou les top features sont stables")
-    c2.metric("Fidelite LIME", "R² = 0.89", help="Qualite de l'approximation lineaire locale")
-    c3.metric("Temps / Explication", "2.1s", help="Temps moyen pour generer une explication complete")
-    c4.metric("Features Cles", "~50", help="Nombre de mots TF-IDF les plus discriminants")
+    c2.metric("Temps / Explication", "2.1s", help="Temps moyen pour generer une explication complete")
+    c3.metric("Features Cles", "~50", help="Nombre de mots TF-IDF les plus discriminants")
 
     st.markdown("""
     **Avantage du LinearSVC** : Etant un modele lineaire, les coefficients TF-IDF sont
@@ -350,7 +311,7 @@ with tabs[3]:
             "Intervention humaine",
         ],
         "Notre Reponse": [
-            "Grad-CAM + SHAP + LIME",
+            "Grad-CAM + SHAP",
             "Explication par produit en <3s",
             "F1/classe analysee, classes minoritaires identifiees",
             "Rapport technique complet + code source",
@@ -433,7 +394,6 @@ with st.sidebar:
     st.divider()
     st.markdown("**Methodes Texte**")
     st.markdown("- SHAP (Shapley)")
-    st.markdown("- LIME (Local)")
     st.divider()
     st.markdown("**Tests Robustesse**")
     st.markdown("- Rotation 360 deg")
