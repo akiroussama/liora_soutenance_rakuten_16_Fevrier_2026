@@ -7,7 +7,7 @@ Three tabs for live classification using real trained models:
   - Fusion: Both inputs + adjustable weight slider (default 60% image / 40% text)
 
 Business context: automates product classification from ~5min/product (manual)
-to <1s (AI) with 88% full automation rate at 80% confidence threshold.
+to <1s (AI) with ~70% full automation rate at 80% confidence threshold.
 """
 import streamlit as st
 import time
@@ -39,8 +39,8 @@ st.info("""
 
 Ce PoC simule le processus de classification automatique des produits sur une marketplace e-commerce.
 **Avant** : un opérateur classifie manuellement chaque produit (~5 min, 10-15% d'erreur).
-**Après** : le système IA classifie en <1 seconde avec ~6% d'erreur, permettant de traiter **100K+ produits/jour**.
-Le taux d'automatisation avec seuil de confiance à 80% est de **88%** (les 12% restants partent en revue humaine).
+**Après** : le système IA classifie en <1 seconde avec ~15% d'erreur, permettant de traiter **100K+ produits/jour**.
+Le taux d'automatisation avec seuil de confiance à 80% est de **~70%** (les ~30% restants partent en revue humaine).
 """)
 st.markdown("---")
 

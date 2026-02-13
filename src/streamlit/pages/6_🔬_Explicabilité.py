@@ -256,8 +256,8 @@ with tabs[2]:
         img_podium = str(ASSETS_DIR / "podium_final.png")
         if os.path.exists(img_podium):
             st.image(img_podium, width="stretch")
-            st.caption("Sur 60 produits testes : le Voting valide 53 (88%) avec >80% de confiance, "
-                       "contre 46 pour DINOv3 seul et 6 pour XGBoost seul.")
+            st.caption("Sur 60 produits testes : le Voting valide 42 (~70%) avec >80% de confiance, "
+                       "contre 38 pour DINOv3 seul et 6 pour XGBoost seul.")
         else:
             st.warning("Image podium_final.png introuvable.")
 

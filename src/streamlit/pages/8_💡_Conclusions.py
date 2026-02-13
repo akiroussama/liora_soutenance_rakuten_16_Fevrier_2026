@@ -87,7 +87,7 @@ with col2:
     - Temps : **< 1 sec/produit**
     - Erreur : **~15%** (fusion)
     - Scalabilite : **100K+/jour** (1 serveur)
-    - Taux automatisation : **88%** (seuil 80%)
+    - Taux automatisation : **~70%** (seuil 80%)
     """)
 
 # Podium validation
@@ -96,7 +96,7 @@ if os.path.exists(img_podium):
     c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
         st.image(img_podium, width="stretch")
-        st.caption("Produits valides avec >80% de confiance : Voting 53/60 (88%), XGBoost seul 6/60 (10%).")
+        st.caption("Produits valides avec >80% de confiance : Voting 42/60 (~70%), XGBoost seul 6/60 (10%).")
 
 # Radar recapitulatif
 img_radar = str(ASSETS_DIR / "radar_models.png")
