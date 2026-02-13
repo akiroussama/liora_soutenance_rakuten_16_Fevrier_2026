@@ -45,8 +45,10 @@ st.success("Classification automatique de **84 916 produits** en 27 categories, 
 # Image recapitulative : accuracy par modele
 img_accuracy = str(ASSETS_DIR / "model_accuracy_comparison.png")
 if os.path.exists(img_accuracy):
-    st.image(img_accuracy, use_container_width=True)
-    st.caption("Accuracy par modele : le VOTING (92.4%) surpasse chaque modele individuel.")
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.image(img_accuracy, width="stretch")
+        st.caption("Accuracy par modele : le VOTING (92.4%) surpasse chaque modele individuel.")
 
 # Graphique funnel : progression des resultats
 st.subheader("Progression des Performances")
@@ -59,7 +61,7 @@ fig_funnel = go.Figure(go.Funnel(
     marker=dict(color=["#FFCDD2", "#EF9A9A", "#E57373", "#BF0000"]),
 ))
 fig_funnel.update_layout(height=300, margin=dict(l=10, r=10, t=10, b=10))
-st.plotly_chart(fig_funnel, use_container_width=True)
+st.plotly_chart(fig_funnel, width="stretch")
 st.caption("De la baseline a la fusion : chaque etape apporte un gain mesurable.")
 
 # ==========================================
@@ -91,14 +93,18 @@ with col2:
 # Podium validation
 img_podium = str(ASSETS_DIR / "podium_final.png")
 if os.path.exists(img_podium):
-    st.image(img_podium, use_container_width=True)
-    st.caption("Produits valides avec >80% de confiance : Voting 53/60 (88%), XGBoost seul 6/60 (10%).")
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.image(img_podium, width="stretch")
+        st.caption("Produits valides avec >80% de confiance : Voting 53/60 (88%), XGBoost seul 6/60 (10%).")
 
 # Radar recapitulatif
 img_radar = str(ASSETS_DIR / "radar_models.png")
 if os.path.exists(img_radar):
-    st.image(img_radar, use_container_width=True)
-    st.caption("Profils des modeles : le VOTING (rouge) enveloppe tous les modeles individuels.")
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.image(img_radar, width="stretch")
+        st.caption("Profils des modeles : le VOTING (rouge) enveloppe tous les modeles individuels.")
 
 # ROI chart
 st.subheader("Retour sur Investissement")
@@ -126,7 +132,7 @@ fig_roi.update_layout(
     yaxis_title="Score (normalise)",
     legend=dict(orientation="h", yanchor="bottom", y=1.02),
 )
-st.plotly_chart(fig_roi, use_container_width=True)
+st.plotly_chart(fig_roi, width="stretch")
 
 # ==========================================
 # LIMITES

@@ -1,0 +1,2 @@
+[     319ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8502/Donn%C3%A9es/_stcore/host-config:0
+[     320ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8502/Donn%C3%A9es/_stcore/health:0

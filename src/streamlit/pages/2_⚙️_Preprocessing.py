@@ -43,9 +43,11 @@ st.header("Pipeline Image")
 # Pipeline visuel complet
 img_pipeline = str(ASSETS_DIR / "image_pipeline.png")
 if os.path.exists(img_pipeline):
-    st.image(img_pipeline, use_container_width=True)
-    st.caption("Pipeline complet : 1. Image originale (500x500) → 2. Representation matricielle (Canal R) → "
-               "3. Data Augmentation (rotations) → 4. Extraction de features (vecteur 2048D).")
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.image(img_pipeline, width="stretch")
+        st.caption("Pipeline complet : 1. Image originale (500x500) → 2. Representation matricielle (Canal R) → "
+                   "3. Data Augmentation (rotations) → 4. Extraction de features (vecteur 2048D).")
 
 st.markdown("---")
 
@@ -79,18 +81,22 @@ img_resize = str(ASSETS_DIR / "image_resize.png")
 if os.path.exists(img_resize):
     st.markdown("---")
     st.subheader("Avant / Apres Resize")
-    st.image(img_resize, use_container_width=True)
-    st.caption("Ligne du haut : images originales (500x500). Ligne du bas : apres resize (224x224). "
-               "Les produits restent reconnaissables malgre la reduction.")
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.image(img_resize, width="stretch")
+        st.caption("Ligne du haut : images originales (500x500). Ligne du bas : apres resize (224x224). "
+                   "Les produits restent reconnaissables malgre la reduction.")
 
 # Data augmentation
 img_augmentation = str(ASSETS_DIR / "data_augmentation.png")
 if os.path.exists(img_augmentation):
     st.markdown("---")
     st.subheader("Data Augmentation")
-    st.image(img_augmentation, use_container_width=True)
-    st.caption("Exemple d'augmentation sur un produit (classe 1180 - Figurines). "
-               "5 variantes generees par rotation, flip, changement de luminosite.")
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.image(img_augmentation, width="stretch")
+        st.caption("Exemple d'augmentation sur un produit (classe 1180 - Figurines). "
+                   "5 variantes generees par rotation, flip, changement de luminosite.")
 
 # ==========================================
 # PIPELINE TEXTE
@@ -166,14 +172,14 @@ c1, c2 = st.columns(2, gap="large")
 with c1:
     img_efficacy = str(ASSETS_DIR / "strategy_efficacy.png")
     if os.path.exists(img_efficacy):
-        st.image(img_efficacy, use_container_width=True)
+        st.image(img_efficacy, width="stretch")
         st.caption("Preuve d'efficacite : le taux de detection des classes minoritaires (Figurines) "
                    "passe de 60.7% (modele naif) a 83.8% (avec strategie).")
 
 with c2:
     img_impact = str(ASSETS_DIR / "imbalance_impact.png")
     if os.path.exists(img_impact):
-        st.image(img_impact, use_container_width=True)
+        st.image(img_impact, width="stretch")
         st.caption("Impact sur les courbes d'entrainement : le modele naif (rouge) converge plus vite "
                    "mais le modele avec strategie (vert) apprend mieux les classes rares.")
 

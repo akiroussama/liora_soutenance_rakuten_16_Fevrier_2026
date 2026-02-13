@@ -37,13 +37,17 @@ class MultimodalClassifier:
         # 1. Category mapping (code -> human-readable name)
         try:
             with open(CATEGORY_MAPPING_PATH, 'r', encoding='utf-8') as f:
-                self.mapping = json.load(f)
+                raw = json.load(f)
+            # Handle nested JSON format: {"categories": {"2583": {"name": "Piscine", ...}}}
+            if "categories" in raw and isinstance(raw["categories"], dict):
+                self.mapping = {
+                    code: f"{cat.get('emoji', '')} {cat['name']}".strip()
+                    for code, cat in raw["categories"].items()
+                }
+            else:
+                self.mapping = raw
         except Exception:
-            try:
-                with open(CATEGORY_MAPPING_PATH, 'r') as f:
-                    self.mapping = json.load(f)
-            except Exception:
-                self.mapping = {}
+            self.mapping = {}
 
         # 2. Image model — Voting System (DINOv3 + XGBoost + EfficientNet)
         try:
@@ -84,7 +88,10 @@ class MultimodalClassifier:
         Run text-only classification through LinearSVC.
 
         LinearSVC uses decision_function (not predict_proba), so we convert
-        raw scores to probabilities via softmax: exp(s - max) / sum(exp(s - max)).
+        raw scores to probabilities via tempered softmax with T=0.3.
+        Standard softmax (T=1) spreads probability too uniformly across 27
+        classes because LinearSVC raw scores have small spread. T=0.3 produces
+        confidence levels that reflect actual prediction quality.
         """
         if not self.text_model:
             return []
@@ -97,8 +104,11 @@ class MultimodalClassifier:
                 probs = self.text_model.predict_proba(text)[0]
             elif hasattr(self.text_model, "decision_function"):
                 scores = self.text_model.decision_function(text)[0]
-                # Softmax conversion for LinearSVC raw scores
-                exp_scores = np.exp(scores - np.max(scores))
+                # Tempered softmax: T=0.3 sharpens the distribution so that
+                # the winning class gets meaningful confidence (not ~4% uniform)
+                T = 0.3
+                scaled = (scores - np.max(scores)) / T
+                exp_scores = np.exp(scaled)
                 probs = exp_scores / exp_scores.sum()
             else:
                 return []

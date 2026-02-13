@@ -69,7 +69,7 @@ fig_pyramid.update_layout(
     margin=dict(l=10, r=10, t=10, b=10),
     funnelmode="stack",
 )
-st.plotly_chart(fig_pyramid, use_container_width=True)
+st.plotly_chart(fig_pyramid, width="stretch")
 
 # ==========================================
 # COUVERTURE DE CODE
@@ -98,7 +98,7 @@ fig_cov = px.bar(
 )
 fig_cov.update_layout(height=350, coloraxis_showscale=False)
 fig_cov.update_traces(texttemplate='%{text}%', textposition='outside')
-st.plotly_chart(fig_cov, use_container_width=True)
+st.plotly_chart(fig_cov, width="stretch")
 
 # ==========================================
 # QUALITY GATES ML
@@ -117,14 +117,14 @@ with gauge_cols[0]:
         gauge={"axis": {"range": [0, 100]}, "bar": {"color": "#BF0000"},
                "threshold": {"line": {"color": "green", "width": 4}, "thickness": 0.75, "value": 90}}))
     fig_g1.update_layout(height=200, margin=dict(l=20, r=20, t=40, b=10))
-    st.plotly_chart(fig_g1, use_container_width=True)
+    st.plotly_chart(fig_g1, width="stretch")
 
 with gauge_cols[1]:
     fig_g2 = go.Figure(go.Indicator(mode="gauge+number", value=91.8, title={"text": "F1 Macro"},
         gauge={"axis": {"range": [0, 100]}, "bar": {"color": "#BF0000"},
                "threshold": {"line": {"color": "green", "width": 4}, "thickness": 0.75, "value": 88}}))
     fig_g2.update_layout(height=200, margin=dict(l=20, r=20, t=40, b=10))
-    st.plotly_chart(fig_g2, use_container_width=True)
+    st.plotly_chart(fig_g2, width="stretch")
 
 with gauge_cols[2]:
     fig_g3 = go.Figure(go.Indicator(mode="gauge+number+delta", value=80, title={"text": "Latence (ms)"},
@@ -132,7 +132,7 @@ with gauge_cols[2]:
         gauge={"axis": {"range": [0, 200]}, "bar": {"color": "#BF0000"},
                "threshold": {"line": {"color": "green", "width": 4}, "thickness": 0.75, "value": 100}}))
     fig_g3.update_layout(height=200, margin=dict(l=20, r=20, t=40, b=10))
-    st.plotly_chart(fig_g3, use_container_width=True)
+    st.plotly_chart(fig_g3, width="stretch")
 
 gates_data = pd.DataFrame({
     "Gate": [
@@ -154,7 +154,7 @@ st.dataframe(
         if v == "PASS" else "",
         subset=["Statut"]
     ),
-    use_container_width=True,
+    width="stretch",
     hide_index=True,
 )
 
@@ -186,7 +186,7 @@ with col1:
             if v in ("Bloque", "Gere") else "",
             subset=["Statut"]
         ),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )
 
@@ -207,9 +207,11 @@ img_rotation = str(ASSETS_DIR / "stress_test_rotation.png")
 if os.path.exists(img_rotation):
     st.markdown("---")
     st.subheader("Test de Robustesse : Rotation 360")
-    st.image(img_rotation, use_container_width=True)
-    st.caption("Confiance de chaque modele lors de la rotation 0-360. "
-               "DINOv3 (violet) est le plus stable. XGBoost (vert) est fragile — poids 1/7.")
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.image(img_rotation, width="stretch")
+        st.caption("Confiance de chaque modele lors de la rotation 0-360. "
+                   "DINOv3 (violet) est le plus stable. XGBoost (vert) est fragile — poids 1/7.")
 
 # ==========================================
 # TESTS NON-REGRESSION ML

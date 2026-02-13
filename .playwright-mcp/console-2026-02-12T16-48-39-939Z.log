@@ -1,0 +1,2 @@
+[  203106ms] [WARNING] No script tag of type "javascript/worker" was found and "useWorker" is true. Not using web worker. @ http://localhost:8502/static/js/index.BKIlG7Ng.js:2
+[  290752ms] [WARNING] No script tag of type "javascript/worker" was found and "useWorker" is true. Not using web worker. @ http://localhost:8502/static/js/index.BKIlG7Ng.js:2

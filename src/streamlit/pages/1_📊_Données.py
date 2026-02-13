@@ -40,8 +40,10 @@ st.title("Exploration des Donnees")
 # Apercu visuel du dataset
 img_samples = str(ASSETS_DIR / "sample_products.png")
 if os.path.exists(img_samples):
-    st.image(img_samples, use_container_width=True)
-    st.caption("Exemples de produits issus de 5 categories differentes du catalogue Rakuten France.")
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.image(img_samples, width="stretch")
+        st.caption("Exemples de produits issus de 5 categories differentes du catalogue Rakuten France.")
 
 if is_data_available():
     st.success("Donnees reelles chargees")
@@ -84,14 +86,14 @@ with tab_bar:
         coloraxis_showscale=False,
     )
     fig_bar.update_traces(textposition='outside')
-    st.plotly_chart(fig_bar, use_container_width=True)
+    st.plotly_chart(fig_bar, width="stretch")
 
 with tab_table:
     display_df = dist_df[['emoji', 'category_name', 'count', 'percentage']].copy()
     display_df.columns = ['', 'Catégorie', 'Produits', '%']
     display_df['Produits'] = display_df['Produits'].apply(lambda x: f"{x:,}".replace(",", " "))
     display_df['%'] = display_df['%'].apply(lambda x: f"{x:.1f}%")
-    st.dataframe(display_df, use_container_width=True, hide_index=True, height=600)
+    st.dataframe(display_df, width="stretch", hide_index=True, height=600)
 
 # Statistiques texte
 st.divider()
@@ -116,9 +118,11 @@ with col2:
 # Boxplot longueur titres par categorie
 img_boxplot = str(ASSETS_DIR / "boxplot_title_length.png")
 if os.path.exists(img_boxplot):
-    st.image(img_boxplot, use_container_width=True)
-    st.caption("Longueur des titres (designation) par categorie. "
-               "Les categories Livres (60) et Magazines (1300) ont les titres les plus longs.")
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.image(img_boxplot, width="stretch")
+        st.caption("Longueur des titres (designation) par categorie. "
+                   "Les categories Livres (60) et Magazines (1300) ont les titres les plus longs.")
 
 # Exemples
 st.divider()
@@ -144,9 +148,11 @@ st.header("Analyse Lexicale")
 
 img_top20 = str(ASSETS_DIR / "top20_words.png")
 if os.path.exists(img_top20):
-    st.image(img_top20, use_container_width=True)
-    st.caption("Top 20 des mots les plus frequents dans les titres. "
-               "'piscine', 'jeu', 'lot' et 'coussin' dominent le vocabulaire.")
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.image(img_top20, width="stretch")
+        st.caption("Top 20 des mots les plus frequents dans les titres. "
+                   "'piscine', 'jeu', 'lot' et 'coussin' dominent le vocabulaire.")
 
 # Qualite des donnees
 st.divider()
@@ -156,7 +162,7 @@ img_missing = str(ASSETS_DIR / "missing_values.png")
 if os.path.exists(img_missing):
     c1, c2 = st.columns([2, 1])
     with c1:
-        st.image(img_missing, use_container_width=True)
+        st.image(img_missing, width="stretch")
         st.caption("Carte des valeurs manquantes. Jaune = manquant. "
                    "Le champ 'description' presente le plus de valeurs manquantes.")
     with c2:

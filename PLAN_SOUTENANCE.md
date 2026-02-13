@@ -44,29 +44,117 @@
 
 ### 1. OUSSAMA — 0:00 a 5:00 (5 min) — "Le Hook"
 
-| Chrono | Slide | Contenu | Duree |
-|--------|-------|---------|-------|
-| 0:00 | Cover | Presenter l'equipe et le projet, mentor Antoine | 40s |
-| 0:40 | Sommaire | Plan de la presentation, fil rouge, teasing des metriques | 20s |
-| 1:00 | — | **DEMO LIVE STREAMLIT** | **3 min 30** |
-| 1:00 | Streamlit Accueil | Ouvrir l'app, montrer les metriques globales | 30s |
-| 1:30 | Streamlit Donnees | Distribution des 27 classes, desequilibre visible | 20s |
-| 1:50 | Streamlit Texte | Saisir "iPhone 15 Pro Max 256Go" → Prediction texte | 30s |
-| 2:20 | Streamlit Image | Upload photo produit → Voting visible (3 modeles) | 40s |
-| 3:00 | Streamlit Fusion | Texte + Image → Resultat ~94% | 30s |
-| 3:30 | Streamlit | Cas ou texte et image se corrigent mutuellement | 30s |
-| 4:00 | Streamlit Slider | Varier le ratio image/texte → montrer l'impact live | 30s |
-| 4:30 | Transition | "Vous avez vu le resultat. Michael va vous montrer la matiere premiere." | 30s |
-| 5:00 | — | **Transition → Michael** | — |
+| Chrono | Ecran Streamlit | Ce qu'on voit | Ce que tu dis | Duree |
+|--------|-----------------|---------------|---------------|-------|
+| 0:00 | *Slides* Cover | Logo Rakuten, equipe, mentor | Intro equipe + mission | 40s |
+| 0:40 | *Slides* Sommaire | Plan 4 parties, fil rouge | Teasing: "94%, en live" | 20s |
+| 1:00 | **Accueil** (app.py) | 4 metriques (84 916 / 27 / Texte+Image / ~94%), pipeline Texte→Image→Fusion, grille 27 categories avec emojis | "Voici notre application deployee. 84 916 produits, 27 categories, ~94% de precision." | 25s |
+| 1:25 | **Page Demo** > Onglet Texte | Zone de saisie, bouton "Analyser" | Taper "Harry Potter edition poche" → Prediction Livres (99%) + top 5 avec barres de confiance + mots-cles surlignés | 35s |
+| 2:00 | **Page Demo** > Onglet Image | Upload image, bouton "Lancer le Voting" | Upload photo bouee piscine → Le Conseil des Sages : DINOv3 (poids 4), EffNet (poids 2), XGBoost (poids 1) avec barres visuelles → Prediction Piscine | 45s |
+| 2:45 | **Page Demo** > Onglet Fusion | Slider 60/40, zone texte + image | "DVD Le Grand Bleu" + jaquette bleue → Le texte corrige l'image → Prediction DVD correcte. Puis bouger le slider → montrer l'impact live des poids | 45s |
+| 3:30 | **Page Demo** > Architecture | Expander "Architecture du systeme" : schema explainability_drive.png + model_accuracy_comparison.png | "Le Voting combine 3 visions differentes. Resultat : 92.4% image, la fusion avec le texte monte a 94%." | 30s |
+| 4:00 | **Page Performance** > Tab Benchmark | Graphique benchmark_cpu_gpu.png : CPU vs GPU, x24 acceleration DINOv3 | "En production GPU, le systeme classe un produit en 170ms. Soit 100 000 produits par jour sur un seul serveur." | 25s |
+| 4:25 | Transition | — | "Vous avez vu le resultat final. Michael va maintenant vous plonger dans la matiere premiere : les donnees brutes et les defis du preprocessing." | 35s |
+| 5:00 | — | — | **→ Michael prend la parole** | — |
 
-**Script Oussama :**
-> "Bonjour, nous sommes l'equipe Rakuten. Notre mission : classifier automatiquement 85 000 produits e-commerce en 27 categories en combinant texte et image. Je suis Oussama, j'ai travaille sur la partie image et le deploiement. Johan est notre architecte image, il a construit le Voting System. Michael a prepare les donnees et le preprocessing texte. Et Liviu, data scientist senior, a developpe les modeles NLP et la fusion. Avant la theorie, je vous montre le resultat final en action."
+---
 
-> *[DEMO 3 min 30 — montrer les 3 cas : facile, image decisive, texte decisif]*
+#### SCRIPT DETAILLE OUSSAMA (mot a mot, 5 min)
 
-> "Vous venez de voir ~94% d'accuracy en live. Comment on y arrive ? Michael va vous expliquer les donnees brutes et le preprocessing qui rendent tout ca possible."
+**[0:00 — COVER — debout, regard au jury]**
 
-**Objectif :** Le jury est impressionne. Il a VU le systeme fonctionner. Maintenant il veut comprendre.
+> "Bonjour. Nous sommes l'equipe Rakuten. Notre mission : classifier automatiquement 85 000 produits e-commerce en 27 categories, en combinant texte et image.
+>
+> Je suis Oussama, j'ai travaille sur la partie image et le deploiement de l'application. A ma droite, Johan, notre architecte image — c'est lui qui a construit le Voting System a 3 modeles. Michael a prepare les donnees et tout le preprocessing texte. Et Liviu, data scientist senior, a developpe les modeles NLP et la strategie de fusion.
+>
+> Notre mentor est Antoine, qui nous a guides tout au long du projet."
+
+**[0:40 — SOMMAIRE — pointer l'ecran]**
+
+> "Notre presentation suit une logique simple : je commence par vous montrer le resultat en live, puis Michael explique les donnees, Johan detaille la partie image, et Liviu conclut avec le texte, la fusion, et l'explicabilite. Avant toute theorie... laissez-moi vous montrer ce qu'on a construit."
+
+**[1:00 — DEMO LIVE — ouvrir Streamlit, page Accueil]**
+
+> *[Ecran : page Accueil avec les 4 metriques en haut, le pipeline en 3 colonnes, et la grille des 27 categories]*
+>
+> "Voici notre application deployee sur Hugging Face. En haut : les chiffres cles — 84 916 produits, 27 categories, deux modalites texte et image, et ~94% de precision globale. En dessous, notre pipeline : le texte passe par un nettoyage et TF-IDF, l'image par DINOv3, et la fusion combine les deux. Et voila nos 27 categories — des livres aux piscines, des jeux video au bricolage."
+>
+> *[Cliquer sur "Classifier un produit" → Page Demo]*
+
+**[1:25 — DEMO TEXTE — Onglet "Analyse Texte"]**
+
+> *[Ecran : zone de saisie a gauche, resultats a droite]*
+>
+> "Premier test : le texte seul. Je tape 'Harry Potter edition poche'..."
+>
+> *[Taper le texte, cliquer "Analyser le Texte"]*
+>
+> "Le modele identifie les mots-cles — 'harry', 'potter', 'edition', 'poche' — et predit avec 99% de confiance : Livres. Le top 5 confirme : aucune hesitation. Cas facile."
+
+**[2:00 — DEMO IMAGE — Onglet "Analyse Image"]**
+
+> *[Cliquer sur l'onglet Image, uploader la photo de bouee]*
+>
+> "Deuxieme test : l'image seule. J'uploade une photo de bouee de piscine, sans aucun texte."
+>
+> *[Cliquer "Lancer le Voting Image" — apparition du Conseil des Sages : DINOv3 poids 4, EffNet poids 2, XGBoost poids 1 avec barres de progression]*
+>
+> "Regardez l'architecture du vote : notre 'Conseil des Sages'. DINOv3, le patron, a poids 4 — c'est un Vision Transformer qui voit le contexte global. EfficientNet, l'expert, poids 2 — un CNN qui capte les details. XGBoost, le statisticien, poids 1 — il corrige. Ensemble, ils votent : Piscine. Cas ou l'image suffit."
+
+**[2:45 — DEMO FUSION — Onglet "FUSION Multimodale"]**
+
+> *[Cliquer sur l'onglet Fusion. Montrer le slider a 60% image / 40% texte]*
+>
+> "Troisieme test : la fusion. C'est le cas le plus interessant. Je tape 'DVD Le Grand Bleu Luc Besson' et j'uploade une jaquette bleue."
+>
+> *[Entrer le texte et l'image, cliquer "Calculer la Fusion"]*
+>
+> "L'image seule hesiterait — c'est bleu, ca pourrait etre une piscine. Mais le texte dit 'DVD Luc Besson'. La fusion corrige : DVD. C'est exactement la complementarite texte-image."
+>
+> *[Bouger le slider vers 90% image]*
+>
+> "Si je pousse l'image a 90%... le texte perd son influence. C'est pour ca qu'on a calibre a 60/40 — le meilleur equilibre."
+
+**[3:30 — ARCHITECTURE VISUELLE — Expander sur la page Demo]**
+
+> *[Ouvrir l'expander "Architecture du systeme de classification" → affiche le schema explainability + le graphique accuracy]*
+>
+> "Sous le capot : voici comment les 3 modeles du Voting analysent chaque image differemment. Et le resultat — le Voting a 92.4% surpasse chaque modele individuel. En fusionnant avec le texte : ~94%."
+
+**[4:00 — BENCHMARK RAPIDE — Page Performance, onglet Benchmark]**
+
+> *[Naviguer vers Page Performance > onglet Benchmark CPU/GPU — benchmark_cpu_gpu.png visible]*
+>
+> "Un mot sur la production. DINOv3 prend 2 secondes en CPU, mais 82 millisecondes en GPU — acceleration de x24. Le Voting complet : moins de 200ms par produit. Soit plus de 100 000 produits par jour sur un seul serveur."
+
+**[4:25 — TRANSITION]**
+
+> "Vous venez de voir le systeme en action : texte, image, fusion. ~94% d'accuracy, en temps reel. La question maintenant : comment on y arrive ? Michael va vous plonger dans la matiere premiere — les donnees brutes, le desequilibre des classes, et le preprocessing qui rend tout ca possible."
+>
+> *[Regard vers Michael, geste de la main]*
+
+---
+
+#### ECRANS STREAMLIT — RESUME VISUEL (ce que le jury voit)
+
+| Moment | Page | Elements visuels marquants |
+|--------|------|---------------------------|
+| 1:00 | Accueil | 4 metriques en gros, pipeline 3 colonnes, 27 emojis |
+| 1:25 | Demo > Texte | Mots-cles surlignés `harry` `potter`, barre confiance 99%, top 5 DataFrame |
+| 2:00 | Demo > Image | Photo bouee, 3 colonnes Conseil des Sages (DINOv3/EffNet/XGBoost) avec poids et barres |
+| 2:45 | Demo > Fusion | Slider interactif 60/40, barres laterales, resultat fusionne |
+| 3:30 | Demo > Architecture | Schema explicabilite (explainability_drive.png), comparaison accuracy (model_accuracy_comparison.png) |
+| 4:00 | Performance > Benchmark | 3 graphiques : CPU (gris), GPU (rouge), Acceleration (vert x24) |
+
+#### PRODUITS DE DEMO (prepares a l'avance)
+
+| # | Texte | Image | Resultat | Pourquoi ce cas |
+|---|-------|-------|----------|-----------------|
+| 1 | "Harry Potter edition poche" | *(pas d'image)* | Livres 99% | Cas facile — le texte suffit |
+| 2 | *(pas de texte)* | Photo bouee piscine | Piscine 92% | Image decisive — montre le Voting |
+| 3 | "DVD Le Grand Bleu Luc Besson" | Jaquette bleue | DVD 87% | Texte corrige l'image — fusion |
+
+**Objectif minute 5 :** Le jury est impressionne. Il a VU le systeme fonctionner sur 3 cas concrets. Il a vu l'architecture, les poids, le benchmark. Maintenant il VEUT comprendre comment ca marche.
 
 ---
 

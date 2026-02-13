@@ -48,14 +48,18 @@ st.markdown("---")
 with st.expander("Architecture du systeme de classification", expanded=False):
     img_explain = str(ASSETS_DIR / "explainability_drive.png")
     if os.path.exists(img_explain):
-        st.image(img_explain, use_container_width=True)
-        st.caption("Les 3 modeles du Voting analysent chaque image differemment : "
-                   "DINOv3 (attention globale), EfficientNet (details), XGBoost (features statistiques).")
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            st.image(img_explain, width="stretch")
+            st.caption("Les 3 modeles du Voting analysent chaque image differemment : "
+                       "DINOv3 (attention globale), EfficientNet (details), XGBoost (features statistiques).")
 
     img_accuracy = str(ASSETS_DIR / "model_accuracy_comparison.png")
     if os.path.exists(img_accuracy):
-        st.image(img_accuracy, use_container_width=True)
-        st.caption("Le VOTING combine les 3 avis pour atteindre 92.4% d'accuracy image.")
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            st.image(img_accuracy, width="stretch")
+            st.caption("Le VOTING combine les 3 avis pour atteindre 92.4% d'accuracy image.")
 
 # Download models from HF Hub if not present locally (runs once, cached)
 @st.cache_resource
@@ -93,7 +97,7 @@ def show_results(results, title="Résultats"):
     df_chart = pd.DataFrame(chart_data)
     st.dataframe(
         df_chart.style.background_gradient(cmap="Greens", subset=["Confiance"]).format({"Confiance": "{:.1%}"}),
-        use_container_width=True,
+        width="stretch",
         hide_index=True
     )
 
@@ -159,7 +163,7 @@ with tabs[1]:
         img_file = st.file_uploader("Image du produit", type=['jpg', 'png', 'jpeg', 'webp'])
         
         if img_file:
-            st.image(img_file, caption="Aperçu", use_container_width=True)
+            st.image(img_file, caption="Aperçu", width="stretch")
             with open("temp_demo.jpg", "wb") as f: 
                 f.write(img_file.getbuffer())
     

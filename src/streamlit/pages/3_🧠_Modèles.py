@@ -59,7 +59,7 @@ with tabs[0]:
 
     c_g1, c_g2, c_g3 = st.columns([1, 4, 1])
     with c_g2:
-        st.graphviz_chart(graph, use_container_width=True)
+        st.graphviz_chart(graph, width="stretch")
 
     st.markdown("---")
 
@@ -72,7 +72,7 @@ with tabs[0]:
         st.markdown("##### Synthese (Radar)")
         img_radar = str(ASSETS_DIR / "radar_models.png")
         if os.path.exists(img_radar):
-            st.image(img_radar, use_container_width=True)
+            st.image(img_radar, width="stretch")
             st.caption("Le Voting (Rouge) enveloppe les modeles individuels sur les 5 axes : "
                        "Precision, Confiance, Robustesse, Universalite, Vitesse.")
 
@@ -80,7 +80,7 @@ with tabs[0]:
         st.markdown("##### Matrice de Complementarite")
         img_compl = str(ASSETS_DIR / "complementarity_matrix.png")
         if os.path.exists(img_compl):
-            st.image(img_compl, use_container_width=True)
+            st.image(img_compl, width="stretch")
             st.caption("XGBoost est 'Independant' (Alien) de tous les autres modeles. "
                        "C'est precisement cette independance qui securise le vote.")
 
@@ -101,7 +101,7 @@ with tabs[0]:
         st.markdown("##### AVANT (Probleme)")
         img_before = str(ASSETS_DIR / "calibration_before.png")
         if os.path.exists(img_before):
-            st.image(img_before, use_container_width=True)
+            st.image(img_before, width="stretch")
             st.caption("XGBoost (vert) concentre ses scores a ~25%. Le seuil de 80% (ligne rouge) "
                        "est rarement atteint — le modele hesite trop.")
 
@@ -109,7 +109,7 @@ with tabs[0]:
         st.markdown("##### APRES (Sharpening)")
         img_after = str(ASSETS_DIR / "calibration_after.png")
         if os.path.exists(img_after):
-            st.image(img_after, use_container_width=True)
+            st.image(img_after, width="stretch")
             st.caption("Apres sharpening, XGBoost (vert) depasse le seuil de 80%. "
                        "Le VOTING (rouge) est mieux calibre — decisions plus nettes.")
 
@@ -164,7 +164,7 @@ with tabs[1]:
                 subset=["F1-Score"],
                 props="color: black; background-color: #d4edda; font-weight: bold;"
             ),
-            use_container_width=True,
+            width="stretch",
             hide_index=True
         )
 

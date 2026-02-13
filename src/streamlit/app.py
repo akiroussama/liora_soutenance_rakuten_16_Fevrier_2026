@@ -86,10 +86,10 @@ st.divider()
 st.header("Tester")
 col1, col2 = st.columns(2)
 with col1:
-    if st.button("Classifier un produit", use_container_width=True, type="primary"):
-        st.switch_page("pages/4_🔍_Démo.py")
+    if st.button("Classifier un produit", width="stretch", type="primary"):
+        st.switch_page("pages/5_🔍_Démo.py")
 with col2:
-    if st.button("Explorer les données", use_container_width=True, type="primary"):
+    if st.button("Explorer les données", width="stretch", type="primary"):
         st.switch_page("pages/1_📊_Données.py")
 
 # Footer

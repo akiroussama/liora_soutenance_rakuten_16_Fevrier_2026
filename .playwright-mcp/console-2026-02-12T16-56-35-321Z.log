@@ -1,0 +1,19 @@
+[     926ms] [WARNING] Manifest: found icon with no valid purpose; ignoring it. @ https://www.babnet.net/manifest.php:0
+[    1110ms] [WARNING] adgb - not initialized. @ https://cdn.taboola.com/libtrc/babnettunisie/loader.js:0
+[   26433ms] [ERROR] Attestation check for Attribution Reporting on https://www.google-analytics.com failed. @ https://www.babnet.net/cadredetail-323555.asp:0
+[   28042ms] TypeError: Cannot read properties of null (reading 'style')
+    at https://www.babnet.net/cadredetail-323555.asp:2169:7
+[   33456ms] Uncaught TypeError: TRC.getRTUS is not a function
+    at <anonymous> (https://gum.criteo.com/sync?c=72&r=2&j=TRC.getRTUS&us_privacy=&gdpr=0&gdpr_consent=:0:4)
+[   36844ms] [ERROR] Mixed Content: The page at 'https://www.babnet.net/cadredetail-323555.asp' was loaded over HTTPS, but requested an insecure resource 'http://prg.smartadserver.com/prebid/v1'. This request has been blocked; the content must be served over HTTPS. @ https://cdn.projectagora-adtag-library.com/prebid/latest/prebid.js:11
+[   36845ms] [ERROR] Mixed Content: The page at 'https://www.babnet.net/cadredetail-323555.asp' was loaded over HTTPS, but requested an insecure resource 'http://prg.smartadserver.com/prebid/v1'. This request has been blocked; the content must be served over HTTPS. @ https://cdn.projectagora-adtag-library.com/prebid/latest/prebid.js:11
+[   41510ms] [ERROR] Failed to load resource: net::ERR_INSUFFICIENT_RESOURCES @ https://fundingchoicesmessages.google.com/f/AGSKWxVSVR3IabtuDGhE7uwVbjQ67ITmMs2w9IpVMZqOMziStqy71G3SbcpAnUhtXIksFu2VcmznYs06Y3uS1gXnpzgsD3hjbJ2-lJxV4lGUGHlIA7UJKH3AcknDutScAE0Pw03J8I7CQXWR3lZfrG-kiAFTy_YFSe7I_xcoXyjPAlm3EM0O0Hy6BeWDQ8ud/_/get-advert-/mpuguardian./ero_line_/ad-hcm./bookads2.:0
+[   42108ms] [ERROR] Attestation check for Attribution Reporting on https://www.google-analytics.com failed. @ https://www.babnet.net/cadredetail-323555.asp:0
+[   42151ms] [ERROR] Attestation check for Attribution Reporting on https://www.google-analytics.com failed. @ https://www.babnet.net/cadredetail-323555.asp:0
+[   43158ms] [ERROR] Failed to load resource: net::ERR_INSUFFICIENT_RESOURCES @ https://pagead2.googlesyndication.com/bg/36tO05c_38eTKSrHXzgYAyBWL9NXbFft-JdFZytyqsk.js:0
+[   44167ms] [ERROR] Failed to load resource: net::ERR_INSUFFICIENT_RESOURCES @ https://ms-cookie-sync.presage.io/user-sync?rtbhouse_id=JjnZ9FiLtB3rYb3w7B6Thr_G4iHd8XPz4jRnd4wS1BQ&pi=ogury&gdpr=0&gdpr_consent=:0
+[   46192ms] [ERROR] Failed to load resource: net::ERR_INSUFFICIENT_RESOURCES @ https://eb2.3lift.com/xuid?mid=6250&xuid=isLIMember&dongle=2b63:0
+[   47260ms] [WARNING] Placements With no Content: Below Article Thumbnails | Lazy Injected 1 @ https://cdn.taboola.com/libtrc/babnettunisie/loader.js:0
+[   47261ms] [WARNING] Placements With no Content: Below Article Thumbnails | Lazy Injected 1 @ https://cdn.taboola.com/libtrc/babnettunisie/loader.js:0
+[   51343ms] [ERROR] Failed to load resource: net::ERR_INSUFFICIENT_RESOURCES @ https://fundingchoicesmessages.google.com/el/AGSKWxWj8v5exen8b-8LKaruBLKF5CJYfhAa4A7rdW-vDmCdkoK1CqpL9XtjQyrpDPyaPkWuvGZR7Fp4NGQkNfGGkC05aliD97M5HQ6pYpC_jCAxPcf3Q_b47NPa9cbXIE7mK_4R_hij8w==:0
+[   51546ms] [ERROR] Failed to load resource: net::ERR_EMPTY_RESPONSE @ https://sync.srv.stackadapt.com/sync?nid=13&gdpr=0&gdpr_consent=&gpp=&gpp_sid=:0

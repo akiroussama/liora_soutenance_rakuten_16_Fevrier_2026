@@ -70,9 +70,11 @@ with tabs[0]:
 
     img_drive = str(ASSETS_DIR / "explainability_drive.png")
     if os.path.exists(img_drive):
-        st.image(img_drive, use_container_width=True)
-        st.caption("De gauche a droite : Image originale, DINOv3 (Attention Maps — vision globale), "
-                   "EfficientNet (Zones d'Activation — details fins), XGBoost (Top Features decisives).")
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            st.image(img_drive, width="stretch")
+            st.caption("De gauche a droite : Image originale, DINOv3 (Attention Maps — vision globale), "
+                       "EfficientNet (Zones d'Activation — details fins), XGBoost (Top Features decisives).")
     else:
         st.warning("Image explainability_drive.png introuvable.")
 
@@ -112,10 +114,12 @@ with tabs[0]:
 
     img_focus = str(ASSETS_DIR / "focus_battle.png")
     if os.path.exists(img_focus):
-        st.image(img_focus, use_container_width=True)
-        st.caption("Exemple sur un produit : chaque quadrant montre le focus d'un modele different. "
-                   "DINOv3 atteint 90.7% de confiance (vision globale), EfficientNet 77.8% (details), "
-                   "XGBoost 31.7% (decision divergente — c'est la diversite qui renforce le vote).")
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            st.image(img_focus, width="stretch")
+            st.caption("Exemple sur un produit : chaque quadrant montre le focus d'un modele different. "
+                       "DINOv3 atteint 90.7% de confiance (vision globale), EfficientNet 77.8% (details), "
+                       "XGBoost 31.7% (decision divergente — c'est la diversite qui renforce le vote).")
     else:
         st.warning("Image focus_battle.png introuvable.")
 
@@ -132,10 +136,12 @@ with tabs[0]:
 
     img_rapport = str(ASSETS_DIR / "rapport_technique_gradcam.png")
     if os.path.exists(img_rapport):
-        st.image(img_rapport, use_container_width=True)
-        st.caption("Rapport genere automatiquement : image client, focus Phoenix (Overfit), "
-                   "focus EfficientNet, et barres de confiance par modele. "
-                   "Le VOTING final (37.2%) combine les avis avec les poids 4:2:1.")
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            st.image(img_rapport, width="stretch")
+            st.caption("Rapport genere automatiquement : image client, focus Phoenix (Overfit), "
+                       "focus EfficientNet, et barres de confiance par modele. "
+                       "Le VOTING final (37.2%) combine les avis avec les poids 4:2:1.")
     else:
         st.warning("Image rapport_technique_gradcam.png introuvable.")
 
@@ -179,7 +185,7 @@ with tabs[1]:
             xaxis_title="Contribution SHAP",
             yaxis_title="",
         )
-        st.plotly_chart(fig_shap, use_container_width=True)
+        st.plotly_chart(fig_shap, width="stretch")
 
         c1, c2 = st.columns(2)
         c1.metric("Prediction", "Telephones (2583)")
@@ -214,7 +220,7 @@ with tabs[1]:
             xaxis_title="Poids LIME",
             yaxis_title="",
         )
-        st.plotly_chart(fig_lime, use_container_width=True)
+        st.plotly_chart(fig_lime, width="stretch")
 
         c1, c2 = st.columns(2)
         c1.metric("Prediction", "Jeux Video (2905)")
@@ -254,10 +260,12 @@ with tabs[2]:
 
     img_rotation = str(ASSETS_DIR / "stress_test_rotation.png")
     if os.path.exists(img_rotation):
-        st.image(img_rotation, use_container_width=True)
-        st.caption("Confiance de chaque modele quand l'image est tournee de 0 a 360 degres. "
-                   "DINOv3 (violet) reste le plus stable grace a son architecture Vision Transformer. "
-                   "XGBoost (vert pointille) est le plus fragile — c'est pourquoi son poids est 1/7.")
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            st.image(img_rotation, width="stretch")
+            st.caption("Confiance de chaque modele quand l'image est tournee de 0 a 360 degres. "
+                       "DINOv3 (violet) reste le plus stable grace a son architecture Vision Transformer. "
+                       "XGBoost (vert pointille) est le plus fragile — c'est pourquoi son poids est 1/7.")
     else:
         st.warning("Image stress_test_rotation.png introuvable.")
 
@@ -268,10 +276,12 @@ with tabs[2]:
 
     img_galerie = str(ASSETS_DIR / "galerie_voting.png")
     if os.path.exists(img_galerie):
-        st.image(img_galerie, use_container_width=True)
-        st.caption("5 produits analyses par le Voting. Barres rouges : Le Chef (VOTING final). "
-                   "Barres bleues : confiance par modele. 'MAJORITE' = tous d'accord, "
-                   "'DESACCORD' = un ou plusieurs modeles divergent.")
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            st.image(img_galerie, width="stretch")
+            st.caption("5 produits analyses par le Voting. Barres rouges : Le Chef (VOTING final). "
+                       "Barres bleues : confiance par modele. 'MAJORITE' = tous d'accord, "
+                       "'DESACCORD' = un ou plusieurs modeles divergent.")
     else:
         st.warning("Image galerie_voting.png introuvable.")
 
@@ -284,7 +294,7 @@ with tabs[2]:
         st.subheader("Podium : Produits Valides (>80%)")
         img_podium = str(ASSETS_DIR / "podium_final.png")
         if os.path.exists(img_podium):
-            st.image(img_podium, use_container_width=True)
+            st.image(img_podium, width="stretch")
             st.caption("Sur 60 produits testes : le Voting valide 53 (88%) avec >80% de confiance, "
                        "contre 46 pour DINOv3 seul et 6 pour XGBoost seul.")
         else:
@@ -294,7 +304,7 @@ with tabs[2]:
         st.subheader("Profils des Modeles (Radar)")
         img_radar = str(ASSETS_DIR / "radar_models.png")
         if os.path.exists(img_radar):
-            st.image(img_radar, use_container_width=True)
+            st.image(img_radar, width="stretch")
             st.caption("Le VOTING (rouge) enveloppe tous les modeles individuels sur les 5 axes : "
                        "Precision, Confiance, Robustesse, Universalite, Vitesse.")
         else:
@@ -361,7 +371,7 @@ with tabs[3]:
             if v == "Conforme" else "",
             subset=["Statut"]
         ),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )
 

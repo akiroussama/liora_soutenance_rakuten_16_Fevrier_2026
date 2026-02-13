@@ -62,9 +62,11 @@ with tabs[0]:
 
     img_accuracy = str(ASSETS_DIR / "model_accuracy_comparison.png")
     if os.path.exists(img_accuracy):
-        st.image(img_accuracy, use_container_width=True)
-        st.caption("Accuracy sur le jeu de test. Le VOTING (92.4%) surpasse chaque modele individuel. "
-                   "Phoenix/ResNet50 (90%) est en overfitting — exclu du voting final.")
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            st.image(img_accuracy, width="stretch")
+            st.caption("Accuracy sur le jeu de test. Le VOTING (92.4%) surpasse chaque modele individuel. "
+                       "Phoenix/ResNet50 (90%) est en overfitting — exclu du voting final.")
 
     st.markdown("---")
 
@@ -85,7 +87,7 @@ with tabs[0]:
             subset=["Accuracy"],
             props="color: black; background-color: #d4edda; font-weight: bold;"
         ),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )
 
@@ -103,10 +105,12 @@ with tabs[1]:
 
     img_scatter = str(ASSETS_DIR / "speed_vs_precision.png")
     if os.path.exists(img_scatter):
-        st.image(img_scatter, use_container_width=True)
-        st.caption("Chaque point = une configuration testee. Cercles = Deep Learning, Croix = Machine Learning. "
-                   "Le Deep Learning (bleu, en haut a gauche) domine en F1 ET en vitesse. "
-                   "XGBoost_Heavy_CPU (orange, en haut a droite) est le plus lent (21K sec).")
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            st.image(img_scatter, width="stretch")
+            st.caption("Chaque point = une configuration testee. Cercles = Deep Learning, Croix = Machine Learning. "
+                       "Le Deep Learning (bleu, en haut a gauche) domine en F1 ET en vitesse. "
+                       "XGBoost_Heavy_CPU (orange, en haut a droite) est le plus lent (21K sec).")
 
     st.markdown("---")
 
@@ -127,7 +131,7 @@ with tabs[1]:
         "Temps (sec)": ["55.7", "57.7", "58.3", "55.7", "76.7"],
     })
 
-    st.dataframe(podium, use_container_width=True, hide_index=True)
+    st.dataframe(podium, width="stretch", hide_index=True)
 
     st.info("Le Deep Learning domine les 19 premieres places. Le premier ML classique "
             "(XGBoost_Heavy_CPU) n'arrive qu'en 20e position avec 76.5% de F1.")
@@ -140,10 +144,12 @@ with tabs[2]:
 
     img_benchmark = str(ASSETS_DIR / "benchmark_cpu_gpu.png")
     if os.path.exists(img_benchmark):
-        st.image(img_benchmark, use_container_width=True)
-        st.caption("3 comparaisons : 1) Temps CPU (gris) — DINOv3 prend 2 secondes. "
-                   "2) Temps GPU (rouge) — tout passe sous 100ms. "
-                   "3) Facteur d'acceleration (vert) — DINOv3 gagne x24 avec GPU.")
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            st.image(img_benchmark, width="stretch")
+            st.caption("3 comparaisons : 1) Temps CPU (gris) — DINOv3 prend 2 secondes. "
+                       "2) Temps GPU (rouge) — tout passe sous 100ms. "
+                       "3) Facteur d'acceleration (vert) — DINOv3 gagne x24 avec GPU.")
 
     st.markdown("---")
 
@@ -187,9 +193,11 @@ with tabs[3]:
     # F1 par classe (image reelle)
     img_f1 = str(ASSETS_DIR / "f1_per_class.png")
     if os.path.exists(img_f1):
-        st.image(img_f1, use_container_width=True)
-        st.caption("F1-Score par classe du modele texte (LinearSVC). "
-                   "Les classes avec beaucoup de produits (2583, 1560) performent mieux.")
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            st.image(img_f1, width="stretch")
+            st.caption("F1-Score par classe du modele texte (LinearSVC). "
+                       "Les classes avec beaucoup de produits (2583, 1560) performent mieux.")
 
     st.markdown("---")
 
@@ -198,7 +206,7 @@ with tabs[3]:
     if os.path.exists(img_hery):
         c1, c2 = st.columns([1, 1])
         with c1:
-            st.image(img_hery, use_container_width=True)
+            st.image(img_hery, width="stretch")
             st.caption("Comparaison des performances texte : LinearSVC, LogReg, CamemBERT.")
         with c2:
             st.markdown("""
@@ -217,7 +225,7 @@ with tabs[3]:
     if os.path.exists(img_confusion):
         c1, c2 = st.columns([1, 2])
         with c1:
-            st.image(img_confusion, use_container_width=True)
+            st.image(img_confusion, width="stretch")
         with c2:
             st.markdown("""
             **1280** = Jouets enfants | **1281** = Jeux de societe
@@ -266,7 +274,7 @@ with tabs[3]:
         xaxis=dict(tickangle=45, tickfont=dict(size=8)),
         yaxis=dict(tickfont=dict(size=8)),
     )
-    st.plotly_chart(fig_cm, use_container_width=True)
+    st.plotly_chart(fig_cm, width="stretch")
     st.caption("Matrice de confusion interactive. Diagonale = predictions correctes.")
 
 # Sidebar
