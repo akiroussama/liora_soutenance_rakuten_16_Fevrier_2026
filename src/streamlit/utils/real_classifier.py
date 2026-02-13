@@ -145,3 +145,100 @@ class MultimodalClassifier:
         # Sort and return
         final_results = [self._format_result(label, score) for label, score in fusion_scores.items()]
         return sorted(final_results, key=lambda x: x['confidence'], reverse=True)
+
+    def explain_text(self, text):
+        """Extract top TF-IDF features contributing to the predicted class."""
+        if not self.text_model:
+            return []
+        try:
+            if isinstance(text, str):
+                text = [text]
+
+            # Get the predicted class index
+            scores = self.text_model.decision_function(text)[0]
+            predicted_idx = int(np.argmax(scores))
+
+            # Get TF-IDF feature vector for input text
+            feats_step = self.text_model.named_steps.get('feats')
+            clf_step = self.text_model.named_steps.get('clf')
+            if feats_step is None or clf_step is None:
+                return []
+
+            tfidf_vec = feats_step.transform(text)
+            if sp.issparse(tfidf_vec):
+                tfidf_arr = tfidf_vec.toarray()[0]
+            else:
+                tfidf_arr = np.array(tfidf_vec[0])
+
+            # Get coefficients for the predicted class
+            coefs = clf_step.coef_[predicted_idx]
+
+            # Contribution = tfidf_value * coefficient
+            contributions = tfidf_arr * coefs
+            nonzero = np.nonzero(contributions)[0]
+
+            if len(nonzero) == 0:
+                return []
+
+            # Get feature names
+            feature_names = feats_step.get_feature_names_out()
+
+            # Sort by absolute contribution, take top 10
+            top_indices = nonzero[np.argsort(np.abs(contributions[nonzero]))[-10:][::-1]]
+
+            return [
+                {"feature": str(feature_names[i]), "contribution": float(contributions[i])}
+                for i in top_indices
+            ]
+        except Exception as e:
+            print(f"Text explain error: {e}")
+            return []
+
+    def predict_image_detailed(self, image_path):
+        """Run image classification with per-model breakdown."""
+        if not self.voting:
+            return {"results": [], "per_model": {}}
+        try:
+            detailed = self.voting.predict_detailed(image_path)
+            results = [self._format_result(r['label'], r['confidence'])
+                       for r in detailed['predictions']]
+            # Add human-readable names to per-model
+            per_model = {}
+            for model_name, info in detailed['per_model'].items():
+                per_model[model_name] = {
+                    "label": info['top_label'],
+                    "name": self.mapping.get(str(info['top_label']),
+                                             f"Produit {info['top_label']}"),
+                    "confidence": info['top_conf'],
+                }
+            return {"results": results, "per_model": per_model}
+        except Exception as e:
+            print(f"Image detailed error: {e}")
+            return {"results": [], "per_model": {}}
+
+    def predict_fusion_detailed(self, text, image_path):
+        """Fusion with full explainability: text features + per-model image breakdown."""
+        res_text = self.predict_text(text)
+        img_detail = self.predict_image_detailed(image_path)
+        text_explain = self.explain_text(text)
+
+        # Merge scores for fusion
+        fusion_scores = {}
+        for item in res_text:
+            fusion_scores[item['label']] = item['confidence'] * self.w_text
+        for item in img_detail['results']:
+            label = item['label']
+            fusion_scores[label] = fusion_scores.get(label, 0.0) + (item['confidence'] * self.w_image)
+
+        fusion_results = [self._format_result(label, score) for label, score in fusion_scores.items()]
+        fusion_results = sorted(fusion_results, key=lambda x: x['confidence'], reverse=True)
+
+        return {
+            "fusion": fusion_results,
+            "text_results": res_text,
+            "image_results": img_detail['results'],
+            "per_model": img_detail['per_model'],
+            "text_explain": text_explain,
+            "text_top": res_text[0] if res_text else None,
+            "image_top": img_detail['results'][0] if img_detail['results'] else None,
+        }

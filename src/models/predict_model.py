@@ -119,9 +119,12 @@ class VotingPredictor:
             import json
             mapping_path = self.mdir / "category_mapping.json"
             if mapping_path.exists():
-                with open(mapping_path, 'r') as mf:
+                with open(mapping_path, 'r', encoding='utf-8') as mf:
                     cat_map = json.load(mf)
-                code_list = sorted(cat_map.keys(), key=int)
+                if "categories" in cat_map:
+                    code_list = sorted(cat_map["categories"].keys(), key=int)
+                else:
+                    code_list = sorted(cat_map.keys(), key=int)
                 labels = [code_list[i] if i < len(code_list) else str(i) for i in ids]
             else:
                 labels = [str(i) for i in ids]
@@ -154,16 +157,19 @@ class VotingPredictor:
             else:
                 f_p = (4.0 * p1 + 2.0 * p3) / 6.0
 
-        # Build label mapping
+        # Build label mapping (reuse same logic as predict())
         import json
         if self.has_xgboost:
             code_list = [str(self.le.inverse_transform([i])[0]) for i in range(27)]
         else:
             mapping_path = self.mdir / "category_mapping.json"
             if mapping_path.exists():
-                with open(mapping_path, 'r') as mf:
+                with open(mapping_path, 'r', encoding='utf-8') as mf:
                     cat_map = json.load(mf)
-                code_list = sorted(cat_map.keys(), key=int)
+                if "categories" in cat_map:
+                    code_list = sorted(cat_map["categories"].keys(), key=int)
+                else:
+                    code_list = sorted(cat_map.keys(), key=int)
             else:
                 code_list = [str(i) for i in range(27)]
 
