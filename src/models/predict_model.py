@@ -130,3 +130,65 @@ class VotingPredictor:
             {"label": labels[j], "confidence": float(f_p[ids[j]])}
             for j in range(len(ids))
         ]
+
+    def predict_detailed(self, img_p):
+        """Run voting inference and return per-model breakdown for explainability."""
+        if not self.loaded:
+            self.load_models()
+
+        with torch.no_grad():
+            p1 = F.softmax(
+                self.m1(preprocess_image(img_p, "dino").to(self.device)), dim=1
+            ).cpu().numpy()[0]
+
+            i2 = preprocess_image(img_p, "standard").to(self.device)
+            p3 = F.softmax(self.m3(i2), dim=1).cpu().numpy()[0]
+
+            p2 = None
+            if self.has_xgboost:
+                f = self.ext(i2).squeeze().cpu().numpy().reshape(1, -1)
+                raw_p2 = self.m2.predict_proba(f)[0]
+                sharp_p2 = np.power(raw_p2, 3)
+                p2 = sharp_p2 / sharp_p2.sum()
+                f_p = (4.0 * p1 + 1.0 * p2 + 2.0 * p3) / 7.0
+            else:
+                f_p = (4.0 * p1 + 2.0 * p3) / 6.0
+
+        # Build label mapping
+        import json
+        if self.has_xgboost:
+            code_list = [str(self.le.inverse_transform([i])[0]) for i in range(27)]
+        else:
+            mapping_path = self.mdir / "category_mapping.json"
+            if mapping_path.exists():
+                with open(mapping_path, 'r') as mf:
+                    cat_map = json.load(mf)
+                code_list = sorted(cat_map.keys(), key=int)
+            else:
+                code_list = [str(i) for i in range(27)]
+
+        # Top-5 final predictions
+        ids = np.argsort(f_p)[-5:][::-1]
+        predictions = [
+            {"label": code_list[ids[j]] if ids[j] < len(code_list) else str(ids[j]),
+             "confidence": float(f_p[ids[j]])}
+            for j in range(len(ids))
+        ]
+
+        # Per-model top prediction
+        def _top(proba):
+            idx = int(np.argmax(proba))
+            lbl = code_list[idx] if idx < len(code_list) else str(idx)
+            return {"top_label": lbl, "top_conf": float(proba[idx])}
+
+        per_model = {
+            "DINOv3": _top(p1),
+            "EfficientNet": _top(p3),
+        }
+        if p2 is not None:
+            per_model["XGBoost"] = _top(p2)
+
+        return {
+            "predictions": predictions,
+            "per_model": per_model,
+        }
